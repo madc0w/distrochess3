@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"nuxt": "^3.9.0",
-		"mongodb": "^5.11.0"
+		"mongodb": "^6.6.0"
 	},
 	"devDependencies": {
 		"typescript": "^5.2.0"
