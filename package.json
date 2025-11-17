@@ -1,0 +1,17 @@
+{
+	"name": "distrochess3",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "nuxt dev",
+		"build": "nuxt build",
+		"start": "nuxt start"
+	},
+	"dependencies": {
+		"nuxt": "^3.9.0",
+		"mongodb": "^5.11.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.2.0"
+	}
+}
