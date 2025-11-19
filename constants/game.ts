@@ -1,1 +1,2 @@
-export const maxMoveTimeMins = 5; // Maximum time allowed for a move in minutes
+// Maximum time allowed for a move in minutes
+export const maxMoveTimeMins = 8;

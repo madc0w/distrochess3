@@ -77,9 +77,10 @@ export function useAuth() {
 	}
 
 	function getAuthHeader() {
-		return auth.value?.token
-			? { Authorization: `Bearer ${auth.value.token}` }
-			: {};
+		if (auth.value?.token) {
+			return { Authorization: `Bearer ${auth.value.token}` };
+		}
+		return undefined;
 	}
 
 	return {

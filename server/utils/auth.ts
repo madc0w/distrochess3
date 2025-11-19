@@ -11,6 +11,8 @@ export interface JWTPayload {
 
 export function verifyAuthToken(event: H3Event): ObjectId {
 	const authHeader = getHeader(event, 'Authorization');
+	// console.log('[verifyAuthToken] Incoming Authorization header:', authHeader);
+	// console.log('[verifyAuthToken] JWT_SECRET:', process.env.JWT_SECRET);
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		throw createError({
 			statusCode: 401,
@@ -27,6 +29,7 @@ export function verifyAuthToken(event: H3Event): ObjectId {
 		}
 		return new ObjectId((jwt.verify(token, secret) as JWTPayload).userId);
 	} catch (err) {
+		console.error('[verifyAuthToken] JWT verification error:', err);
 		throw createError({
 			statusCode: 401,
 			statusMessage: 'Invalid authentication token',

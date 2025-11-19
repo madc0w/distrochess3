@@ -4,7 +4,11 @@ export interface Game {
 	_id: ObjectId;
 	whiteUserIds: ObjectId[];
 	blackUserIds: ObjectId[];
-	fen: string;
+	history: Array<{
+		fen: string;
+		date: Date;
+		userId: ObjectId | null;
+	}>;
 	createdDate: Date;
 	lastMoveDate?: Date;
 	currentTurnUserId?: ObjectId | null;

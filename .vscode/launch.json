@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Nuxt",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": {
+        "MONGODB_URI": "mongodb+srv://doadmin:fF4r12i7q053BxC9@distrochess-test-fcbe26b7.mongo.ondigitalocean.com/admin?tls=true&authSource=admin",
+        "MONGODB_DB": "distrochess-test",
+        "JWT_SECRET": "sfd912lkhcbvweki2398u06dd"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"],
+      "outputCapture": "std"
+    }
+  ]
+}

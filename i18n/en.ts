@@ -27,6 +27,11 @@ export const en = {
 	distroChess: 'DistroChess',
 	gamePlaceholder: 'Game view coming soon!',
 	gameComingSoon: 'The chess game will be displayed here.',
+	yourTurn: 'Your Turn',
+	waitingForOpponent: 'Please wait for an opponent to make a move...',
+	timeRemaining: 'Time remaining',
+	loadingGame: 'Loading game...',
+	noGameAvailable: 'No game available',
 };
 
 export type Translations = typeof en;
