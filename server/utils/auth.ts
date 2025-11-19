@@ -16,7 +16,7 @@ export function verifyAuthToken(event: H3Event): ObjectId {
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		throw createError({
 			statusCode: 401,
-			statusMessage: 'Unauthorized: No valid authentication token provided',
+			statusMessage: 'ERR_UNAUTHORIZED_NO_TOKEN',
 		});
 	}
 
@@ -25,14 +25,17 @@ export function verifyAuthToken(event: H3Event): ObjectId {
 	try {
 		const secret = process.env.JWT_SECRET;
 		if (!secret) {
-			throw new Error('JWT_SECRET is not defined');
+			throw createError({
+				statusCode: 500,
+				statusMessage: 'ERR_JWT_SECRET_MISSING',
+			});
 		}
 		return new ObjectId((jwt.verify(token, secret) as JWTPayload).userId);
 	} catch (err) {
 		console.error('[verifyAuthToken] JWT verification error:', err);
 		throw createError({
 			statusCode: 401,
-			statusMessage: 'Invalid authentication token',
+			statusMessage: 'ERR_INVALID_AUTH_TOKEN',
 		});
 	}
 }

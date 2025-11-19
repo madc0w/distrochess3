@@ -1,5 +1,7 @@
 import { useState } from 'nuxt/app';
 import { computed, onMounted, watch } from 'vue';
+import { translations as t } from './useI18n';
+import { translateServerError } from './useServerErrors';
 
 export type AuthPayload = {
 	user: {
@@ -48,8 +50,7 @@ export function useAuth() {
 			console.error('Signup error:', error);
 			return {
 				success: false,
-				error:
-					error.data?.statusMessage || error.statusMessage || 'Signup failed',
+				error: translateServerError(error, t) || 'Signup failed',
 			};
 		}
 	}
@@ -66,8 +67,7 @@ export function useAuth() {
 			console.error('Signin error:', error);
 			return {
 				success: false,
-				error:
-					error.data?.statusMessage || error.statusMessage || 'Signin failed',
+				error: translateServerError(error, t) || 'Signin failed',
 			};
 		}
 	}

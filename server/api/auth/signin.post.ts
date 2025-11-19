@@ -1,20 +1,17 @@
 import { createError, defineEventHandler, readBody } from 'h3';
 import jwt from 'jsonwebtoken';
 import { scryptSync, timingSafeEqual } from 'node:crypto';
+import type { UserDoc } from '../../types/user';
 import { getDb } from '../../utils/mongo';
-
-interface UserDoc {
-	email: string;
-	name: string;
-	passwordHash: string;
-	createdAt: Date;
-}
 
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
 	const secret = process.env.JWT_SECRET || process.env.NITRO_JWT_SECRET;
 	if (!secret) {
-		throw new Error('JWT_SECRET is not defined');
+		throw createError({
+			statusCode: 500,
+			statusMessage: 'ERR_JWT_SECRET_MISSING',
+		});
 	}
 
 	const payload = {
@@ -42,13 +39,13 @@ export default defineEventHandler(async (event) => {
 		if (!email || typeof email !== 'string') {
 			throw createError({
 				statusCode: 400,
-				statusMessage: 'Email is required',
+				statusMessage: 'ERR_EMAIL_REQUIRED',
 			});
 		}
 		if (!password || typeof password !== 'string') {
 			throw createError({
 				statusCode: 400,
-				statusMessage: 'Password is required',
+				statusMessage: 'ERR_PASSWORD_REQUIRED',
 			});
 		}
 
@@ -60,7 +57,7 @@ export default defineEventHandler(async (event) => {
 		if (!user) {
 			throw createError({
 				statusCode: 401,
-				statusMessage: 'Invalid email or password',
+				statusMessage: 'ERR_INVALID_CREDENTIALS',
 			});
 		}
 
@@ -68,7 +65,7 @@ export default defineEventHandler(async (event) => {
 		if (!verifyPassword(password, user.passwordHash)) {
 			throw createError({
 				statusCode: 401,
-				statusMessage: 'Invalid email or password',
+				statusMessage: 'ERR_INVALID_CREDENTIALS',
 			});
 		}
 
@@ -84,14 +81,13 @@ export default defineEventHandler(async (event) => {
 			token,
 		};
 	} catch (error: any) {
-		// Re-throw if it's already an H3 error
+		// Re-throw if it's already an H3 error (statusMessage contains i18n code)
 		if (error.statusCode) {
 			throw error;
 		}
-		// Otherwise wrap it
 		throw createError({
 			statusCode: 500,
-			statusMessage: 'Sign in failed',
+			statusMessage: 'ERR_SIGNIN_FAILED',
 		});
 	}
 });

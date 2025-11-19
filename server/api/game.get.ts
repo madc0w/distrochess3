@@ -1,7 +1,7 @@
 import { Chess } from 'chess.js';
 import { defineEventHandler, getQuery } from 'h3';
 import { ObjectId } from 'mongodb';
-import { maxMoveTimeMins } from '~/constants/game';
+import { maxMoveTimeMins, newGameProbability } from '~/constants/game';
 import type { Game } from '../types/game';
 import { verifyAuthToken } from '../utils/auth';
 import { getDb } from '../utils/mongo';
@@ -71,14 +71,14 @@ export default defineEventHandler(async (event) => {
 		});
 
 		const currentGame: Game = availableGames[0];
+		const now = new Date();
 		if (currentGame) {
-			const now = new Date();
 			currentGame.currentTurnStartDate = now;
 			currentGame.currentTurnUserId = userId;
 
-			console.log(
-				`update game ${currentGame._id} to set turn for user ${userId}`
-			);
+			// console.log(
+			// 	`update game ${currentGame._id} to set turn for user ${userId}`
+			// );
 			// persist the current turn info to the database
 			await db
 				.collection<Game>('games')
@@ -87,6 +87,31 @@ export default defineEventHandler(async (event) => {
 					{ $set: { currentTurnStartDate: now, currentTurnUserId: userId } }
 				);
 			return currentGame;
+		} else if (Math.random() < newGameProbability) {
+			// compute next numeric id (max existing id + 1)
+			const last = await db
+				.collection<Game>('games')
+				.find({}, { projection: { id: 1 } })
+				.sort({ id: -1 })
+				.limit(1)
+				.toArray();
+			const maxId = Number(last[0]?.id ?? 0);
+			const id: Number = maxId + 1;
+
+			const newGame: Game = {
+				_id: new ObjectId(),
+				id,
+				whiteUserIds: [],
+				blackUserIds: [],
+				history: [],
+				createdDate: now,
+				lastMoveDate: null,
+				currentTurnUserId: userId,
+				currentTurnStartDate: now,
+			};
+
+			await db.collection<Game>('games').insertOne(newGame);
+			return newGame;
 		}
 
 		return null;

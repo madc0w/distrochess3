@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 
 export interface Game {
 	_id: ObjectId;
+	id: Number;
 	whiteUserIds: ObjectId[];
 	blackUserIds: ObjectId[];
 	history: Array<{
@@ -10,7 +11,7 @@ export interface Game {
 		userId: ObjectId | null;
 	}>;
 	createdDate: Date;
-	lastMoveDate?: Date;
+	lastMoveDate?: Date | null;
 	currentTurnUserId?: ObjectId | null;
 	currentTurnStartDate?: Date | null;
 }

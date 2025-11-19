@@ -1,20 +1,17 @@
 import { createError, defineEventHandler, readBody } from 'h3';
 import jwt from 'jsonwebtoken';
 import { randomBytes, scryptSync } from 'node:crypto';
+import type { UserDoc } from '../../types/user';
 import { getDb } from '../../utils/mongo';
-
-interface UserDoc {
-	email: string;
-	name: string;
-	passwordHash: string;
-	createdAt: Date;
-}
 
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
 	const secret = process.env.JWT_SECRET || process.env.NITRO_JWT_SECRET;
 	if (!secret) {
-		throw new Error('JWT_SECRET is not defined');
+		throw createError({
+			statusCode: 500,
+			statusMessage: 'ERR_JWT_SECRET_MISSING',
+		});
 	}
 
 	const payload = {
@@ -41,19 +38,19 @@ export default defineEventHandler(async (event) => {
 		if (!email || typeof email !== 'string') {
 			throw createError({
 				statusCode: 400,
-				statusMessage: 'Email is required',
+				statusMessage: 'ERR_EMAIL_REQUIRED',
 			});
 		}
 		if (!name || typeof name !== 'string') {
 			throw createError({
 				statusCode: 400,
-				statusMessage: 'Name is required',
+				statusMessage: 'ERR_NAME_REQUIRED',
 			});
 		}
 		if (!password || typeof password !== 'string' || password.length < 6) {
 			throw createError({
 				statusCode: 400,
-				statusMessage: 'Password must be at least 6 characters',
+				statusMessage: 'ERR_PASSWORD_TOO_SHORT',
 			});
 		}
 
@@ -65,7 +62,7 @@ export default defineEventHandler(async (event) => {
 		if (existing) {
 			throw createError({
 				statusCode: 409,
-				statusMessage: 'Email already registered',
+				statusMessage: 'ERR_EMAIL_REGISTERED',
 			});
 		}
 
@@ -91,14 +88,14 @@ export default defineEventHandler(async (event) => {
 			token,
 		};
 	} catch (error: any) {
-		// Re-throw if it's already an H3 error
+		// Re-throw if it's already an H3 error (we store codes in `statusMessage`)
 		if (error.statusCode) {
 			throw error;
 		}
-		// Otherwise wrap it
+		// Otherwise wrap it with a generic error code for client-side i18n
 		throw createError({
 			statusCode: 500,
-			statusMessage: 'Account creation failed',
+			statusMessage: 'ERR_ACCOUNT_CREATION_FAILED',
 		});
 	}
 });
