@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div class="container" v-cloak>
 		<!-- Signup Form (shown when not authenticated) -->
 		<div v-if="!isAuthenticated" class="auth-container">
 			<h1>{{ t.welcome }}</h1>
@@ -80,6 +80,10 @@ import { ref } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { translations as t } from '~/composables/useI18n';
 
+definePageMeta({
+	ssr: false,
+});
+
 const { user, isAuthenticated, signup, signin, signout } = useAuth();
 
 // Form state
@@ -134,6 +138,19 @@ function handleSignout() {
 	margin: 0 auto;
 	padding: 2rem;
 	min-height: 100vh;
+	/* Prevent FOUC with initial hidden state and quick fade-in */
+	animation: fadeInPage 0.15s ease-out;
+}
+
+@keyframes fadeInPage {
+	from {
+		opacity: 0;
+		visibility: hidden;
+	}
+	to {
+		opacity: 1;
+		visibility: visible;
+	}
 }
 
 .auth-container {
