@@ -38,6 +38,7 @@ async function initDatabase() {
 			chess.reset(); // Reset to starting position
 
 			games.push({
+				id: i + 1,
 				whiteUserIds: [],
 				blackUserIds: [],
 				history: [

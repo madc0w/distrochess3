@@ -27,11 +27,28 @@ export const en = {
 	distroChess: 'DistroChess',
 	gamePlaceholder: 'Game view coming soon!',
 	gameComingSoon: 'The chess game will be displayed here.',
-	yourTurn: 'Your Turn',
+	yourTurn: "It's your turn...",
+
+	// Server error codes (dereference these on the client)
+	errors: {
+		ERR_EMAIL_REQUIRED: 'Email is required',
+		ERR_NAME_REQUIRED: 'Name is required',
+		ERR_PASSWORD_TOO_SHORT: 'Password must be at least 6 characters',
+		ERR_EMAIL_REGISTERED: 'That email is already registered',
+		ERR_ACCOUNT_CREATION_FAILED: 'Account creation failed — please try again',
+		ERR_JWT_SECRET_MISSING: 'Server error (missing configuration)',
+		ERR_PASSWORD_REQUIRED: 'Password is required',
+		ERR_INVALID_CREDENTIALS: 'Invalid email or password',
+		ERR_SIGNIN_FAILED: 'Sign in failed — please try again',
+		ERR_UNAUTHORIZED_NO_TOKEN: 'Unauthorized: No authentication token provided',
+		ERR_INVALID_AUTH_TOKEN: 'Invalid authentication token',
+		ERR_GENERIC: 'An error occurred. Please try again.',
+	},
 	waitingForOpponent: 'Please wait for an opponent to make a move...',
 	timeRemaining: 'Time remaining',
 	loadingGame: 'Loading game...',
 	noGameAvailable: 'No game available',
+	gameId: 'Game ID',
 };
 
 export type Translations = typeof en;

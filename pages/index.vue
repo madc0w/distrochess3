@@ -4,11 +4,11 @@
 		<div v-if="!isAuthenticated" class="auth-container">
 			<h1>{{ t.welcome }}</h1>
 			<form @submit.prevent="handleSignup" class="signup-form">
-				<h2>{{ showSignin ? t.signin : t.signup }}</h2>
+				<h2>{{ isShowSignin ? t.signin : t.signup }}</h2>
 
 				<div v-if="error" class="error">{{ error }}</div>
 
-				<div v-if="!showSignin" class="form-group">
+				<div v-if="!isShowSignin" class="form-group">
 					<label for="name">{{ t.name }}</label>
 					<input
 						id="name"
@@ -43,14 +43,14 @@
 					/>
 				</div>
 
-				<button type="submit" class="btn-primary" :disabled="loading">
-					{{ loading ? t.pleaseWait : showSignin ? t.signin : t.signup }}
+				<button type="submit" class="btn-primary" :disabled="isLoading">
+					{{ isLoading ? t.pleaseWait : isShowSignin ? t.signin : t.signup }}
 				</button>
 
 				<p class="toggle-auth">
-					{{ showSignin ? t.noAccount : t.haveAccount }}
+					{{ isShowSignin ? t.noAccount : t.haveAccount }}
 					<a @click="toggleAuthMode" href="#">
-						{{ showSignin ? t.signup : t.signin }}
+						{{ isShowSignin ? t.signup : t.signin }}
 					</a>
 				</p>
 			</form>
@@ -82,6 +82,9 @@
 			<!-- Active game -->
 			<div v-else class="active-game">
 				<div class="game-info">
+					<div class="game-id">
+						{{ t.gameId }}: <code>{{ currentGame.id }}</code>
+					</div>
 					<div class="timer-section">
 						<h3>{{ t.yourTurn }}</h3>
 						<div class="timer">
@@ -111,6 +114,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
 import { useAuth } from '~/composables/useAuth';
 import { translations as t } from '~/composables/useI18n';
+import { translateServerError } from '~/composables/useServerErrors';
 import { maxMoveTimeMins } from '~/constants/game';
 
 definePageMeta({
@@ -124,9 +128,9 @@ const { user, isAuthenticated, signup, signin, signout, getAuthHeader } =
 const name = ref('');
 const email = ref('');
 const password = ref('');
-const loading = ref(false);
+const isLoading = ref(false);
 const error = ref('');
-const showSignin = ref(false);
+const isShowSignin = ref(false);
 
 // Game state
 const currentGame = ref<any>(null);
@@ -159,30 +163,32 @@ const playerColor = computed(() => {
 });
 
 function toggleAuthMode() {
-	showSignin.value = !showSignin.value;
+	isShowSignin.value = !isShowSignin.value;
 	error.value = '';
 	password.value = '';
 }
 
+// Translator provided by `composables/useServerErrors` — imported above
+
 async function handleSignup() {
 	error.value = '';
-	loading.value = true;
+	isLoading.value = true;
 
 	try {
 		let result;
-		if (showSignin.value) {
+		if (isShowSignin.value) {
 			result = await signin(email.value, password.value);
 		} else {
 			result = await signup(name.value, email.value, password.value);
 		}
 
 		if (!result.success) {
-			error.value = result.error || 'Authentication failed';
+			error.value = translateServerError(result.error, t);
 		}
 	} catch (e: any) {
-		error.value = e.message || 'An error occurred';
+		error.value = translateServerError(e, t);
 	} finally {
-		loading.value = false;
+		isLoading.value = false;
 	}
 }
 
@@ -255,7 +261,8 @@ async function handleMove(move: {
 		await loadGame(currentGame.value._id);
 	} catch (e: any) {
 		console.error('Error making move:', e);
-		error.value = e.message || 'Failed to make move';
+		// Use shared translator
+		error.value = translateServerError(e, t) || 'Failed to make move';
 	}
 }
 
@@ -513,6 +520,14 @@ onUnmounted(() => {
 .game-info {
 	font-size: 1rem !important;
 	color: #999 !important;
+}
+
+.game-id {
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 0.75rem;
+	word-break: break-all;
+	font-family: 'Courier New', monospace;
 }
 
 .game-status {
