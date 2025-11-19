@@ -31,6 +31,15 @@ export default defineEventHandler(async (event) => {
 				},
 			}
 		);
+		await db.collection<Game>('games').updateMany(
+			{ currentTurnUserId: userId },
+			{
+				$set: {
+					currentTurnStartDate: null,
+					currentTurnUserId: null,
+				},
+			}
+		);
 
 		const allGames = await db
 			.collection<Game>('games')
