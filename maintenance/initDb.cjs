@@ -33,16 +33,21 @@ async function initDatabase() {
 		const games = [];
 		const chess = new Chess();
 
+		const now = new Date();
 		for (let i = 0; i < GAME_COUNT; i++) {
 			chess.reset(); // Reset to starting position
 
 			games.push({
 				whiteUserIds: [],
 				blackUserIds: [],
-				fen: chess.fen(),
-				createdDate: new Date(
-					Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
-				), // Random date within last week
+				history: [
+					{
+						fen: chess.fen(),
+						date: now,
+						userId: null,
+					},
+				],
+				createdDate: now,
 			});
 		}
 
@@ -52,12 +57,6 @@ async function initDatabase() {
 		);
 		console.log(`Database: ${dbName}`);
 		console.log(`Collection: games`);
-
-		// Display sample games
-		console.log('\nSample games:');
-		games.slice(0, 5).forEach((game, idx) => {
-			console.log(`  ${idx + 1}. ${game.white} vs ${game.black}`);
-		});
 
 		console.log(`\n✓ Database initialization complete!`);
 	} catch (error) {

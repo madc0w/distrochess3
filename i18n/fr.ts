@@ -29,4 +29,9 @@ export const fr: Translations = {
 	distroChess: 'DistroChess',
 	gamePlaceholder: 'Vue du jeu à venir!',
 	gameComingSoon: "Le jeu d'échecs sera affiché ici.",
+	yourTurn: 'Votre tour',
+	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
+	timeRemaining: 'Temps restant',
+	loadingGame: 'Chargement du jeu...',
+	noGameAvailable: 'Aucun jeu disponible',
 };

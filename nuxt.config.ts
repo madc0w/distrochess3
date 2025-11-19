@@ -11,4 +11,31 @@ export default defineNuxtConfig({
 	imports: {
 		dirs: ['composables'],
 	},
+	nitro: {
+		sourceMap: true,
+		experimental: {
+			openAPI: true,
+		},
+		devProxy: {},
+	},
+	vite: {
+		server: {
+			hmr: {
+				protocol: 'ws',
+				host: 'localhost',
+			},
+		},
+	},
+	hooks: {
+		'nitro:init': (nitro) => {
+			// Force Nitro dev server to run with inspect enabled
+			if (process.env.NODE_ENV !== 'production') {
+				nitro.options.dev = true;
+			}
+		},
+	},
+	sourcemap: {
+		server: true,
+		client: true,
+	},
 });
