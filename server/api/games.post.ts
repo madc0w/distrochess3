@@ -1,3 +1,5 @@
+import { Chess } from 'chess.js';
+import { createError, defineEventHandler, readBody } from 'h3';
 import { getDb } from '../utils/mongo';
 
 export default defineEventHandler(async (event) => {
@@ -9,9 +11,13 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 	const db = await getDb();
-	const res = await db
-		.collection('games')
-		.insertOne({ white: body.white, black: body.black, createdAt: new Date() });
+	const game = new Chess();
+	const res = await db.collection('games').insertOne({
+		white: body.white,
+		black: body.black,
+		fen: game.fen(),
+		createdDate: new Date(),
+	});
 	const inserted = await db
 		.collection('games')
 		.findOne({ _id: res.insertedId });
