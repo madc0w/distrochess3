@@ -45,6 +45,15 @@ export const fr: Translations = {
 	close: 'Fermer',
 	winScoreChange:
 		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
+	emails: {
+		greeting: 'Bonjour {name},',
+		intro:
+			"Merci d'avoir rejoint DistroChess — la façon la plus rapide de jouer en ligne.",
+		description:
+			'Lancez une partie, invitez vos amis et suivez votre score en direct depuis n’importe quel appareil.',
+		ctaText: 'Visiter DistroChess.com',
+		footer: "À bientôt sur l'échiquier !",
+	},
 
 	// Server error codes (dereference these on the client)
 	errors: {

@@ -58,6 +58,15 @@ export const en = {
 	moveBy: 'Move made by:',
 	lastMoveBy: 'Last move by:',
 	score: 'Score',
+	emails: {
+		greeting: 'Hi {name},',
+		intro:
+			'Thanks for joining DistroChess — the fastest way to play distro-style games online.',
+		description:
+			'Start a match, invite friends, and keep an eye on your live rating from any device.',
+		ctaText: 'Jump back into DistroChess.com',
+		footer: 'See you on the board!',
+	},
 };
 
 export type Translations = typeof en;

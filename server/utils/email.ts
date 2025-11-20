@@ -38,9 +38,18 @@ export async function sendWelcomeEmail(
 
 	const t = getTranslations(locale);
 	const userName = user.name;
+	const emailCopy = t.emails || {
+		greeting: `Hi {name},`,
+		intro: 'Thanks for joining DistroChess.',
+		description: 'Play your next game online and track every move.',
+		ctaText: 'Visit DistroChess.com',
+		footer: 'See you on the board!',
+	};
+
+	const greeting = emailCopy.greeting.replace('{name}', userName);
 
 	const subject = t.welcome;
-	const textBody = `${t.welcome} ${userName}!`;
+	const textBody = `${t.welcome} ${userName}! ${emailCopy.description}`;
 	// Load HTML template and replace placeholders
 	// ESM-compatible directory resolution
 	// ESM-compatible directory resolution (no require)
@@ -53,12 +62,19 @@ export async function sendWelcomeEmail(
 		'welcome.html'
 	);
 	let htmlTemplate = readFileSync(templatePath, 'utf8');
-	htmlTemplate = htmlTemplate
-		.replace('{{welcome}}', t.welcome)
-		.replace('{{userName}}', userName)
-		.replace('{{welcomeMessage}}', `${userName}, ${t.welcome}`);
+	const replacements: Record<string, string> = {
+		'{{welcomeHeading}}': t.welcome,
+		'{{greeting}}': greeting,
+		'{{welcomeMessage}}': emailCopy.intro,
+		'{{descriptionMessage}}': emailCopy.description,
+		'{{ctaText}}': emailCopy.ctaText,
+		'{{footerMessage}}': emailCopy.footer,
+	};
 
-	const htmlBody = htmlTemplate;
+	const htmlBody = Object.entries(replacements).reduce(
+		(acc, [token, value]) => acc.replaceAll(token, value),
+		htmlTemplate
+	);
 
 	const payload: MailjetPayload = {
 		Messages: [
