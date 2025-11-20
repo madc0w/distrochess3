@@ -39,6 +39,7 @@ export const fr: Translations = {
 	unknownPlayer: 'Inconnu',
 	moveBy: 'Coup joué par :',
 	lastMoveBy: 'Dernier coup par :',
+	score: 'Score',
 
 	// Server error codes (dereference these on the client)
 	errors: {

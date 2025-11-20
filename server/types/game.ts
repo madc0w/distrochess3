@@ -14,4 +14,5 @@ export interface Game {
 	lastMoveDate?: Date | null;
 	currentTurnUserId?: ObjectId | null;
 	currentTurnStartDate?: Date | null;
+	result?: 'white-win' | 'black-win' | 'draw' | null;
 }

@@ -69,10 +69,11 @@ export default defineEventHandler(async (event) => {
 		// Hash password and create user
 		const passwordHash = hashPassword(password);
 		const doc: UserDoc = {
+			createdDate: new Date(),
 			email: email.toLowerCase(),
 			name: name.trim(),
 			passwordHash,
-			createdAt: new Date(),
+			score: 1000,
 		};
 
 		const insertResult = await users.insertOne(doc);
