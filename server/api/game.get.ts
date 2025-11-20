@@ -50,12 +50,22 @@ export default defineEventHandler(async (event) => {
 			.sort({ lastMoveDate: 1 })
 			.toArray();
 
+		// console.log(`user ${userId} : allGames`, allGames);
+
 		// Filter games that are available to the user
 		const availableGames = allGames.filter((game: Game) => {
+			// Helper that compares ObjectId-like values by string form
+			const includesId = (arr: any[] = [], id: any) =>
+				arr.some((x) => x != null && x.toString() === id.toString());
+
+			// console.log('blackUserIds', game.blackUserIds);
+			// console.log('userId', userId);
+			// console.log('includes', includesId(game.blackUserIds, userId));
+
 			// Game is available if either side is unassigned to current user
 			if (
-				!game.whiteUserIds.includes(userId) &&
-				!game.blackUserIds.includes(userId)
+				!includesId(game.whiteUserIds, userId) &&
+				!includesId(game.blackUserIds, userId)
 			) {
 				return true;
 			}
@@ -65,12 +75,15 @@ export default defineEventHandler(async (event) => {
 			const currentTurn = chessGame.turn(); // 'w' for white, 'b' for black
 
 			return (
-				(currentTurn === 'w' && game.whiteUserIds.includes(userId)) ||
-				(currentTurn === 'b' && game.blackUserIds.includes(userId))
+				(currentTurn === 'w' && includesId(game.whiteUserIds, userId)) ||
+				(currentTurn === 'b' && includesId(game.blackUserIds, userId))
 			);
 		});
 
-		const currentGame: Game = availableGames[0];
+		// console.log(`user ${userId} : availableGames`, availableGames);
+
+		const currentGame: Game =
+			availableGames.find((g) => g.history.length > 1) || availableGames[0];
 		const now = new Date();
 		if (currentGame) {
 			currentGame.currentTurnStartDate = now;
@@ -98,12 +111,19 @@ export default defineEventHandler(async (event) => {
 			const maxId = Number(last[0]?.id ?? 0);
 			const id: Number = maxId + 1;
 
+			const chess = new Chess();
 			const newGame: Game = {
 				_id: new ObjectId(),
 				id,
 				whiteUserIds: [],
 				blackUserIds: [],
-				history: [],
+				history: [
+					{
+						fen: chess.fen(),
+						date: now,
+						userId: null,
+					},
+				],
 				createdDate: now,
 				lastMoveDate: null,
 				currentTurnUserId: userId,

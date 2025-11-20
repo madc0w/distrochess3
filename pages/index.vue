@@ -95,7 +95,10 @@
 						</div>
 					</div>
 				</div>
-
+				<!-- 
+				<div>
+					{{ currentGame.history }}
+				</div> -->
 				<div class="chessboard-area">
 					<ChessBoard
 						:fen="currentFen"
@@ -116,6 +119,8 @@ import { useAuth } from '~/composables/useAuth';
 import { translations as t } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 import { maxMoveTimeMins } from '~/constants/game';
+
+console.log('index.vue loaded');
 
 definePageMeta({
 	ssr: false,
@@ -207,7 +212,7 @@ function handleSignout() {
 }
 
 async function loadGame(excludeGameId?: string) {
-	if (!currentGame.value && !isGameLoading.value) {
+	if (excludeGameId || (!currentGame.value && !isGameLoading.value)) {
 		try {
 			isGameLoading.value = true;
 			const params = excludeGameId ? `?gameId=${excludeGameId}` : '';
@@ -312,8 +317,6 @@ function formatTime(seconds: number): string {
 	const secs = seconds % 60;
 	return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
-
-console.log('index.vue loaded');
 
 // Watch authentication state
 watch(isAuthenticated, (newVal) => {
