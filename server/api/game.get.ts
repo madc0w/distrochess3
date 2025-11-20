@@ -99,7 +99,33 @@ export default defineEventHandler(async (event) => {
 					{ _id: currentGame._id },
 					{ $set: { currentTurnStartDate: now, currentTurnUserId: userId } }
 				);
-			return currentGame;
+
+			// Build a map of userId => userName for any userIds referenced in history
+			const userIds = Array.from(
+				new Set(
+					currentGame.history
+						.map((h) => h.userId)
+						.filter((id) => id != null)
+						.map((id) => id.toString())
+				)
+			).map((idStr) => new ObjectId(idStr));
+
+			const userNamesMap: Record<string, string> = {};
+			if (userIds.length > 0) {
+				const users = await db
+
+					.collection('users')
+					.find({ _id: { $in: userIds } }, { projection: { name: 1 } })
+					.toArray();
+				users.forEach((u: any) => {
+					userNamesMap[u._id.toString()] = u.name;
+				});
+			}
+
+			return {
+				...currentGame,
+				userNamesMap,
+			};
 		} else if (Math.random() < newGameProbability) {
 			// compute next numeric id (max existing id + 1)
 			const last = await db

@@ -27,7 +27,7 @@ export const en = {
 	distroChess: 'DistroChess',
 	gamePlaceholder: 'Game view coming soon!',
 	gameComingSoon: 'The chess game will be displayed here.',
-	yourTurn: "It's your turn...",
+	yourTurn: "It's your move...",
 
 	// Server error codes (dereference these on the client)
 	errors: {
@@ -50,6 +50,9 @@ export const en = {
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',
 	gameHistory: 'Game history',
+	unknownPlayer: 'Unknown',
+	moveBy: 'Move made by:',
+	lastMoveBy: 'Last move by:',
 };
 
 export type Translations = typeof en;
