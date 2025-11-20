@@ -2,6 +2,7 @@ import { createError, defineEventHandler, readBody } from 'h3';
 import jwt from 'jsonwebtoken';
 import { randomBytes, scryptSync } from 'node:crypto';
 import type { UserDoc } from '../../types/user';
+import { sendWelcomeEmail } from '../../utils/email';
 import { getDb } from '../../utils/mongo';
 
 // Generate JWT token (never expires)
@@ -33,7 +34,7 @@ function hashPassword(password: string): string {
 export default defineEventHandler(async (event) => {
 	try {
 		const body = await readBody(event);
-		const { email, name, password } = body || {};
+		const { email, name, password, locale } = body || {};
 
 		if (!email || typeof email !== 'string') {
 			throw createError({
@@ -79,6 +80,11 @@ export default defineEventHandler(async (event) => {
 		const insertResult = await users.insertOne(doc);
 		const _id = insertResult.insertedId.toString();
 		const token = generateToken(_id, doc.email, doc.name);
+
+		// Send welcome email asynchronously (do not block response)
+		sendWelcomeEmail(doc, locale || 'en').catch((err: any) => {
+			console.error('Failed to send welcome email:', err);
+		});
 
 		return {
 			user: {

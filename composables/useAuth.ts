@@ -40,9 +40,19 @@ export function useAuth() {
 
 	async function signup(name: string, email: string, password: string) {
 		try {
+			// Detect current language from browser or translations
+			let locale = 'en';
+			if (typeof window !== 'undefined') {
+				const browserLang =
+					navigator.language || (navigator as any).userLanguage;
+				const langCode = browserLang.split('-')[0].toLowerCase();
+				if (['en', 'fr'].includes(langCode)) {
+					locale = langCode;
+				}
+			}
 			const response = await $fetch<AuthPayload>('/api/auth/signup', {
 				method: 'POST',
-				body: { name, email, password },
+				body: { name, email, password, locale },
 			});
 			auth.value = response;
 			return { success: true };
