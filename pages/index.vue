@@ -133,6 +133,16 @@
 								›
 							</button>
 						</div>
+
+						<div
+							class="history-player"
+							v-if="currentGame && currentMovePlayerName"
+						>
+							<span class="move-by">{{
+								isViewingHistory ? t.moveBy : t.lastMoveBy
+							}}</span>
+							<span class="move-name">{{ currentMovePlayerName }}</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -219,6 +229,24 @@ function goForward() {
 	)
 		historyIndex.value++;
 }
+
+const currentMovePlayerName = computed(() => {
+	if (!currentGame.value) return '';
+	const entry = currentGame.value.history[historyIndex.value];
+	if (!entry) return '';
+	const uid = entry.userId;
+	if (!uid) return '';
+	const map = (currentGame.value as any).userNamesMap ?? {};
+	const uidStr = typeof uid === 'string' ? uid : uid.toString();
+	// Prefer server-provided name map
+	if (map[uidStr]) return map[uidStr];
+	// If the id matches the signed-in user, use the client's user name as a fallback
+	if (user.value && user.value._id && uidStr === user.value._id.toString()) {
+		return user.value.name ?? t.unknownPlayer;
+	}
+	// Final fallback: localized unknown label
+	return t.unknownPlayer;
+});
 
 const playerColor = computed(() => {
 	if (!currentGame.value || !user.value) return 'white';
@@ -764,17 +792,19 @@ onUnmounted(() => {
 .parent-history-bar {
 	width: 100%;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 12px;
+	gap: 8px;
 	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
 	position: relative;
 }
 .parent-history-bar .history-controls {
-	display: inline-flex;
+	display: flex;
+	justify-content: center;
 	align-items: center;
-	gap: 8px;
+	gap: 12px;
 }
 .parent-history-bar .history-btn {
 	background: #222;
@@ -783,13 +813,40 @@ onUnmounted(() => {
 	padding: 6px 10px;
 	border-radius: 6px;
 	cursor: pointer;
+	min-width: 40px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 }
 .parent-history-bar .history-pos {
-	font-size: 0.9rem;
+	display: inline-block;
+	white-space: nowrap;
+	font-size: 0.95rem;
 	color: #222;
 	background: #f3f3f3;
-	padding: 4px 8px;
+	padding: 6px 10px;
 	border-radius: 6px;
+}
+
+.parent-history-bar .history-player {
+	margin-top: 8px;
+	font-size: 0.95rem;
+	color: #444;
+	text-align: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
+.parent-history-bar .move-by {
+	font-weight: 600;
+	color: #666;
+}
+.parent-history-bar .move-name {
+	color: #333;
+	font-weight: 500;
 }
 
 /* Position the small label above the controls so it doesn't shift layout */

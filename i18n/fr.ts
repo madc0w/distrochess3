@@ -36,6 +36,9 @@ export const fr: Translations = {
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',
 	gameHistory: 'Historique de la partie',
+	unknownPlayer: 'Inconnu',
+	moveBy: 'Coup joué par :',
+	lastMoveBy: 'Dernier coup par :',
 
 	// Server error codes (dereference these on the client)
 	errors: {
