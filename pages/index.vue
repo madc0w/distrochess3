@@ -101,10 +101,39 @@
 				</div> -->
 				<div class="chessboard-area">
 					<ChessBoard
-						:fen="currentFen"
+						:fen="displayFen"
 						:player-color="playerColor"
+						:is-viewing-history="isViewingHistory"
 						@move="handleMove"
 					/>
+
+					<!-- Parent-controlled history navigation -->
+					<div class="parent-history-bar">
+						<div class="history-message" v-if="isViewingHistory">
+							{{ t.gameHistory }}
+						</div>
+						<div class="history-controls">
+							<button
+								class="history-btn"
+								@click.prevent="goBack"
+								:disabled="atStart"
+								aria-label="Previous position"
+							>
+								‹
+							</button>
+							<span class="history-pos"
+								>{{ historyIndex + 1 }} / {{ totalPositions }}</span
+							>
+							<button
+								class="history-btn"
+								@click.prevent="goForward"
+								:disabled="atEnd"
+								aria-label="Next position"
+							>
+								›
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -147,6 +176,49 @@ const timerIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
 const currentFen = computed(() => {
 	return currentGame.value.history[currentGame.value.history.length - 1].fen;
 });
+
+// Parent-controlled history index for navigation UI
+const historyIndex = ref(0);
+
+// Reset history index whenever the game is (re)loaded
+watch(currentGame, (g) => {
+	if (g && g.history && g.history.length)
+		historyIndex.value = g.history.length - 1;
+	else historyIndex.value = 0;
+});
+
+const totalPositions = computed(() => currentGame.value?.history?.length ?? 0);
+const displayFen = computed(() => {
+	if (!currentGame.value) return currentFen.value;
+	const idx = Math.min(
+		Math.max(0, historyIndex.value),
+		currentGame.value.history.length - 1
+	);
+	return currentGame.value.history[idx].fen;
+});
+
+const isViewingHistory = computed(() => {
+	if (!currentGame.value) return false;
+	return historyIndex.value !== currentGame.value.history.length - 1;
+});
+
+const atStart = computed(() => historyIndex.value <= 0);
+const atEnd = computed(() => {
+	if (!currentGame.value) return true;
+	return historyIndex.value >= currentGame.value.history.length - 1;
+});
+
+function goBack() {
+	if (historyIndex.value > 0) historyIndex.value--;
+}
+
+function goForward() {
+	if (
+		currentGame.value &&
+		historyIndex.value < currentGame.value.history.length - 1
+	)
+		historyIndex.value++;
+}
 
 const playerColor = computed(() => {
 	if (!currentGame.value || !user.value) return 'white';
@@ -575,6 +647,7 @@ onUnmounted(() => {
 
 .chessboard-area {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	background: #fff;
@@ -582,17 +655,17 @@ onUnmounted(() => {
 	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
 	margin-top: 1.5rem;
 	margin-bottom: 1.5rem;
-	width: 480px;
-	height: 480px;
-	max-width: 90vw;
-	max-height: 90vw;
-	padding: 0;
-	overflow: hidden;
+	width: 100%;
+	max-width: 480px;
+	height: auto;
+	max-height: none;
+	padding: 0.5rem;
+	overflow: visible;
 }
 
 .chessboard-area > * {
 	width: 100%;
-	height: 100%;
+	height: auto;
 	display: block;
 }
 
@@ -685,5 +758,57 @@ onUnmounted(() => {
 	.timer-value {
 		font-size: 1.25rem;
 	}
+}
+
+/* Parent history controls (in-flow under board) */
+.parent-history-bar {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	position: relative;
+}
+.parent-history-bar .history-controls {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+.parent-history-bar .history-btn {
+	background: #222;
+	color: #fff;
+	border: none;
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.parent-history-bar .history-pos {
+	font-size: 0.9rem;
+	color: #222;
+	background: #f3f3f3;
+	padding: 4px 8px;
+	border-radius: 6px;
+}
+
+/* Position the small label above the controls so it doesn't shift layout */
+.parent-history-bar .history-message {
+	position: absolute;
+	top: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: transparent;
+	padding: 0 6px;
+	font-weight: 600;
+	pointer-events: none;
+}
+
+/* Disabled state for parent buttons: gray out and use default arrow cursor */
+.parent-history-bar .history-btn[disabled] {
+	opacity: 0.35;
+	cursor: default;
+	background: #555;
+	color: #ddd;
 }
 </style>
