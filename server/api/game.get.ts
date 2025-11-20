@@ -22,18 +22,14 @@ export default defineEventHandler(async (event) => {
 
 		await db.collection<Game>('games').updateMany(
 			{
-				currentTurnStartDate: { $lt: cutoffDate },
-				currentTurnUserId: { $ne: null },
+				$or: [
+					{ currentTurnUserId: userId },
+					{
+						currentTurnStartDate: { $lt: cutoffDate },
+						currentTurnUserId: { $ne: null },
+					},
+				],
 			},
-			{
-				$set: {
-					currentTurnStartDate: null,
-					currentTurnUserId: null,
-				},
-			}
-		);
-		await db.collection<Game>('games').updateMany(
-			{ currentTurnUserId: userId },
 			{
 				$set: {
 					currentTurnStartDate: null,
@@ -46,6 +42,7 @@ export default defineEventHandler(async (event) => {
 			.collection<Game>('games')
 			.find({
 				currentTurnUserId: null,
+				result: null,
 				...(excludeGameId && { _id: { $ne: new ObjectId(excludeGameId) } }),
 			})
 			.sort({ lastMoveDate: 1 })
