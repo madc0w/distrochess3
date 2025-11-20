@@ -35,6 +35,7 @@ export const fr: Translations = {
 	loadingGame: 'Chargement du jeu...',
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',
+	gameHistory: 'Historique de la partie',
 
 	// Server error codes (dereference these on the client)
 	errors: {

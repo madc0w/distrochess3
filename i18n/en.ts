@@ -49,6 +49,7 @@ export const en = {
 	loadingGame: 'Loading game...',
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',
+	gameHistory: 'Game history',
 };
 
 export type Translations = typeof en;
