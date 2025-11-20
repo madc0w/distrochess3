@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import { maxMoveTimeMins, newGameProbability } from '~/constants/game';
 import type { Game } from '../types/game';
 import { verifyAuthToken } from '../utils/auth';
+import { includesId } from '../utils/includesId';
 import { getDb } from '../utils/mongo';
 
 export default defineEventHandler(async (event) => {
@@ -54,14 +55,6 @@ export default defineEventHandler(async (event) => {
 
 		// Filter games that are available to the user
 		const availableGames = allGames.filter((game: Game) => {
-			// Helper that compares ObjectId-like values by string form
-			const includesId = (arr: any[] = [], id: any) =>
-				arr.some((x) => x != null && x.toString() === id.toString());
-
-			// console.log('blackUserIds', game.blackUserIds);
-			// console.log('userId', userId);
-			// console.log('includes', includesId(game.blackUserIds, userId));
-
 			// Game is available if either side is unassigned to current user
 			if (
 				!includesId(game.whiteUserIds, userId) &&
@@ -110,21 +103,25 @@ export default defineEventHandler(async (event) => {
 				)
 			).map((idStr) => new ObjectId(idStr));
 
-			const userNamesMap: Record<string, string> = {};
+			const userDataMap: Record<string, any> = {};
 			if (userIds.length > 0) {
 				const users = await db
 
 					.collection('users')
-					.find({ _id: { $in: userIds } }, { projection: { name: 1 } })
+					.find(
+						{ _id: { $in: userIds } },
+						{ projection: { name: true, score: true } }
+					)
 					.toArray();
 				users.forEach((u: any) => {
-					userNamesMap[u._id.toString()] = u.name;
+					userDataMap[u._id.toString()] = { name: u.name, score: u.score };
 				});
 			}
 
+			// console.log('userDataMap', userDataMap);
 			return {
 				...currentGame,
-				userNamesMap,
+				userDataMap,
 			};
 		} else if (Math.random() < newGameProbability) {
 			// compute next numeric id (max existing id + 1)

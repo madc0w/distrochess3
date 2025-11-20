@@ -53,6 +53,7 @@ export const en = {
 	unknownPlayer: 'Unknown',
 	moveBy: 'Move made by:',
 	lastMoveBy: 'Last move by:',
+	score: 'Score',
 };
 
 export type Translations = typeof en;

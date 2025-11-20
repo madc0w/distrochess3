@@ -2,11 +2,13 @@ export interface UserDoc {
 	email: string;
 	name: string;
 	passwordHash: string;
-	createdAt: Date;
+	createdDate: Date;
+	score: number;
 }
 
 export interface PublicUser {
 	_id: string;
 	email: string;
 	name: string;
+	score: number;
 }

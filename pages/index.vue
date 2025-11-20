@@ -116,8 +116,8 @@
 							<button
 								class="history-btn"
 								@click.prevent="goBack"
-								:disabled="atStart"
-								aria-label="Previous position"
+								:disabled="isAtStart"
+								:aria-label="t.previousPosition"
 							>
 								‹
 							</button>
@@ -127,8 +127,8 @@
 							<button
 								class="history-btn"
 								@click.prevent="goForward"
-								:disabled="atEnd"
-								aria-label="Next position"
+								:disabled="isAtEnd"
+								:aria-label="t.nextPosition"
 							>
 								›
 							</button>
@@ -136,12 +136,15 @@
 
 						<div
 							class="history-player"
-							v-if="currentGame && currentMovePlayerName"
+							v-if="currentGame && currentMovePlayerData"
 						>
 							<span class="move-by">{{
 								isViewingHistory ? t.moveBy : t.lastMoveBy
 							}}</span>
-							<span class="move-name">{{ currentMovePlayerName }}</span>
+							<span class="move-name"
+								>{{ currentMovePlayerData.name }} ({{ t.score }} :
+								{{ currentMovePlayerData.score }})</span
+							>
 						</div>
 					</div>
 				</div>
@@ -208,12 +211,14 @@ const displayFen = computed(() => {
 });
 
 const isViewingHistory = computed(() => {
-	if (!currentGame.value) return false;
-	return historyIndex.value !== currentGame.value.history.length - 1;
+	return (
+		currentGame.value &&
+		historyIndex.value !== currentGame.value.history.length - 1
+	);
 });
 
-const atStart = computed(() => historyIndex.value <= 0);
-const atEnd = computed(() => {
+const isAtStart = computed(() => historyIndex.value <= 0);
+const isAtEnd = computed(() => {
 	if (!currentGame.value) return true;
 	return historyIndex.value >= currentGame.value.history.length - 1;
 });
@@ -230,22 +235,12 @@ function goForward() {
 		historyIndex.value++;
 }
 
-const currentMovePlayerName = computed(() => {
-	if (!currentGame.value) return '';
+const currentMovePlayerData = computed(() => {
 	const entry = currentGame.value.history[historyIndex.value];
-	if (!entry) return '';
 	const uid = entry.userId;
-	if (!uid) return '';
-	const map = (currentGame.value as any).userNamesMap ?? {};
-	const uidStr = typeof uid === 'string' ? uid : uid.toString();
-	// Prefer server-provided name map
-	if (map[uidStr]) return map[uidStr];
-	// If the id matches the signed-in user, use the client's user name as a fallback
-	if (user.value && user.value._id && uidStr === user.value._id.toString()) {
-		return user.value.name ?? t.unknownPlayer;
-	}
-	// Final fallback: localized unknown label
-	return t.unknownPlayer;
+	const map = (currentGame.value as any).userDataMap ?? {};
+	// console.log(map);
+	return map[uid];
 });
 
 const playerColor = computed(() => {

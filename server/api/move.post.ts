@@ -3,7 +3,9 @@ import { defineEventHandler, readBody } from 'h3';
 import { ObjectId } from 'mongodb';
 import type { Game } from '../types/game';
 import { verifyAuthToken } from '../utils/auth';
+import { includesId } from '../utils/includesId';
 import { getDb } from '../utils/mongo';
+import { updateUserScores } from '../utils/scores';
 
 export default defineEventHandler(async (event) => {
 	const userId = verifyAuthToken(event);
@@ -37,14 +39,9 @@ export default defineEventHandler(async (event) => {
 	}
 
 	// Validate and make the move
-	let moveResult: any;
-	try {
-		moveResult = chessGame.move(move);
-		if (!moveResult) {
-			throw new Error('Invalid move');
-		}
-	} catch (error) {
-		throw new Error('Invalid move: ' + (error as Error).message);
+	const moveResult: any = chessGame.move(move);
+	if (!moveResult) {
+		throw new Error('Invalid move');
 	}
 
 	// Add to game history and record which user moved (white or black)
@@ -60,11 +57,26 @@ export default defineEventHandler(async (event) => {
 	};
 
 	// moveResult.color is 'w' for white, 'b' for black
-	if (moveResult.color === 'w') {
+	if (moveResult.color === 'w' && !includesId(game.whiteUserIds, userId)) {
 		pushFields.whiteUserIds = userId;
-	} else {
+	} else if (
+		moveResult.color === 'b' &&
+		!includesId(game.blackUserIds, userId)
+	) {
 		pushFields.blackUserIds = userId;
 	}
+
+	// console.log('typeof chessGame.isGameOver', typeof chessGame.isGameOver);
+	// console.log(
+	// 	'typeof chessGame.game_over',
+	// 	typeof (chessGame as any).game_over
+	// );
+
+	// Determine if the move ended the game and who (if anyone) won
+	const isGameOver = chessGame.isGameOver(); // contrary to docs...
+	const winnerColor = chessGame.isCheckmate() // contrary to docs...
+		? (moveResult.color as 'w' | 'b')
+		: null;
 
 	await db.collection<Game>('games').updateOne(
 		{ _id: new ObjectId(gameId as string) },
@@ -77,6 +89,16 @@ export default defineEventHandler(async (event) => {
 			},
 		}
 	);
+
+	// If the game is over, refresh the game doc and update user scores
+	if (isGameOver) {
+		const updatedGame = await db
+			.collection<Game>('games')
+			.findOne({ _id: new ObjectId(gameId as string) });
+		if (updatedGame) {
+			await updateUserScores(db, updatedGame, winnerColor);
+		}
+	}
 
 	return { success: true, fen: newFen };
 });
