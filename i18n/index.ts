@@ -5,6 +5,9 @@ import { fr } from './fr';
 const translations: Record<string, any> = {
 	en,
 	fr,
+	gameDrawn: {
+		message: 'The game has ended in a draw.',
+	},
 };
 
 export function getTranslations(locale: string): Translations {

@@ -10,12 +10,14 @@
 	},
 	"dependencies": {
 		"@types/jsonwebtoken": "^9.0.10",
+		"canvas-confetti": "^1.9.4",
 		"chess.js": "^1.4.0",
 		"jsonwebtoken": "^9.0.2",
 		"mongodb": "^6.6.0",
 		"nuxt": "^3.9.0"
 	},
 	"devDependencies": {
+		"@types/canvas-confetti": "^1.9.0",
 		"@types/node": "^20.19.25",
 		"cross-env": "^10.1.0",
 		"typescript": "^5.2.0"
