@@ -90,15 +90,23 @@ export default defineEventHandler(async (event) => {
 		}
 	);
 
+	let result: any = {};
 	// If the game is over, refresh the game doc and update user scores
 	if (isGameOver) {
 		const updatedGame = await db
 			.collection<Game>('games')
 			.findOne({ _id: new ObjectId(gameId as string) });
 		if (updatedGame) {
+			const user = await db.collection('users').findOne({ _id: userId });
 			await updateUserScores(db, updatedGame, winnerColor);
+			result.gameResult = updatedGame.result;
+			result.prevScore = user?.score;
+			const reloadedUser = await db
+				.collection('users')
+				.findOne({ _id: userId });
+			result.newScore = reloadedUser?.score;
 		}
 	}
 
-	return { success: true, fen: newFen };
+	return { success: true, fen: newFen, result };
 });

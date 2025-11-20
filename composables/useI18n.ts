@@ -1,54 +1,49 @@
-import { reactive } from 'vue';
-import { en } from '../i18n/en';
-import { fr } from '../i18n/fr';
-
-// Map of available translations
-const translationMap: Record<string, any> = {
-	en,
-	fr,
-};
-
-// Detect browser language immediately on client side
-function getInitialLanguage() {
-	if (typeof window === 'undefined') return 'en';
-
-	const browserLang = navigator.language || (navigator as any).userLanguage;
-	const langCode = browserLang.split('-')[0].toLowerCase();
-
-	return translationMap[langCode] ? langCode : 'en';
+function interpolate(str: string, vars: Record<string, any>): string {
+	return str.replace(/\{(\w+)\}/g, (_, key) =>
+		vars[key] !== undefined ? vars[key] : `{${key}}`
+	);
 }
 
-const initialLang = getInitialLanguage();
-
-// Export the translations as a reactive object with the correct initial language
-export const translations = reactive({ ...translationMap[initialLang] });
-
-export const currentLang = reactive({ value: initialLang });
-
-// Save language preference
-if (typeof window !== 'undefined') {
-	document.cookie = `preferred-lang=${initialLang}; path=/; max-age=31536000`;
+import { en } from '~/i18n/en';
+function makeTranslations(obj: any): any {
+	return new Proxy(obj, {
+		get(target, prop) {
+			const value = target[prop as keyof typeof target];
+			return (vars?: Record<string, any>) => {
+				if (typeof value === 'string') {
+					if (vars && typeof vars === 'object') {
+						return interpolate(value, vars);
+					}
+					return value;
+				}
+				return value;
+			};
+		},
+	});
 }
 
-// Get list of available languages with their display names
-export function getAvailableLanguages() {
-	const languageNames: Record<string, string> = {
-		en: 'English',
-		fr: 'Français',
-	};
-	return Object.keys(translationMap).map((langCode) => ({
-		code: langCode,
-		name: languageNames[langCode] || langCode.toUpperCase(),
-	}));
+function wrapTranslations(obj: any): any {
+	return new Proxy(obj, {
+		get(target, prop) {
+			if (!(prop in target)) return prop;
+			const value = target[prop as keyof typeof target];
+			if (typeof value === 'string') {
+				if (/\{\w+\}/.test(value)) {
+					return (vars?: Record<string, any>) => {
+						if (vars && typeof vars === 'object') {
+							return interpolate(value, vars);
+						}
+						return value;
+					};
+				}
+				return value;
+			}
+			if (typeof value === 'object' && value !== null) {
+				return wrapTranslations(value);
+			}
+			return value;
+		},
+	});
 }
 
-// Switch to a different language
-export function switchLanguage(langCode: string) {
-	if (translationMap[langCode]) {
-		Object.assign(translations, translationMap[langCode]);
-		currentLang.value = langCode;
-		if (typeof window !== 'undefined') {
-			document.cookie = `preferred-lang=${langCode}; path=/; max-age=31536000`;
-		}
-	}
-}
+export const translations = wrapTranslations(en);

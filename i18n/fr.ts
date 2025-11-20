@@ -35,11 +35,16 @@ export const fr: Translations = {
 	loadingGame: 'Chargement du jeu...',
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',
+	winCongrats: 'Félicitations ! Vous avez gagné la partie.',
+	gameDrawn: 'Partie nulle !',
 	gameHistory: 'Historique de la partie',
 	unknownPlayer: 'Inconnu',
 	moveBy: 'Coup joué par :',
 	lastMoveBy: 'Dernier coup par :',
 	score: 'Score',
+	close: 'Fermer',
+	winScoreChange:
+		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
 
 	// Server error codes (dereference these on the client)
 	errors: {

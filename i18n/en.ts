@@ -29,7 +29,7 @@ export const en = {
 	gameComingSoon: 'The chess game will be displayed here.',
 	yourTurn: "It's your move...",
 
-	// Server error codes (dereference these on the client)
+	close: 'Close',
 	errors: {
 		ERR_EMAIL_REQUIRED: 'Email is required',
 		ERR_NAME_REQUIRED: 'Name is required',
@@ -44,6 +44,10 @@ export const en = {
 		ERR_INVALID_AUTH_TOKEN: 'Invalid authentication token',
 		ERR_GENERIC: 'An error occurred. Please try again.',
 	},
+	winCongrats: "Congratulations! You've won the game.",
+	winScoreChange:
+		'Due to your participation in this game, your score has increased from {prevScore} to {newScore}.',
+	gameDrawn: 'Game drawn!',
 	waitingForOpponent: 'Please wait for an opponent to make a move...',
 	timeRemaining: 'Time remaining',
 	loadingGame: 'Loading game...',

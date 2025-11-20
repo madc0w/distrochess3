@@ -151,9 +151,30 @@
 			</div>
 		</div>
 	</div>
+	<!-- Win Modal -->
+	<div v-if="isShowWinModal" class="modal-overlay">
+		<div class="modal-content">
+			<h1 class="win-title">🎉 {{ t.winCongrats }} 🎉</h1>
+			<p class="score-change">
+				{{ t.winScoreChange({ prevScore, newScore }) }}
+			</p>
+			<button class="close-btn" @click="isShowWinModal = false">
+				{{ t.close }}
+			</button>
+		</div>
+	</div>
+	<div v-else-if="isShowDrawModal" class="modal-overlay">
+		<div class="modal-content">
+			<h1 class="win-title">{{ t.gameDrawn }}</h1>
+			<button class="close-btn" @click="isShowDrawModal = false">
+				{{ t.close }}
+			</button>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
+// Remove static import of canvas-confetti
 import { Chess } from 'chess.js';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
@@ -162,7 +183,8 @@ import { translations as t } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 import { maxMoveTimeMins } from '~/constants/game';
 
-console.log('index.vue loaded');
+// console.log('index.vue loaded');
+// console.log(t.winScoreChange({ prevScore: 2222, newScore: 3333 }));
 
 definePageMeta({
 	ssr: false,
@@ -185,6 +207,28 @@ const isGameLoading = ref(false);
 const timeRemaining = ref(maxMoveTimeMins * 60); // seconds
 const pollIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
 const timerIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
+const prevScore = ref<number | null>(null);
+const newScore = ref<number | null>(null);
+
+// Win modal state
+const isShowWinModal = ref(false);
+const isShowDrawModal = ref(false);
+
+function triggerWin(_prevScore?: number, _newScore?: number) {
+	isShowWinModal.value = true;
+	prevScore.value = _prevScore ?? null;
+	newScore.value = _newScore ?? null;
+
+	if (typeof window !== 'undefined') {
+		import('canvas-confetti').then((mod) => {
+			mod.default({
+				particleCount: 200,
+				spread: 90,
+				origin: { y: 0.7 },
+			});
+		});
+	}
+}
 
 const currentFen = computed(() => {
 	return currentGame.value.history[currentGame.value.history.length - 1].fen;
@@ -336,6 +380,12 @@ async function loadGame(excludeGameId?: string) {
 	}
 }
 
+type MoveResponse = {
+	fen: string;
+	success: boolean;
+	result: any;
+};
+
 async function handleMove(move: {
 	from: string;
 	to: string;
@@ -350,12 +400,16 @@ async function handleMove(move: {
 		};
 
 		const authHeaders = getAuthHeader();
-		await $fetch('/api/move', {
+		const res = await $fetch<MoveResponse>('/api/move', {
 			method: 'POST',
 			body: moveData,
 			headers: authHeaders,
 		});
-
+		if (res?.result.gameResult === 'draw') {
+			isShowDrawModal.value = true;
+		} else if (['white-win', 'black-win'].includes(res?.result.gameResult)) {
+			triggerWin(res.result.prevScore, res.result.newScore);
+		}
 		// Move was successful, load next game
 		stopTimer();
 		await loadGame(currentGame.value._id);
@@ -862,5 +916,43 @@ onUnmounted(() => {
 	cursor: default;
 	background: #555;
 	color: #ddd;
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+}
+.modal-content {
+	background: #fff;
+	padding: 3rem 2rem;
+	border-radius: 16px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	text-align: center;
+}
+.win-title {
+	font-size: 2.2rem;
+	color: #4caf50;
+	margin-bottom: 2rem;
+}
+.close-btn {
+	padding: 0.75rem 2rem;
+	font-size: 1.1rem;
+	background: #4caf50;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.close-btn:hover {
+	background: #388e3c;
 }
 </style>

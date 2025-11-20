@@ -8,6 +8,22 @@ export async function updateUserScores(
 	game: Game,
 	winnerColor: 'w' | 'b' | null
 ) {
+	// Update game.result based on winnerColor
+	if (winnerColor === 'w') {
+		game.result = 'white-win';
+	} else if (winnerColor === 'b') {
+		game.result = 'black-win';
+	} else {
+		game.result = 'draw';
+	}
+
+	// Persist game.result to the database
+	const gamesColl = db.collection('games');
+	await gamesColl.updateOne(
+		{ _id: new ObjectId(game._id) },
+		{ $set: { result: game.result } }
+	);
+
 	if (winnerColor) {
 		const usersColl = db.collection('users');
 		const winnerIds =
