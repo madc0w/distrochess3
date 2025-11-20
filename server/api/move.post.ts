@@ -23,9 +23,9 @@ export default defineEventHandler(async (event) => {
 		throw new Error('Game not found');
 	}
 	console.log(
-		`move posted for game ${gameId} by user ${userId.toHexString()}: ${JSON.stringify(
-			move
-		)}`
+		`move posted for game ${
+			game.id
+		} by user ${userId.toHexString()}: ${JSON.stringify(move)}`
 	);
 
 	// Verify it's the user's turn

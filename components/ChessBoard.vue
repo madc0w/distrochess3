@@ -1,3 +1,44 @@
+<template>
+	<div class="chess-board-wrapper">
+		<!-- 
+		<div class="debug">
+			fen {{ fen }}<br />
+			playerColor {{ playerColor }}
+		</div> -->
+
+		<div class="chess-board">
+			<div
+				v-for="square in squares"
+				:key="square"
+				:class="[
+					'square',
+					isLightSquare(square) ? 'light' : 'dark',
+					{ selected: selectedSquare === square },
+					{ 'valid-move': validMoves.includes(square) },
+					{ dragging: draggedPiece === square },
+				]"
+				@click="handleSquareClick(square)"
+				@dragover="handleDragOver"
+				@drop="handleDrop($event, square)"
+				@touchend="handleTouchEnd($event, square)"
+			>
+				<div
+					v-if="getPieceAt(square)"
+					:class="['piece', getPieceColor(square)]"
+					draggable="true"
+					@dragstart="handleDragStart($event, square)"
+					@dragend="handleDragEnd"
+					@touchstart="handleTouchStart($event, square)"
+					@touchmove="handleTouchMove"
+				>
+					{{ getPieceAt(square) }}
+				</div>
+				<div v-if="validMoves.includes(square)" class="move-indicator"></div>
+			</div>
+		</div>
+	</div>
+</template>
+
 <script setup lang="ts">
 import { Chess } from 'chess.js';
 import { computed, ref, watch } from 'vue';
@@ -223,40 +264,25 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 }
 </script>
 
-<template>
-	<div class="chess-board">
-		<div
-			v-for="square in squares"
-			:key="square"
-			:class="[
-				'square',
-				isLightSquare(square) ? 'light' : 'dark',
-				{ selected: selectedSquare === square },
-				{ 'valid-move': validMoves.includes(square) },
-				{ dragging: draggedPiece === square },
-			]"
-			@click="handleSquareClick(square)"
-			@dragover="handleDragOver"
-			@drop="handleDrop($event, square)"
-			@touchend="handleTouchEnd($event, square)"
-		>
-			<div
-				v-if="getPieceAt(square)"
-				:class="['piece', getPieceColor(square)]"
-				draggable="true"
-				@dragstart="handleDragStart($event, square)"
-				@dragend="handleDragEnd"
-				@touchstart="handleTouchStart($event, square)"
-				@touchmove="handleTouchMove"
-			>
-				{{ getPieceAt(square) }}
-			</div>
-			<div v-if="validMoves.includes(square)" class="move-indicator"></div>
-		</div>
-	</div>
-</template>
-
 <style scoped>
+.chess-board-wrapper {
+	position: relative;
+	width: 100%;
+}
+
+.debug {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	background: rgba(255, 255, 255, 0.9);
+	color: #111;
+	padding: 6px 10px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	z-index: 20;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
 .chess-board {
 	display: grid !important;
 	/* explicit 8x8 grid with resilient sizing */
