@@ -38,4 +38,9 @@ export default defineNuxtConfig({
 		server: true,
 		client: true,
 	},
+	app: {
+		head: {
+			link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }],
+		},
+	},
 });
