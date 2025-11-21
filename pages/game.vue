@@ -77,7 +77,7 @@
 					<h3>{{ t.yourTurn }}</h3>
 					<div class="timer">
 						<div class="timer-label">{{ t.timeRemaining }}:</div>
-						<div class="timer-value" :class="{ warning: timeRemaining < 60 }">
+						<div class="timer-value" :class="{ warning: timeRemaining < 20 }">
 							{{ formatTime(timeRemaining) }}
 						</div>
 					</div>
