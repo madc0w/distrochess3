@@ -314,9 +314,8 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 	flex-direction: column;
 	align-items: center;
 	gap: 12px;
-	/* reserve space inside the wrapper so controls can be absolutely positioned
-	   at the bottom without being clipped by parent containers */
-	padding-bottom: 64px;
+	/* legacy padding removed since history is handled by parent */
+	padding-bottom: 12px;
 }
 
 .debug {

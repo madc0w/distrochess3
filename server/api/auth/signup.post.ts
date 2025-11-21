@@ -5,6 +5,9 @@ import type { UserDoc } from '../../types/user';
 import { sendWelcomeEmail } from '../../utils/email';
 import { getDb } from '../../utils/mongo';
 
+const SUPPORTED_LOCALES = ['en', 'fr'] as const;
+type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
 	const secret = process.env.JWT_SECRET || process.env.NITRO_JWT_SECRET;
@@ -31,10 +34,19 @@ function hashPassword(password: string): string {
 	return `${salt}:${derived.toString('hex')}`;
 }
 
+function normalizeLocale(value: unknown): SupportedLocale {
+	if (typeof value !== 'string') return 'en';
+	const langCode = value.split('-')[0].toLowerCase();
+	return SUPPORTED_LOCALES.includes(langCode as SupportedLocale)
+		? (langCode as SupportedLocale)
+		: 'en';
+}
+
 export default defineEventHandler(async (event) => {
 	try {
 		const body = await readBody(event);
 		const { email, name, password, locale } = body || {};
+		const preferredLocale = normalizeLocale(locale);
 
 		if (!email || typeof email !== 'string') {
 			throw createError({
@@ -75,6 +87,7 @@ export default defineEventHandler(async (event) => {
 			name: name.trim(),
 			passwordHash,
 			score: 1000,
+			preferredLocale,
 		};
 
 		const insertResult = await users.insertOne(doc);
@@ -82,7 +95,7 @@ export default defineEventHandler(async (event) => {
 		const token = generateToken(_id, doc.email, doc.name);
 
 		// Send welcome email asynchronously (do not block response)
-		sendWelcomeEmail(doc, locale || 'en').catch((err: any) => {
+		sendWelcomeEmail(doc, preferredLocale).catch((err: any) => {
 			console.error('Failed to send welcome email:', err);
 		});
 
@@ -91,6 +104,7 @@ export default defineEventHandler(async (event) => {
 				_id,
 				email: doc.email,
 				name: doc.name,
+				preferredLocale: doc.preferredLocale,
 			},
 			token,
 		};
