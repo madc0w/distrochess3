@@ -1,6 +1,7 @@
 import { Chess } from 'chess.js';
-import { defineEventHandler, getQuery } from 'h3';
-import { ObjectId } from 'mongodb';
+import { createError, defineEventHandler, getQuery } from 'h3';
+import type { Db, Filter, ObjectId } from 'mongodb';
+import { ObjectId as MongoObjectId } from 'mongodb';
 import { maxMoveTimeMins, newGameProbability } from '~/constants/game';
 import type { Game } from '../types/game';
 import { verifyAuthToken } from '../utils/auth';
@@ -13,6 +14,7 @@ export default defineEventHandler(async (event) => {
 		const userId = verifyAuthToken(event);
 		const query = getQuery(event);
 		const excludeGameId = query.gameId as string | undefined;
+		const requestedGameId = query.requestedGameId as string | undefined;
 
 		const db = await getDb();
 
@@ -38,12 +40,30 @@ export default defineEventHandler(async (event) => {
 			}
 		);
 
+		if (requestedGameId) {
+			const requestedGame = await findRequestedGame(db, requestedGameId);
+
+			if (!requestedGame) {
+				throw createError({ statusCode: 404, statusMessage: 'GAME_NOT_FOUND' });
+			}
+
+			if (!isGameAvailableToUser(requestedGame, userId)) {
+				throw createError({
+					statusCode: 409,
+					statusMessage: 'GAME_NOT_AVAILABLE',
+				});
+			}
+
+			return await hydrateGameForUser(requestedGame, userId, db);
+		}
+
+		const excludeObjectId = safelyCreateObjectId(excludeGameId);
 		const allGames = await db
 			.collection<Game>('games')
 			.find({
 				currentTurnUserId: null,
 				result: null,
-				...(excludeGameId && { _id: { $ne: new ObjectId(excludeGameId) } }),
+				...(excludeObjectId && { _id: { $ne: excludeObjectId } }),
 			})
 			.sort({ lastMoveDate: 1 })
 			.toArray();
@@ -51,24 +71,9 @@ export default defineEventHandler(async (event) => {
 		// console.log(`user ${userId} : allGames`, allGames);
 
 		// Filter games that are available to the user
-		const availableGames = allGames.filter((game: Game) => {
-			// Game is available if either side is unassigned to current user
-			if (
-				!includesId(game.whiteUserIds, userId) &&
-				!includesId(game.blackUserIds, userId)
-			) {
-				return true;
-			}
-
-			// Game is available if user is assigned to a side and it's their turn
-			const chessGame = new Chess(game.history[game.history.length - 1].fen);
-			const currentTurn = chessGame.turn(); // 'w' for white, 'b' for black
-
-			return (
-				(currentTurn === 'w' && includesId(game.whiteUserIds, userId)) ||
-				(currentTurn === 'b' && includesId(game.blackUserIds, userId))
-			);
-		});
+		const availableGames = allGames.filter((game: Game) =>
+			isGameAvailableToUser(game, userId)
+		);
 
 		// console.log(`user ${userId} : availableGames`, availableGames);
 
@@ -76,50 +81,7 @@ export default defineEventHandler(async (event) => {
 			availableGames.find((g) => g.history.length > 1) || availableGames[0];
 		const now = new Date();
 		if (currentGame) {
-			currentGame.currentTurnStartDate = now;
-			currentGame.currentTurnUserId = userId;
-
-			// console.log(
-			// 	`update game ${currentGame._id} to set turn for user ${userId}`
-			// );
-			// persist the current turn info to the database
-			await db
-				.collection<Game>('games')
-				.updateOne(
-					{ _id: currentGame._id },
-					{ $set: { currentTurnStartDate: now, currentTurnUserId: userId } }
-				);
-
-			// Build a map of userId => userName for any userIds referenced in history
-			const userIds = Array.from(
-				new Set(
-					currentGame.history
-						.map((h) => h.userId)
-						.filter((id) => id != null)
-						.map((id) => id.toString())
-				)
-			).map((idStr) => new ObjectId(idStr));
-
-			const userDataMap: Record<string, any> = {};
-			if (userIds.length > 0) {
-				const users = await db
-
-					.collection('users')
-					.find(
-						{ _id: { $in: userIds } },
-						{ projection: { name: true, score: true } }
-					)
-					.toArray();
-				users.forEach((u: any) => {
-					userDataMap[u._id.toString()] = { name: u.name, score: u.score };
-				});
-			}
-
-			// console.log('userDataMap', userDataMap);
-			return {
-				...currentGame,
-				userDataMap,
-			};
+			return await hydrateGameForUser(currentGame, userId, db, now);
 		} else if (Math.random() < newGameProbability) {
 			// compute next numeric id (max existing id + 1)
 			const last = await db
@@ -133,7 +95,7 @@ export default defineEventHandler(async (event) => {
 
 			const chess = new Chess();
 			const newGame: Game = {
-				_id: new ObjectId(),
+				_id: new MongoObjectId(),
 				id,
 				whiteUserIds: [],
 				blackUserIds: [],
@@ -160,3 +122,107 @@ export default defineEventHandler(async (event) => {
 		throw error;
 	}
 });
+
+function isGameAvailableToUser(game: Game, userId: ObjectId): boolean {
+	const playerIsUnassigned =
+		!includesId(game.whiteUserIds, userId) &&
+		!includesId(game.blackUserIds, userId);
+	if (playerIsUnassigned) return true;
+
+	const latestFen = game.history?.[game.history.length - 1]?.fen;
+	if (!latestFen) return false;
+
+	const chessGame = new Chess(latestFen);
+	const currentTurn = chessGame.turn();
+
+	return (
+		(currentTurn === 'w' && includesId(game.whiteUserIds, userId)) ||
+		(currentTurn === 'b' && includesId(game.blackUserIds, userId))
+	);
+}
+
+async function hydrateGameForUser(
+	game: Game,
+	userId: ObjectId,
+	db: Db,
+	now: Date = new Date()
+) {
+	const hydratedGame: Game = {
+		...game,
+		currentTurnStartDate: now,
+		currentTurnUserId: userId,
+	};
+
+	await db
+		.collection<Game>('games')
+		.updateOne(
+			{ _id: game._id },
+			{ $set: { currentTurnStartDate: now, currentTurnUserId: userId } }
+		);
+
+	const userDataMap = await buildUserDataMap(game, db);
+	return {
+		...hydratedGame,
+		userDataMap,
+	};
+}
+
+async function buildUserDataMap(game: Game, db: Db) {
+	const userIds = Array.from(
+		new Set(
+			game.history
+				.map((h) => h.userId)
+				.filter((id): id is ObjectId => id != null)
+				.map((id) => id.toString())
+		)
+	).map((idStr) => new MongoObjectId(idStr));
+
+	const userDataMap: Record<string, any> = {};
+	if (userIds.length > 0) {
+		const users = await db
+			.collection('users')
+			.find(
+				{ _id: { $in: userIds } },
+				{ projection: { name: true, score: true } }
+			)
+			.toArray();
+		users.forEach((u: any) => {
+			userDataMap[u._id.toString()] = { name: u.name, score: u.score };
+		});
+	}
+
+	return userDataMap;
+}
+
+function safelyCreateObjectId(value?: string) {
+	if (!value) return undefined;
+	try {
+		return new MongoObjectId(value);
+	} catch (_err) {
+		return undefined;
+	}
+}
+
+async function findRequestedGame(db: Db, requestedGameId: string) {
+	const orFilters: Filter<Game>[] = [];
+	const requestedObjectId = safelyCreateObjectId(requestedGameId);
+	if (requestedObjectId) {
+		orFilters.push({ _id: requestedObjectId });
+	}
+
+	const numericId = Number(requestedGameId);
+	if (!Number.isNaN(numericId)) {
+		orFilters.push({ id: numericId });
+	}
+
+	if (orFilters.length === 0) {
+		return null;
+	}
+
+	const filter: Filter<Game> =
+		orFilters.length === 1
+			? { ...orFilters[0], result: null }
+			: { result: null, $or: orFilters };
+
+	return db.collection<Game>('games').findOne(filter);
+}

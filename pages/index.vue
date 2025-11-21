@@ -41,18 +41,39 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from 'vue';
+import { computed, watchEffect } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
 
 const { t } = useI18n();
 const { isAuthenticated } = useAuth();
 const router = useRouter();
+const route = useRoute();
+
+const requestedGameId = computed(() => {
+	const raw = Array.isArray(route.query.gameId)
+		? route.query.gameId[0]
+		: route.query.gameId;
+	return typeof raw === 'string' && raw.length ? raw : undefined;
+});
 
 if (process.client) {
 	watchEffect(() => {
+		const gameId = requestedGameId.value;
 		if (isAuthenticated.value) {
-			router.replace('/game');
+			if (gameId) {
+				router.replace({ path: '/game', query: { gameId } });
+			} else {
+				router.replace('/game');
+			}
+			return;
+		}
+		if (gameId) {
+			const redirectTarget = `/game?gameId=${encodeURIComponent(gameId)}`;
+			router.replace({
+				path: '/signin',
+				query: { redirect: redirectTarget },
+			});
 		}
 	});
 }

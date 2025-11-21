@@ -78,6 +78,10 @@ export const en = {
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',
 	gameHistory: 'Game history',
+	requestedGameNotFound:
+		"We couldn't find that game. Loading your next available game instead.",
+	requestedGameNotAvailable:
+		"That game isn't available to you. Loading your next available game instead.",
 	unknownPlayer: 'Unknown',
 	moveBy: 'Move made by:',
 	lastMoveBy: 'Last move by:',

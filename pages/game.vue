@@ -14,6 +14,10 @@
 				</div>
 			</div>
 
+			<div v-if="errorMessage" class="game-alert">
+				{{ errorMessage }}
+			</div>
+
 			<div v-if="isGameLoading" class="game-status">
 				<p>{{ t.loadingGame }}</p>
 			</div>
@@ -88,7 +92,11 @@
 
 	<div v-if="isShowWinModal" class="modal-overlay">
 		<div class="modal-content">
-			<h1 class="win-title">🎉 {{ t.winCongrats }} 🎉</h1>
+			<div class="win-header">
+				<span class="win-icon" aria-hidden="true">🎉</span>
+				<h1 class="win-title">{{ t.winCongrats }}</h1>
+				<span class="win-icon" aria-hidden="true">🎉</span>
+			</div>
 			<p class="score-change">
 				{{ t.winScoreChange({ prevScore, newScore }) }}
 			</p>
@@ -109,7 +117,7 @@
 
 <script setup lang="ts">
 import { Chess } from 'chess.js';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
 import { useAuth } from '~/composables/useAuth';
 import { useEscapeKey } from '~/composables/useEscapeKey';
@@ -122,6 +130,7 @@ definePageMeta({
 });
 
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
 const { user, isAuthenticated, signout, getAuthHeader } = useAuth();
 
@@ -135,6 +144,16 @@ const newScore = ref<number | null>(null);
 
 const isShowWinModal = ref(false);
 const isShowDrawModal = ref(false);
+const errorMessage = ref('');
+const manualSignoutRedirect = ref<string | null>(null);
+let loadSequence: Promise<void> = Promise.resolve();
+
+const requestedGameId = computed(() => {
+	const raw = Array.isArray(route.query.gameId)
+		? route.query.gameId[0]
+		: route.query.gameId;
+	return typeof raw === 'string' && raw.length ? raw : undefined;
+});
 
 useEscapeKey((event) => {
 	if (isShowWinModal.value) {
@@ -235,6 +254,7 @@ const playerColor = computed(() => {
 });
 
 function handleSignout() {
+	manualSignoutRedirect.value = '/';
 	signout();
 	stopPolling();
 	stopTimer();
@@ -242,33 +262,134 @@ function handleSignout() {
 	router.replace('/');
 }
 
-async function loadGame(excludeGameId?: string) {
-	if (excludeGameId || (!currentGame.value && !isGameLoading.value)) {
-		try {
-			isGameLoading.value = true;
-			const params = excludeGameId ? `?gameId=${excludeGameId}` : '';
-			const authHeaders = getAuthHeader();
-			const response = await $fetch(
-				`/api/game${params}`,
-				authHeaders ? { headers: authHeaders } : {}
-			);
+type LoadGameOptions = {
+	excludeGameId?: string;
+	requestedGameId?: string;
+	force?: boolean;
+};
 
-			if (response) {
-				currentGame.value = response;
-				startTimer();
-			} else {
-				currentGame.value = null;
-				stopTimer();
-				startPolling();
-			}
-		} catch (e) {
+async function loadGame(options: LoadGameOptions = {}) {
+	const shouldForce = Boolean(
+		options.force || options.excludeGameId || options.requestedGameId
+	);
+	if (isGameLoading.value && !shouldForce) {
+		return currentGame.value;
+	}
+
+	isGameLoading.value = true;
+
+	try {
+		const params = new URLSearchParams();
+		if (options.excludeGameId) {
+			params.set('gameId', options.excludeGameId);
+		}
+		if (options.requestedGameId) {
+			params.set('requestedGameId', options.requestedGameId);
+		}
+		const query = params.toString();
+		const url = query ? `/api/game?${query}` : '/api/game';
+		const authHeaders = getAuthHeader();
+		const response = await $fetch(
+			url,
+			authHeaders ? { headers: authHeaders } : {}
+		);
+
+		if (response) {
+			currentGame.value = response;
+			stopPolling();
+			startTimer();
+		} else {
+			currentGame.value = null;
+			stopTimer();
+			startPolling();
+		}
+
+		return response;
+	} catch (e) {
+		if (!options.requestedGameId) {
 			console.error('Error loading game:', e);
 			currentGame.value = null;
 			startPolling();
-		} finally {
-			isGameLoading.value = false;
+			return null;
 		}
+		throw e;
+	} finally {
+		isGameLoading.value = false;
 	}
+}
+
+async function loadRequestedGame(gameId: string) {
+	errorMessage.value = '';
+	try {
+		const response = await loadGame({
+			requestedGameId: gameId,
+			force: true,
+		});
+		return Boolean(response);
+	} catch (err: any) {
+		const statusMessage =
+			err?.statusMessage ||
+			err?.data?.statusMessage ||
+			err?.response?.statusMessage ||
+			err?.statusCode;
+		if (statusMessage === 'GAME_NOT_FOUND') {
+			errorMessage.value = t.value.requestedGameNotFound;
+		} else if (statusMessage === 'GAME_NOT_AVAILABLE') {
+			errorMessage.value = t.value.requestedGameNotAvailable;
+		} else {
+			errorMessage.value =
+				translateServerError(err, t.value) || t.value.errors.ERR_GENERIC;
+		}
+		return false;
+	}
+}
+
+function isCurrentGame(gameId: string) {
+	if (!currentGame.value) return false;
+	const currentId =
+		currentGame.value._id?.toString?.() ?? currentGame.value._id;
+	return currentId === gameId || String(currentGame.value.id ?? '') === gameId;
+}
+
+function queueGameLoad() {
+	loadSequence = loadSequence
+		.catch(() => undefined)
+		.then(() => loadAccordingToQuery())
+		.catch((err) => {
+			console.error('Failed to load game from queue', err);
+			errorMessage.value =
+				translateServerError(err, t.value) || t.value.errors.ERR_GENERIC;
+		});
+}
+
+async function loadAccordingToQuery() {
+	if (!isAuthenticated.value) return;
+
+	const targetGameId = requestedGameId.value;
+	if (targetGameId) {
+		if (isCurrentGame(targetGameId)) {
+			errorMessage.value = '';
+			return;
+		}
+		const loadedRequested = await loadRequestedGame(targetGameId);
+		if (loadedRequested) {
+			return;
+		}
+		await loadGame({ force: true });
+		return;
+	}
+
+	if (!currentGame.value) {
+		await loadGame();
+	}
+}
+
+function redirectToSignin() {
+	const target = route.fullPath || '/game';
+	router.replace({
+		path: '/signin',
+		query: { redirect: target },
+	});
 }
 
 type MoveResponse = {
@@ -302,7 +423,10 @@ async function handleMove(move: {
 			triggerWin(res.result.prevScore, res.result.newScore);
 		}
 		stopTimer();
-		await loadGame(currentGame.value._id);
+		await loadGame({
+			excludeGameId: currentGame.value._id,
+			force: true,
+		});
 	} catch (e: any) {
 		const friendly = translateServerError(e, t.value) || 'Failed to make move';
 		console.error('Error making move:', friendly, e);
@@ -319,7 +443,10 @@ function startTimer() {
 		if (timeRemaining.value <= 0) {
 			stopTimer();
 			if (currentGame.value) {
-				loadGame(currentGame.value._id);
+				loadGame({
+					excludeGameId: currentGame.value._id,
+					force: true,
+				});
 			}
 		}
 	}, 1000);
@@ -355,23 +482,29 @@ function formatTime(seconds: number): string {
 	return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-watch(isAuthenticated, (newVal) => {
-	if (newVal) {
-		loadGame();
-	} else {
-		stopPolling();
-		stopTimer();
-		currentGame.value = null;
-		router.replace('/');
-	}
-});
+watch(
+	() => isAuthenticated.value,
+	(newVal) => {
+		if (newVal) {
+			queueGameLoad();
+		} else {
+			stopPolling();
+			stopTimer();
+			currentGame.value = null;
+			if (manualSignoutRedirect.value) {
+				manualSignoutRedirect.value = null;
+				return;
+			}
+			redirectToSignin();
+		}
+	},
+	{ immediate: true }
+);
 
-onMounted(() => {
-	if (isAuthenticated.value) {
-		loadGame();
-	} else {
-		router.replace('/');
-	}
+watch(requestedGameId, (newVal, oldVal) => {
+	if (!isAuthenticated.value) return;
+	if (newVal === oldVal) return;
+	queueGameLoad();
 });
 
 onUnmounted(() => {
@@ -462,6 +595,16 @@ onUnmounted(() => {
 .game-status {
 	text-align: center;
 	padding: 2.5rem 1.5rem;
+}
+
+.game-alert {
+	margin-bottom: 1rem;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	background: #fff6e5;
+	color: #92400e;
+	border: 1px solid #fcd34d;
+	font-weight: 500;
 }
 
 .game-status p {
@@ -652,14 +795,9 @@ onUnmounted(() => {
 }
 
 .parent-history-bar .history-message {
-	position: absolute;
-	top: -30px;
-	left: 50%;
-	transform: translateX(-50%);
-	background: transparent;
-	padding: 0 6px;
 	font-weight: 600;
-	pointer-events: none;
+	color: #444;
+	margin-bottom: 4px;
 }
 
 .parent-history-bar .history-btn[disabled] {
@@ -688,12 +826,36 @@ onUnmounted(() => {
 	border-radius: 16px;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 	text-align: center;
+	width: min(90vw, 520px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.win-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	width: 100%;
+}
+
+.win-icon {
+	font-size: 2.5rem;
 }
 
 .win-title {
 	font-size: 2.2rem;
 	color: #4caf50;
-	margin-bottom: 2rem;
+	margin: 0;
+}
+
+.score-change {
+	margin: 0;
+	font-size: 1.1rem;
+	color: #444;
+	line-height: 1.45;
 }
 
 .close-btn {
@@ -705,6 +867,7 @@ onUnmounted(() => {
 	border-radius: 8px;
 	cursor: pointer;
 	transition: background 0.2s;
+	min-width: 160px;
 }
 
 .close-btn:hover {
@@ -736,6 +899,15 @@ onUnmounted(() => {
 
 	.timer-value {
 		font-size: 1.25rem;
+	}
+
+	.modal-content {
+		padding: 2.5rem 1.5rem;
+		width: min(95vw, 420px);
+	}
+
+	.win-title {
+		font-size: 1.8rem;
 	}
 }
 </style>

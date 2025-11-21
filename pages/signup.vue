@@ -1,12 +1,12 @@
 <template>
 	<div class="auth-page" v-cloak>
 		<div class="gradient"></div>
-		<AuthForm mode="signup" />
+		<AuthForm mode="signup" :redirect-to="redirectTarget" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from 'vue';
+import { computed, watchEffect } from 'vue';
 import AuthForm from '~/components/AuthForm.vue';
 import { useAuth } from '~/composables/useAuth';
 import { useEscapeKey } from '~/composables/useEscapeKey';
@@ -16,7 +16,21 @@ definePageMeta({
 });
 
 const router = useRouter();
+const route = useRoute();
 const { isAuthenticated } = useAuth();
+
+const redirectTarget = computed(() => {
+	const raw = Array.isArray(route.query.redirect)
+		? route.query.redirect[0]
+		: route.query.redirect;
+	if (typeof raw !== 'string' || !raw) return '/';
+	try {
+		const decoded = decodeURIComponent(raw);
+		return decoded.startsWith('/') ? decoded : '/';
+	} catch (_err) {
+		return raw.startsWith('/') ? raw : '/';
+	}
+});
 
 useEscapeKey(() => {
 	router.replace('/');
@@ -24,7 +38,7 @@ useEscapeKey(() => {
 
 watchEffect(() => {
 	if (isAuthenticated.value) {
-		router.replace('/');
+		router.replace(redirectTarget.value || '/');
 	}
 });
 </script>

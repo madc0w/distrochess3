@@ -1,7 +1,6 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { getTranslations } from '../../i18n/index';
 import type { UserDoc } from '../types/user';
+import welcomeEmailTemplate from './email-templates/welcome.html?raw';
 
 interface MailjetMessage {
 	From: {
@@ -50,18 +49,8 @@ export async function sendWelcomeEmail(
 
 	const subject = t.welcome;
 	const textBody = `${t.welcome} ${userName}! ${emailCopy.description}`;
-	// Load HTML template and replace placeholders
-	// ESM-compatible directory resolution
-	// ESM-compatible directory resolution (no require)
-	// Always resolve path relative to project, not Nuxt build dir
-	const templatePath = join(
-		process.cwd(),
-		'server',
-		'utils',
-		'email-templates',
-		'welcome.html'
-	);
-	let htmlTemplate = readFileSync(templatePath, 'utf8');
+	// Load HTML template and replace placeholders (bundled via ?raw import)
+	const htmlTemplate = welcomeEmailTemplate;
 	const replacements: Record<string, string> = {
 		'{{welcomeHeading}}': t.welcome,
 		'{{greeting}}': greeting,
@@ -115,6 +104,4 @@ export async function sendWelcomeEmail(
 	const result = await response.json();
 	console.log('Welcome email sent successfully to:', user.email);
 	console.log('Mailjet response:', JSON.stringify(result, null, 2));
-
-	return result;
 }
