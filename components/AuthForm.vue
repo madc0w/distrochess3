@@ -71,15 +71,15 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import type { RouteLocationRaw } from 'vue-router';
 import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 
-const props = defineProps<{ mode: 'signin' | 'signup' }>();
+const props = defineProps<{ mode: 'signin' | 'signup'; redirectTo?: string }>();
 
 const { t } = useI18n();
 const { signin, signup } = useAuth();
-const router = useRouter();
 
 const name = ref('');
 const email = ref('');
@@ -103,9 +103,13 @@ const switchCopy = computed(() =>
 const switchLabel = computed(() =>
 	props.mode === 'signin' ? t.value.signup : t.value.signin
 );
-const switchTo = computed(() =>
-	props.mode === 'signin' ? '/signup' : '/signin'
-);
+const switchTo = computed<RouteLocationRaw>(() => {
+	const basePath = props.mode === 'signin' ? '/signup' : '/signin';
+	if (props.redirectTo) {
+		return { path: basePath, query: { redirect: props.redirectTo } };
+	}
+	return basePath;
+});
 const primaryLabel = computed(() =>
 	props.mode === 'signin' ? t.value.signin : t.value.signup
 );
@@ -128,8 +132,6 @@ async function handleSubmit() {
 			error.value = result.error || t.value.errors.ERR_GENERIC;
 			return;
 		}
-
-		await router.push('/');
 	} catch (err: any) {
 		error.value =
 			translateServerError(err, t.value) || t.value.errors.ERR_GENERIC;

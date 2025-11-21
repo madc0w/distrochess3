@@ -60,6 +60,10 @@ export const fr: Translations = {
 	loadingGame: 'Chargement du jeu...',
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',
+	requestedGameNotFound:
+		"Nous n'avons pas trouvé cette partie. Chargement de votre prochaine partie disponible.",
+	requestedGameNotAvailable:
+		"Vous n'avez pas accès à cette partie. Chargement de votre prochaine partie disponible.",
 	winCongrats: 'Félicitations ! Vous avez gagné la partie.',
 	gameDrawn: 'Partie nulle !',
 	gameHistory: 'Historique de la partie',
