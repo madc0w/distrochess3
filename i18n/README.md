@@ -20,6 +20,6 @@ const { t } = useI18n();
 
 1. Create a new file (e.g., `fr.ts`) with the same structure as `en.ts`
 2. Add the import and register it in `index.ts`
-3. Add it to the `translationMap` in `composables/useI18n.ts`
+3. Ensure it is exported from `i18n/index.ts` so the `useI18n` composable can load it automatically.
 
-The application automatically detects the browser's language preference and falls back to English if the preferred language is not available.
+The application automatically detects the browser's language preference (or saved user preference) and falls back to English if the preferred language is not available.

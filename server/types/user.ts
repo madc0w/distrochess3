@@ -2,13 +2,11 @@ export interface UserDoc {
 	email: string;
 	name: string;
 	passwordHash: string;
-	createdDate: Date;
+	createdDate: Date | null;
 	score: number;
+	preferredLocale?: string;
 }
 
-export interface PublicUser {
+export interface PublicUser extends Omit<UserDoc, 'passwordHash'> {
 	_id: string;
-	email: string;
-	name: string;
-	score: number;
 }

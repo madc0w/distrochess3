@@ -77,6 +77,7 @@ export default defineEventHandler(async (event) => {
 				_id,
 				email: user.email,
 				name: user.name,
+				preferredLocale: user.preferredLocale,
 			},
 			token,
 		};

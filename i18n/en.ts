@@ -18,7 +18,7 @@ export const en = {
 	name: 'Name',
 	email: 'Email',
 	password: 'Password',
-	enterName: 'Enter your name',
+	enterName: 'Enter your name (publicly visible)',
 	enterEmail: 'Enter your email',
 	enterPassword: 'Enter your password (min 6 characters)',
 	pleaseWait: 'Please wait...',
@@ -58,6 +58,17 @@ export const en = {
 	moveBy: 'Move made by:',
 	lastMoveBy: 'Last move by:',
 	score: 'Score',
+	settings: {
+		title: 'User Settings',
+		subtitle: 'Update your profile and preferences.',
+		button: 'Settings',
+		save: 'Save changes',
+		language: 'Language',
+		signupDate: 'Sign up date',
+		readOnly: 'Read only',
+		updateSuccess: 'Settings updated successfully.',
+		backToGames: 'Back to games',
+	},
 	emails: {
 		greeting: 'Hi {name},',
 		intro:
@@ -66,6 +77,10 @@ export const en = {
 			'Start a match, invite friends, and keep an eye on your live rating from any device.',
 		ctaText: 'Jump back into DistroChess.com',
 		footer: 'See you on the board!',
+	},
+	languages: {
+		en: 'English',
+		fr: 'French (Français)',
 	},
 };
 

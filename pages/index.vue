@@ -62,6 +62,9 @@
 				<h1>{{ t.distroChess }}</h1>
 				<div class="user-info">
 					<span>{{ t.welcome }}, {{ user?.name }}!</span>
+					<NuxtLink to="/settings" class="btn-settings">
+						{{ t.settings.button }}
+					</NuxtLink>
 					<button @click="handleSignout" class="btn-signout">
 						{{ t.signout }}
 					</button>
@@ -84,15 +87,6 @@
 				<div class="game-info">
 					<div class="game-id">
 						{{ t.gameId }}: <code>{{ currentGame.id }}</code>
-					</div>
-					<div class="timer-section">
-						<h3>{{ t.yourTurn }}</h3>
-						<div class="timer">
-							<div class="timer-label">{{ t.timeRemaining }}:</div>
-							<div class="timer-value" :class="{ warning: timeRemaining < 60 }">
-								{{ formatTime(timeRemaining) }}
-							</div>
-						</div>
 					</div>
 				</div>
 				<!-- 
@@ -143,8 +137,17 @@
 							}}</span>
 							<span class="move-name"
 								>{{ currentMovePlayerData.name }} ({{ t.score }} :
-								{{ currentMovePlayerData.score }})</span
+								{{ Math.round(currentMovePlayerData.score) }})</span
 							>
+						</div>
+					</div>
+				</div>
+				<div class="timer-section timer-below">
+					<h3>{{ t.yourTurn }}</h3>
+					<div class="timer">
+						<div class="timer-label">{{ t.timeRemaining }}:</div>
+						<div class="timer-value" :class="{ warning: timeRemaining < 60 }">
+							{{ formatTime(timeRemaining) }}
 						</div>
 					</div>
 				</div>
@@ -179,7 +182,7 @@ import { Chess } from 'chess.js';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
 import { useAuth } from '~/composables/useAuth';
-import { translations as t } from '~/composables/useI18n';
+import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 import { maxMoveTimeMins } from '~/constants/game';
 
@@ -190,6 +193,7 @@ definePageMeta({
 	ssr: false,
 });
 
+const { t } = useI18n();
 const { user, isAuthenticated, signup, signin, signout, getAuthHeader } =
 	useAuth();
 
@@ -327,10 +331,10 @@ async function handleSignup() {
 		}
 
 		if (!result.success) {
-			error.value = translateServerError(result.error, t);
+			error.value = translateServerError(result.error, t.value);
 		}
 	} catch (e: any) {
-		error.value = translateServerError(e, t);
+		error.value = translateServerError(e, t.value);
 	} finally {
 		isLoading.value = false;
 	}
@@ -416,7 +420,7 @@ async function handleMove(move: {
 	} catch (e: any) {
 		console.error('Error making move:', e);
 		// Use shared translator
-		error.value = translateServerError(e, t) || 'Failed to make move';
+		error.value = translateServerError(e, t.value) || 'Failed to make move';
 	}
 }
 
@@ -496,7 +500,7 @@ onUnmounted(() => {
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 2rem;
+	padding: 1.25rem;
 	min-height: 100vh;
 	/* Prevent FOUC with initial hidden state and quick fade-in */
 	animation: fadeInPage 0.15s ease-out;
@@ -611,15 +615,15 @@ onUnmounted(() => {
 }
 
 .game-container {
-	padding: 2rem 0;
+	padding: 1.25rem 0;
 }
 
 .game-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 2rem;
-	padding-bottom: 1rem;
+	margin-bottom: 1.25rem;
+	padding-bottom: 0.5rem;
 	border-bottom: 2px solid #eee;
 }
 
@@ -648,6 +652,21 @@ onUnmounted(() => {
 	font-size: 0.9rem;
 	cursor: pointer;
 	transition: background 0.2s;
+}
+
+.btn-settings {
+	padding: 0.5rem 1rem;
+	border: 1px solid #4caf50;
+	color: #4caf50;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	text-decoration: none;
+	transition: background 0.2s, color 0.2s;
+}
+
+.btn-settings:hover {
+	background: #4caf50;
+	color: #fff;
 }
 
 .btn-signout:hover {
@@ -684,7 +703,7 @@ onUnmounted(() => {
 
 .game-status {
 	text-align: center;
-	padding: 4rem 2rem;
+	padding: 2.5rem 1.5rem;
 }
 
 .game-status p {
@@ -716,10 +735,10 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 2rem;
+	gap: 1.25rem;
 	max-width: 600px;
 	margin: 0 auto;
-	padding: 1rem;
+	padding: 0.5rem;
 }
 
 .chessboard-area {
@@ -730,13 +749,13 @@ onUnmounted(() => {
 	background: #fff;
 	border-radius: 16px;
 	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-	margin-top: 1.5rem;
-	margin-bottom: 1.5rem;
+	margin-top: 0.75rem;
+	margin-bottom: 0.75rem;
 	width: 100%;
 	max-width: 480px;
 	height: auto;
 	max-height: none;
-	padding: 0.5rem;
+	padding: 0.25rem 0.5rem;
 	overflow: visible;
 }
 
@@ -766,13 +785,19 @@ onUnmounted(() => {
 
 .timer-section {
 	background: #f9f9f9;
-	padding: 1.5rem;
+	padding: 1.25rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.timer-section.timer-below {
+	width: 100%;
+	max-width: 480px;
+	margin: 0.5rem auto;
+}
+
 .timer-section h3 {
-	margin: 0 0 1rem 0;
+	margin: 0 0 0.5rem 0;
 	color: #333;
 	font-size: 1.5rem;
 	text-align: center;
@@ -782,7 +807,7 @@ onUnmounted(() => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.35rem;
 	font-size: 1.25rem;
 }
 
@@ -844,9 +869,9 @@ onUnmounted(() => {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
+	gap: 4px;
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
 	position: relative;
 }
 .parent-history-bar .history-controls {

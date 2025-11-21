@@ -20,7 +20,7 @@ export const fr: Translations = {
 	name: 'Nom',
 	email: 'Email',
 	password: 'Mot de passe',
-	enterName: 'Entrez votre nom',
+	enterName: 'Entrez votre nom (visible publiquement)',
 	enterEmail: 'Entrez votre email',
 	enterPassword: 'Entrez votre mot de passe (min 6 caractères)',
 	pleaseWait: 'Veuillez patienter...',
@@ -42,6 +42,17 @@ export const fr: Translations = {
 	moveBy: 'Coup joué par :',
 	lastMoveBy: 'Dernier coup par :',
 	score: 'Score',
+	settings: {
+		title: 'Paramètres utilisateur',
+		subtitle: 'Mettez à jour votre profil et vos préférences.',
+		button: 'Paramètres',
+		save: 'Enregistrer les modifications',
+		language: 'Langue',
+		signupDate: "Date d'inscription",
+		readOnly: 'Lecture seule',
+		updateSuccess: 'Paramètres mis à jour avec succès.',
+		backToGames: 'Retour au jeu',
+	},
 	close: 'Fermer',
 	winScoreChange:
 		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
@@ -72,5 +83,9 @@ export const fr: Translations = {
 			"Non autorisé : jeton d'authentification manquant",
 		ERR_INVALID_AUTH_TOKEN: "Jeton d'authentification invalide",
 		ERR_GENERIC: 'Une erreur est survenue. Veuillez réessayer.',
+	},
+	languages: {
+		en: 'Anglais (English)',
+		fr: 'Français',
 	},
 };
