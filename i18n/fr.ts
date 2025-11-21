@@ -30,6 +30,31 @@ export const fr: Translations = {
 	gamePlaceholder: 'Vue du jeu à venir!',
 	gameComingSoon: "Le jeu d'échecs sera affiché ici.",
 	yourTurn: "C'est à vous de jouer...",
+	landing: {
+		eyebrow: 'Échecs asynchrones pour les bâtisseurs',
+		headline: 'Des échecs qui suivent votre fuseau horaire.',
+		description:
+			'DistroChess coordonne des parties distribuées, des cotes en direct et des coups asynchrones pour que les équipes jouent quand leurs agendas sont alignés.',
+		featureTitleOne: 'Classement global',
+		featureCopyOne:
+			'Entrez dans un classement permanent et laissez DistroChess vous trouver le prochain adversaire idéal.',
+		featureTitleTwo: 'Coups instantanés',
+		featureCopyTwo:
+			"Chaque coup se réplique dans le monde en moins d'une seconde grâce au moteur distribué.",
+		featureTitleThree: 'Analyses intégrées',
+		featureCopyThree:
+			'Suivez les séries, les ouvertures et les écarts de score grâce aux métriques pensées pour le jeu asynchrone.',
+		communityTag: 'Construit par la communauté DistroChess',
+		ctaHint: 'Commencez à jouer en quelques secondes',
+	},
+	authPage: {
+		signinTitle: 'Connectez-vous pour continuer',
+		signinSubtitle: 'Reprenez instantanément vos parties distribuées.',
+		signupTitle: 'Créez votre compte DistroChess',
+		signupSubtitle:
+			"Nous avons seulement besoin d'un nom, d'un email et d'un mot de passe.",
+		backHome: "Retour à l'accueil",
+	},
 	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
 	timeRemaining: 'Temps restant',
 	loadingGame: 'Chargement du jeu...',
