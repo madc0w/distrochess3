@@ -1,6 +1,6 @@
+import { useStorage } from '#imports';
 import { getTranslations } from '../../i18n/index';
 import type { UserDoc } from '../types/user';
-import welcomeEmailTemplate from './email-templates/welcome.html?raw';
 
 interface MailjetMessage {
 	From: {
@@ -49,8 +49,8 @@ export async function sendWelcomeEmail(
 
 	const subject = t.welcome;
 	const textBody = `${t.welcome} ${userName}! ${emailCopy.description}`;
-	// Load HTML template and replace placeholders (bundled via ?raw import)
-	const htmlTemplate = welcomeEmailTemplate;
+	// Load HTML template bundled via Nitro server assets
+	const htmlTemplate = await loadWelcomeTemplate();
 	const replacements: Record<string, string> = {
 		'{{welcomeHeading}}': t.welcome,
 		'{{greeting}}': greeting,
@@ -104,4 +104,34 @@ export async function sendWelcomeEmail(
 	const result = await response.json();
 	console.log('Welcome email sent successfully to:', user.email);
 	console.log('Mailjet response:', JSON.stringify(result, null, 2));
+}
+
+let cachedWelcomeTemplate: string | null = null;
+
+async function loadWelcomeTemplate(): Promise<string> {
+	if (cachedWelcomeTemplate) {
+		return cachedWelcomeTemplate;
+	}
+
+	const storage = useStorage('assets:server');
+	const rawTemplate = await storage.getItem('email-templates/welcome.html');
+	if (!rawTemplate) {
+		throw new Error(
+			'Missing email template "welcome.html" in server/assets/email-templates.'
+		);
+	}
+
+	let template: string;
+	if (typeof rawTemplate === 'string') {
+		template = rawTemplate;
+	} else if (rawTemplate instanceof Uint8Array) {
+		template = Buffer.from(rawTemplate).toString('utf8');
+	} else if (rawTemplate instanceof ArrayBuffer) {
+		template = Buffer.from(rawTemplate).toString('utf8');
+	} else {
+		template = String(rawTemplate);
+	}
+
+	cachedWelcomeTemplate = template;
+	return template;
 }
