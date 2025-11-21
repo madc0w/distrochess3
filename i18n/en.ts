@@ -28,6 +28,30 @@ export const en = {
 	gamePlaceholder: 'Game view coming soon!',
 	gameComingSoon: 'The chess game will be displayed here.',
 	yourTurn: "It's your move...",
+	landing: {
+		eyebrow: 'Async chess for builders',
+		headline: 'Chess that keeps pace with your team.',
+		description:
+			'DistroChess coordinates distributed matches, live ratings, and async moves so teams can play whenever time zones align.',
+		featureTitleOne: 'Global ladder',
+		featureCopyOne:
+			'Queue into one persistent ladder and let DistroChess match you with the next best opponent automatically.',
+		featureTitleTwo: 'Snappy turns',
+		featureCopyTwo:
+			'Every move replicates worldwide in under a second thanks to the distributed engine powering the board.',
+		featureTitleThree: 'Insightful analytics',
+		featureCopyThree:
+			'Understand streaks, openings, and score deltas with built-in telemetry tuned for async play.',
+		communityTag: 'Built by the DistroChess community',
+		ctaHint: 'Start playing in seconds',
+	},
+	authPage: {
+		signinTitle: 'Sign in to keep playing',
+		signinSubtitle: 'Pick up your distributed matches instantly.',
+		signupTitle: 'Create your DistroChess account',
+		signupSubtitle: 'We just need a name, email, and password.',
+		backHome: 'Back to home',
+	},
 
 	close: 'Close',
 	errors: {
