@@ -86,6 +86,7 @@ export default defineEventHandler(async (event) => {
 				lastMoveDate: now,
 				currentTurnUserId: null,
 				currentTurnStartDate: null,
+				autoResignNotificationDate: null,
 			},
 		}
 	);
