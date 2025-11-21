@@ -6,6 +6,8 @@ import { includesId } from './includesId';
 
 interface ScoreUserDoc {
 	score?: number;
+	wins?: ObjectId[];
+	losses?: ObjectId[];
 	draws?: ObjectId[];
 }
 
@@ -59,7 +61,7 @@ export async function updateUserScores(
 				(scoreFactor * winnerMoveCounts[userId]) / game.history.length;
 			await usersColl.updateOne(
 				{ _id: new ObjectId(userId) },
-				{ $inc: { score: scoreChange } }
+				{ $inc: { score: scoreChange }, $push: { wins: game._id } }
 			);
 		}
 		for (const userId in loserMoveCounts) {
@@ -70,7 +72,7 @@ export async function updateUserScores(
 			const newScore = Math.max(0, (user?.score ?? 0) - scoreChange);
 			await usersColl.updateOne(
 				{ _id: new ObjectId(userId) },
-				{ $set: { score: newScore } }
+				{ $set: { score: newScore }, $push: { losses: game._id } }
 			);
 		}
 	} else {
