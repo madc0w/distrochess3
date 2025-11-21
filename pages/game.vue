@@ -22,11 +22,6 @@
 				<div class="loading-spinner"></div>
 			</div>
 			<div v-else class="active-game">
-				<div class="game-info">
-					<div class="game-id">
-						{{ t.gameId }}: <code>{{ currentGame.id }}</code>
-					</div>
-				</div>
 				<div class="chessboard-area">
 					<ChessBoard
 						:fen="displayFen"
@@ -72,6 +67,9 @@
 								>{{ currentMovePlayerData.name }} ({{ t.score }} :
 								{{ Math.round(currentMovePlayerData.score) }})</span
 							>
+						</div>
+						<div class="game-id-container">
+							{{ t.gameId }}: <span id="game-id">{{ currentGame.id }}</span>
 						</div>
 					</div>
 				</div>
@@ -629,6 +627,18 @@ onUnmounted(() => {
 	justify-content: center;
 	align-items: center;
 	gap: 8px;
+}
+
+.parent-history-bar .game-id-container {
+	margin-top: 6px;
+	font-size: 0.9rem;
+	color: #666;
+	text-align: center;
+}
+
+.parent-history-bar #game-id {
+	color: #333;
+	font-weight: 600;
 }
 
 .parent-history-bar .move-by {
