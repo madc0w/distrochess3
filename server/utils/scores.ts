@@ -4,6 +4,11 @@ import { scoreFactor } from '../../constants/game';
 import type { Game } from '../types/game';
 import { includesId } from './includesId';
 
+interface ScoreUserDoc {
+	score?: number;
+	draws?: ObjectId[];
+}
+
 export async function updateUserScores(
 	db: Db,
 	game: Game,
@@ -24,9 +29,9 @@ export async function updateUserScores(
 		{ _id: new ObjectId(game._id) },
 		{ $set: { result: game.result } }
 	);
+	const usersColl = db.collection<ScoreUserDoc>('users');
 
 	if (winnerColor) {
-		const usersColl = db.collection('users');
 		const winnerIds =
 			(winnerColor == 'w' ? game.whiteUserIds : game.blackUserIds) || [];
 
@@ -66,6 +71,23 @@ export async function updateUserScores(
 			await usersColl.updateOne(
 				{ _id: new ObjectId(userId) },
 				{ $set: { score: newScore } }
+			);
+		}
+	} else {
+		const drawParticipantIds = [
+			...(game.whiteUserIds || []),
+			...(game.blackUserIds || []),
+		];
+		const uniqueParticipantIds = new Set(
+			drawParticipantIds.map((id) => id.toString())
+		);
+		const uniqueParticipantObjectIds = Array.from(uniqueParticipantIds).map(
+			(userId) => new ObjectId(userId)
+		);
+		if (uniqueParticipantObjectIds.length > 0) {
+			await usersColl.updateMany(
+				{ _id: { $in: uniqueParticipantObjectIds } },
+				{ $push: { draws: game._id } }
 			);
 		}
 	}
