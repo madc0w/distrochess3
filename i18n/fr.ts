@@ -82,17 +82,40 @@ export const fr: Translations = {
 		updateSuccess: 'Paramètres mis à jour avec succès.',
 		backToGames: 'Retour au jeu',
 	},
+	subscriptionPages: {
+		common: {
+			returnHome: 'Retourner sur DistroChess',
+			genericError: 'Veuillez réessayer plus tard.',
+			missingUser: 'Informations utilisateur manquantes.',
+			updateFailed: 'Impossible de mettre à jour vos préférences e-mail.',
+		},
+		unsubscribe: {
+			title: 'Préférences de notification mises à jour',
+			pending: 'Un instant, nous mettons à jour vos préférences…',
+			success:
+				'Vous êtes désabonné des rappels d’abandon automatique. Vous pouvez vous réabonner ci-dessous.',
+			linkText: 'Se réabonner aux rappels',
+		},
+		resubscribe: {
+			title: 'Vous êtes à nouveau abonné',
+			pending: 'Restauration de votre abonnement…',
+			success: 'Vous recevrez de nouveau les rappels d’abandon automatique.',
+			linkText: 'Se désabonner de nouveau',
+		},
+	},
 	close: 'Fermer',
 	winScoreChange:
 		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
 	emails: {
-		greeting: 'Bonjour {name},',
-		intro:
-			"Merci d'avoir rejoint DistroChess — la façon la plus rapide de jouer en ligne.",
-		description:
-			'Lancez une partie, invitez vos amis et suivez votre score en direct depuis n’importe quel appareil.',
-		ctaText: 'Visiter DistroChess.com',
-		footer: "À bientôt sur l'échiquier !",
+		welcome: {
+			greeting: 'Bonjour {name},',
+			intro:
+				"Merci d'avoir rejoint DistroChess — la façon la plus rapide de jouer en ligne.",
+			description:
+				'Lancez une partie, invitez vos amis et suivez votre score en direct depuis n’importe quel appareil.',
+			ctaText: 'Visiter DistroChess.com',
+			footer: "À bientôt sur l'échiquier !",
+		},
 	},
 
 	// Server error codes (dereference these on the client)

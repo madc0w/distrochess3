@@ -97,14 +97,37 @@ export const en = {
 		updateSuccess: 'Settings updated successfully.',
 		backToGames: 'Back to games',
 	},
+	subscriptionPages: {
+		common: {
+			returnHome: 'Return to DistroChess',
+			genericError: 'Please try again later.',
+			missingUser: 'Missing user information.',
+			updateFailed: 'Unable to update your email preferences.',
+		},
+		unsubscribe: {
+			title: 'Notification Preferences Updated',
+			pending: 'Hang tight, updating your preferences…',
+			success:
+				"You're unsubscribed from auto-resign reminders. You can always re-subscribe below.",
+			linkText: 'Re-subscribe to reminders',
+		},
+		resubscribe: {
+			title: "You're Subscribed Again",
+			pending: 'Restoring your subscription…',
+			success: "You'll start receiving auto-resign reminders again.",
+			linkText: 'Unsubscribe again',
+		},
+	},
 	emails: {
-		greeting: 'Hi {name},',
-		intro:
-			'Thanks for joining DistroChess — the fastest way to play distro-style games online.',
-		description:
-			'Start a match, invite friends, and keep an eye on your live rating from any device.',
-		ctaText: 'Jump back into DistroChess.com',
-		footer: 'See you on the board!',
+		welcome: {
+			greeting: 'Hi {name},',
+			intro:
+				'Thanks for joining DistroChess — the fastest way to play distro-style games online.',
+			description:
+				'Start a match, invite friends, and keep an eye on your live rating from any device.',
+			ctaText: 'Jump back into DistroChess.com',
+			footer: 'See you on the board!',
+		},
 	},
 	languages: {
 		en: 'English',
