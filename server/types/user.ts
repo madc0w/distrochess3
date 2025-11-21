@@ -5,6 +5,7 @@ export interface UserDoc {
 	createdDate: Date | null;
 	score: number;
 	preferredLocale?: string;
+	unsubscribeDate?: Date | null;
 }
 
 export interface PublicUser extends Omit<UserDoc, 'passwordHash'> {

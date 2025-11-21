@@ -1,4 +1,3 @@
-import { useStorage } from '#imports';
 import { getTranslations } from '../../i18n/index';
 import type { UserDoc } from '../types/user';
 
@@ -37,13 +36,7 @@ export async function sendWelcomeEmail(
 
 	const t = getTranslations(locale);
 	const userName = user.name;
-	const emailCopy = t.emails || {
-		greeting: `Hi {name},`,
-		intro: 'Thanks for joining DistroChess.',
-		description: 'Play your next game online and track every move.',
-		ctaText: 'Visit DistroChess.com',
-		footer: 'See you on the board!',
-	};
+	const emailCopy = t.emails.welcome;
 
 	const greeting = emailCopy.greeting.replace('{name}', userName);
 
