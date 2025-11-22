@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import { defineEventHandler, readBody } from 'h3';
+import { createError, defineEventHandler, readBody } from 'h3';
 import { ObjectId } from 'mongodb';
 import type { Game } from '../types/game';
 import { verifyAuthToken } from '../utils/auth';
@@ -13,7 +13,10 @@ export default defineEventHandler(async (event) => {
 	const { gameId, move } = body;
 
 	if (!gameId || !move || !userId) {
-		throw new Error('move.post: Missing gameId, move, and/or userId');
+		throw createError({
+			statusCode: 400,
+			statusMessage: 'ERR_MOVE_MISSING_FIELDS',
+		});
 	}
 
 	const db = await getDb();
@@ -22,7 +25,7 @@ export default defineEventHandler(async (event) => {
 		.findOne({ _id: new ObjectId(gameId as string) });
 
 	if (!game) {
-		throw new Error('Game not found');
+		throw createError({ statusCode: 404, statusMessage: 'GAME_NOT_FOUND' });
 	}
 	console.log(
 		`move posted for game ${
@@ -35,13 +38,13 @@ export default defineEventHandler(async (event) => {
 	const chessGame = new Chess(lastHistoryEntry.fen);
 
 	if (game.currentTurnUserId?.toString() !== userId.toString()) {
-		throw new Error('Not your turn');
+		throw createError({ statusCode: 409, statusMessage: 'ERR_NOT_YOUR_TURN' });
 	}
 
 	// Validate and make the move
 	const moveResult: any = chessGame.move(move);
 	if (!moveResult) {
-		throw new Error('Invalid move');
+		throw createError({ statusCode: 400, statusMessage: 'ERR_INVALID_MOVE' });
 	}
 
 	// Add to game history and record which user moved (white or black)
@@ -66,15 +69,9 @@ export default defineEventHandler(async (event) => {
 		pushFields.blackUserIds = userId;
 	}
 
-	// console.log('typeof chessGame.isGameOver', typeof chessGame.isGameOver);
-	// console.log(
-	// 	'typeof chessGame.game_over',
-	// 	typeof (chessGame as any).game_over
-	// );
-
 	// Determine if the move ended the game and who (if anyone) won
-	const isGameOver = chessGame.isGameOver(); // contrary to docs...
-	const winnerColor = chessGame.isCheckmate() // contrary to docs...
+	const isGameOver = chessGame.isGameOver();
+	const winnerColor = chessGame.isCheckmate()
 		? (moveResult.color as 'w' | 'b')
 		: null;
 

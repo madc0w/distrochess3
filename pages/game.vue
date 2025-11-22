@@ -829,28 +829,71 @@ function showMoveErrorModal(message: string) {
 	}, MOVE_ERROR_MODAL_DURATION_MS);
 }
 
-function extractErrorMessage(err: any): string {
-	const candidates = [
-		err?.data?.statusMessage,
-		err?.data?.message,
-		err?.statusMessage,
-		err?.response?.statusMessage,
-		err?.response?._data?.statusMessage,
-		err?.response?._data?.message,
-		err?.message,
-		typeof err === 'string' ? err : null,
-	];
-	for (const candidate of candidates) {
-		if (typeof candidate === 'string' && candidate.trim().length) {
-			return candidate.trim();
+function traverseErrorMessages(
+	err: any,
+	predicate: (message: string) => boolean
+): boolean {
+	const queue: any[] = [err];
+	const seen = new Set<any>();
+	while (queue.length) {
+		const current = queue.shift();
+		if (!current || seen.has(current)) continue;
+		seen.add(current);
+
+		const baseCandidates = [
+			current?.data?.statusMessage,
+			current?.data?.message,
+			current?.statusMessage,
+			current?.statusText,
+			current?.error,
+			current?.response?.statusMessage,
+			current?.response?.statusText,
+			current?.response?.error,
+			current?.response?._data?.statusMessage,
+			current?.response?._data?.message,
+			current?.response?._data?.error,
+			current?.message,
+			current?.stack,
+			typeof current === 'string' ? current : null,
+		];
+
+		if (
+			typeof current?.toString === 'function' &&
+			current.toString !== Object.prototype.toString
+		) {
+			try {
+				baseCandidates.push(current.toString());
+			} catch (_err) {
+				/* ignore */
+			}
+		}
+
+		for (const candidate of baseCandidates) {
+			if (typeof candidate !== 'string') continue;
+			const trimmed = candidate.trim();
+			if (!trimmed || trimmed === '[object Object]') continue;
+			if (predicate(trimmed)) {
+				return true;
+			}
+		}
+
+		if (current?.cause) {
+			queue.push(current.cause);
+		}
+		if (current?.response?.cause) {
+			queue.push(current.response.cause);
 		}
 	}
-	return '';
+	return false;
 }
 
 function isNotYourTurnError(err: any) {
-	const message = extractErrorMessage(err).toLowerCase();
-	return message.includes('not your turn');
+	return traverseErrorMessages(err, (message) => {
+		const lower = message.toLowerCase();
+		return (
+			lower.includes('not your turn') || lower.includes('err_not_your_turn')
+		);
+	});
 }
 
 function getCurrentGameId(): string | null {
