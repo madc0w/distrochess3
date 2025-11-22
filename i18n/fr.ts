@@ -47,6 +47,41 @@ export const fr: Translations = {
 		communityTag: 'Construit par la communauté DistroChess',
 		ctaHint: 'Commencez à jouer en quelques secondes',
 	},
+	faq: {
+		linkLabel: 'FAQ',
+		ctaPrompt: 'Besoin de plus de détails ?',
+		ctaLabel: 'Lire la FAQ',
+		pageTitle: 'Questions fréquentes',
+		intro:
+			'Trouvez rapidement des réponses sur l’appariement asynchrone, les cotes et la synchronisation du plateau distribué.',
+		lastUpdated: 'Dernière mise à jour novembre 2025',
+		contactPrompt:
+			'Encore des questions ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous répondrons sous un jour ouvré.',
+		backToGame: 'Retour à votre partie',
+		backToLanding: 'Retour à l’accueil',
+		items: [
+			{
+				question: 'Comment fonctionnent les parties asynchrones ?',
+				answer:
+					'Une fois inscrit au ladder nous vous appairons avec un joueur d’un score proche. Vous disposez de plusieurs heures — pas de secondes — pour jouer, ce qui s’adapte aux fuseaux horaires.',
+			},
+			{
+				question: 'Que se passe-t-il après mon coup ?',
+				answer:
+					'Nous répliquons immédiatement la FEN et les métadonnées à tous les participants. Votre adversaire reçoit une notification et le plateau se met à jour dès sa prochaine visite.',
+			},
+			{
+				question: 'Comment les scores sont-ils calculés ?',
+				answer:
+					'Les cotes évoluent après chaque résultat confirmé grâce à une variante d’Elo adaptée aux faibles volumes quotidiens. Le delta apparaît dans la fenêtre de victoire.',
+			},
+			{
+				question: 'Puis-je inviter mon équipe ?',
+				answer:
+					'Oui. Partagez votre lien d’invitation ou demandez-leur de s’inscrire directement. Une fois l’email vérifié ils rejoignent le même ladder partagé.',
+			},
+		],
+	},
 	authPage: {
 		signinTitle: 'Connectez-vous pour continuer',
 		signinSubtitle: 'Reprenez instantanément vos parties distribuées.',
