@@ -27,11 +27,11 @@ export default defineEventHandler(async (event) => {
 	if (!game) {
 		throw createError({ statusCode: 404, statusMessage: 'GAME_NOT_FOUND' });
 	}
-	console.log(
-		`move posted for game ${
-			game.id
-		} by user ${userId.toHexString()}: ${JSON.stringify(move)}`
-	);
+	// console.log(
+	// 	`move posted for game ${
+	// 		game.id
+	// 	} by user ${userId.toHexString()}: ${JSON.stringify(move)}`
+	// );
 
 	// Verify it's the user's turn
 	const lastHistoryEntry = game.history[game.history.length - 1];

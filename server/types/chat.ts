@@ -7,6 +7,7 @@ export interface ChatMessage {
 	userId: ObjectId;
 	message: string;
 	createdDate: Date;
+	moveNumber?: number | null;
 }
 
 export interface ChatReadState {

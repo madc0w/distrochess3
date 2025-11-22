@@ -60,6 +60,7 @@ export default defineEventHandler(async (event) => {
 
 	const sanitizedMessage = message.slice(0, MAX_MESSAGE_LENGTH);
 	const now = new Date();
+	const moveNumber = Math.max(0, (game.history?.length ?? 1) - 1);
 
 	const chatDoc: ChatMessage = {
 		_id: new ObjectId(),
@@ -68,6 +69,7 @@ export default defineEventHandler(async (event) => {
 		userId,
 		message: sanitizedMessage,
 		createdDate: now,
+		moveNumber,
 	};
 
 	await db.collection<ChatMessage>('chats').insertOne(chatDoc);
@@ -79,5 +81,6 @@ export default defineEventHandler(async (event) => {
 		userId: userId.toString(),
 		message: sanitizedMessage,
 		createdDateStr: now.toISOString(),
+		moveNumber,
 	};
 });

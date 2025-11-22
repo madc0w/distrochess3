@@ -87,6 +87,7 @@ export default defineEventHandler(async (event) => {
 			message: msg.message,
 			createdDateStr:
 				msg.createdDate?.toISOString?.() ?? new Date().toISOString(),
+			moveNumber: typeof msg.moveNumber === 'number' ? msg.moveNumber : null,
 		})),
 		lastSeenAt: readState?.lastSeenAt?.toISOString() ?? null,
 	};
