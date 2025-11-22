@@ -28,6 +28,7 @@ export const en = {
 	gamePlaceholder: 'Game view coming soon!',
 	gameComingSoon: 'The chess game will be displayed here.',
 	yourTurn: "It's your move...",
+	youAre: 'You are',
 	landing: {
 		eyebrow: 'Async chess for builders',
 		headline: 'Chess that keeps pace with your team.',
@@ -49,40 +50,44 @@ export const en = {
 		linkLabel: 'FAQ',
 		ctaPrompt: 'Need more details?',
 		ctaLabel: 'Read the FAQ',
-		pageTitle: 'Frequently asked questions',
+		pageTitle: 'Frequently Asked Questions',
 		intro:
-			'Get quick answers about async pairings, ratings, and how the distributed board stays in sync.',
+			"What is DistroChess? How does it work?<br/>You're confused, and you want answers now. You've come to the right place.",
 		lastUpdated: 'Last updated November 2025',
-		contactPrompt: `Still have questions? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>, and we'll get back to you within one business day.`,
+		contactPrompt: `Still confused? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>, and we'll get back to you within one business day.`,
 		backToGame: 'Back to your game',
 		backToLanding: 'Back to home',
 		items: [
 			{
-				question: 'How do async matches work?',
+				question: 'How are game matches made?',
 				answer:
-					"Once you're in the ladder we pair you with someone near your rating. You have hours—not seconds—to make a move, so games unfold naturally across time zones.",
+					'You will be presented with a game in which either you have never played, or you are playing on the side whose turn it is. If no such game exists, you will wait for one to become available, when one of your oppoenents makes a move. Once in a while, you might get a fresh new game instead.',
 			},
 			{
 				question: 'What happens when I finish a move?',
 				answer:
-					'We instantly replicate the FEN and metadata to every participant. Your opponent gets an email push and the board reflects the new position on their next visit.',
+					'The next available game will be presented to you automatically, so you can keep playing without delay. If no game is currently available, you will wait until one of your opponents makes a move.',
 			},
 			{
 				question: 'How are scores calculated?',
-				answer:
-					"Ratings shift after each confirmed result using a lightweight ELO derivative tuned for small daily move counts. You'll see the delta in the win modal.",
+				answer: `Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this: In the case of a draw, nothing changes. In the case of a win, each winner gets a number of points added which is proprtional to their percentage of participation in the game. Likewise, each loser the same number of points subtracted based on their percentage of participation.`,
 			},
 			{
-				question: 'Can I invite teammates?',
+				question:
+					'What if nobody wants to make a move, for example if position is hopeless? How to resign?',
+				answer: `After 48 hours of inactivity in a game, the system will first notify all players on the side to move. If still nobody has made a move after another 24 hours, then the game will be auto-resigned, and points allocated accordingly.`,
+			},
+			{
+				question: 'Are ducks allowed to play? Can I play chess with ducks?',
 				answer:
-					'Sure. Share your invite link or have teammates sign up directly. As long as they verify their email they can hop into the shared ladder.',
+					"DistroChess welcomes all avian participants, so long as they don't make too much trouble.",
 			},
 		],
 	},
 	authPage: {
-		signinTitle: 'Sign in to keep playing',
+		signinTitle: 'Sign in to keep playing.',
 		signinSubtitle: 'Pick up your distributed matches instantly.',
-		signupTitle: 'Create your DistroChess account',
+		signupTitle: 'Create your DistroChess account.',
 		signupSubtitle: 'We just need a name, email, and password.',
 		backHome: 'Back to home',
 	},
@@ -91,13 +96,13 @@ export const en = {
 	errors: {
 		ERR_EMAIL_REQUIRED: 'Email is required',
 		ERR_NAME_REQUIRED: 'Name is required',
-		ERR_PASSWORD_TOO_SHORT: 'Password must be at least 6 characters',
-		ERR_EMAIL_REGISTERED: 'That email is already registered',
-		ERR_ACCOUNT_CREATION_FAILED: 'Account creation failed — please try again',
+		ERR_PASSWORD_TOO_SHORT: 'Password must be at least 6 characters.',
+		ERR_EMAIL_REGISTERED: 'That email is already registered.',
+		ERR_ACCOUNT_CREATION_FAILED: 'Account creation failed — please try again.',
 		ERR_JWT_SECRET_MISSING: 'Server error (missing configuration)',
-		ERR_PASSWORD_REQUIRED: 'Password is required',
-		ERR_INVALID_CREDENTIALS: 'Invalid email or password',
-		ERR_SIGNIN_FAILED: 'Sign in failed — please try again',
+		ERR_PASSWORD_REQUIRED: 'Password is required.',
+		ERR_INVALID_CREDENTIALS: 'Invalid email or password.',
+		ERR_SIGNIN_FAILED: 'Sign in failed — please try again.',
 		ERR_UNAUTHORIZED_NO_TOKEN: 'Unauthorized: No authentication token provided',
 		ERR_INVALID_AUTH_TOKEN: 'Invalid authentication token',
 		ERR_GENERIC: 'An error occurred. Please try again.',
@@ -120,6 +125,25 @@ export const en = {
 	moveBy: 'Move made by:',
 	lastMoveBy: 'Last move by:',
 	score: 'Score',
+	teamChat: {
+		button: 'Team chat',
+		title: 'Team chat',
+		subtitle: 'Only teammates on your side can read these messages.',
+		placeholder: 'Share your plan or encouragement...',
+		send: 'Send',
+		sending: 'Sending...',
+		loading: 'Loading messages...',
+		empty: 'No messages yet. Say hello!',
+		you: 'You',
+		disabledHint: 'Make a move for this side to unlock team chat.',
+		emojiToggle: 'Toggle emoji picker',
+		loadError: "Couldn't load chat. Please try again.",
+		sendError: "Couldn't send your message. Please try again.",
+	},
+	moveErrors: {
+		notYourTurnTitle: 'Not your turn',
+		notYourTurnMessage: 'Another player just moved. Loading your next game...',
+	},
 	settings: {
 		title: 'User Settings',
 		subtitle: 'Update your profile and preferences.',

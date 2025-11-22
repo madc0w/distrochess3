@@ -22,7 +22,7 @@
 		<section class="faq-hero">
 			<p class="faq-eyebrow">{{ t.faq.linkLabel }}</p>
 			<h1>{{ t.faq.pageTitle }}</h1>
-			<p class="intro">{{ t.faq.intro }}</p>
+			<p class="intro" v-html="t.faq.intro"></p>
 			<p class="last-updated">{{ t.faq.lastUpdated }}</p>
 		</section>
 
