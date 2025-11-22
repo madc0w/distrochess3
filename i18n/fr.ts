@@ -30,6 +30,7 @@ export const fr: Translations = {
 	gamePlaceholder: 'Vue du jeu à venir!',
 	gameComingSoon: "Le jeu d'échecs sera affiché ici.",
 	yourTurn: "C'est à vous de jouer...",
+	youAre: 'Vous êtes',
 	landing: {
 		eyebrow: 'Échecs asynchrones pour les bâtisseurs',
 		headline: 'Des échecs qui suivent votre fuseau horaire.',
@@ -53,32 +54,39 @@ export const fr: Translations = {
 		ctaLabel: 'Lire la FAQ',
 		pageTitle: 'Questions fréquentes',
 		intro:
-			'Trouvez rapidement des réponses sur l’appariement asynchrone, les cotes et la synchronisation du plateau distribué.',
+			"Qu'est-ce que DistroChess ? Comment ça fonctionne ?<br/>Vous êtes un peu perdu et voulez des réponses maintenant. Vous êtes au bon endroit.",
 		lastUpdated: 'Dernière mise à jour novembre 2025',
 		contactPrompt:
-			'Encore des questions ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous répondrons sous un jour ouvré.',
+			'Toujours perdu ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous rappellerons sous un jour ouvré.',
 		backToGame: 'Retour à votre partie',
 		backToLanding: 'Retour à l’accueil',
 		items: [
 			{
-				question: 'Comment fonctionnent les parties asynchrones ?',
+				question: 'Comment les parties sont-elles appariées ?',
 				answer:
-					'Une fois inscrit au ladder nous vous appairons avec un joueur d’un score proche. Vous disposez de plusieurs heures — pas de secondes — pour jouer, ce qui s’adapte aux fuseaux horaires.',
+					"Nous vous proposons une partie dans laquelle soit vous n'avez encore jamais joué, soit vous jouez pour la couleur dont c'est le tour. S'il n'existe aucune partie répondant à ces critères, vous patienterez jusqu'à ce qu'une se libère, lorsqu'un de vos adversaires jouera. De temps à autre, vous recevrez peut-être une nouvelle partie toute fraîche.",
 			},
 			{
-				question: 'Que se passe-t-il après mon coup ?',
+				question: 'Que se passe-t-il quand je termine un coup ?',
 				answer:
-					'Nous répliquons immédiatement la FEN et les métadonnées à tous les participants. Votre adversaire reçoit une notification et le plateau se met à jour dès sa prochaine visite.',
+					'La prochaine partie disponible vous est présentée automatiquement pour que vous puissiez continuer sans attendre. S’il n’y en a aucune, vous patienterez jusqu’à ce qu’un de vos adversaires joue.',
 			},
 			{
 				question: 'Comment les scores sont-ils calculés ?',
 				answer:
-					'Les cotes évoluent après chaque résultat confirmé grâce à une variante d’Elo adaptée aux faibles volumes quotidiens. Le delta apparaît dans la fenêtre de victoire.',
+					'Chaque joueur commence avec un score de 1000. Quand une partie se termine, les scores de tous les participants sont ajustés ainsi : en cas de nulle, rien ne change. En cas de victoire, chaque gagnant gagne un nombre de points proportionnel à son pourcentage de participation. Chaque perdant perd le même nombre de points, calculé selon son pourcentage de participation.',
 			},
 			{
-				question: 'Puis-je inviter mon équipe ?',
+				question:
+					'Et si personne ne veut jouer, par exemple si la position est désespérée ? Comment abandonner ?',
 				answer:
-					'Oui. Partagez votre lien d’invitation ou demandez-leur de s’inscrire directement. Une fois l’email vérifié ils rejoignent le même ladder partagé.',
+					"Après 48 heures d'inactivité, le système prévient d'abord tous les joueurs du camp au trait. Si personne ne joue après 24 heures supplémentaires, la partie est abandonnée automatiquement et les points sont attribués en conséquence.",
+			},
+			{
+				question:
+					'Les canards peuvent-ils jouer ? Puis-je jouer aux échecs avec des canards ?',
+				answer:
+					"DistroChess accepte tous les participants à plumes, tant qu'ils ne causent pas trop de remous.",
 			},
 		],
 	},
@@ -106,6 +114,27 @@ export const fr: Translations = {
 	moveBy: 'Coup joué par :',
 	lastMoveBy: 'Dernier coup par :',
 	score: 'Score',
+	teamChat: {
+		button: 'Chat d’équipe',
+		title: 'Chat d’équipe',
+		subtitle: 'Seuls vos coéquipiers de cette couleur voient ces messages.',
+		placeholder: 'Partagez votre plan ou vos idées...',
+		send: 'Envoyer',
+		sending: 'Envoi...',
+		loading: 'Chargement des messages...',
+		empty: 'Aucun message pour le moment. Lancez la discussion !',
+		you: 'Vous',
+		disabledHint:
+			'Jouez un coup avec cette couleur pour activer le chat d’équipe.',
+		emojiToggle: 'Afficher/masquer le sélecteur emoji',
+		loadError: 'Impossible de charger le chat. Veuillez réessayer.',
+		sendError: 'Impossible d’envoyer votre message. Veuillez réessayer.',
+	},
+	moveErrors: {
+		notYourTurnTitle: 'Pas votre tour',
+		notYourTurnMessage:
+			'Un autre joueur vient de jouer. Chargement de votre prochaine partie...',
+	},
 	settings: {
 		title: 'Paramètres utilisateur',
 		subtitle: 'Mettez à jour votre profil et vos préférences.',

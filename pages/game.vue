@@ -2,15 +2,29 @@
 	<div class="container" v-cloak>
 		<div class="game-container">
 			<div class="game-header">
-				<h1>{{ t.distroChess }}</h1>
-				<div class="user-info">
-					<span>{{ t.welcome }}, {{ user?.name }}!</span>
+				<h1>
+					<img src="/logo-medium.png" alt="DistroChess" class="game-logo" />
+					<span class="game-title-text">{{ t.distroChess }}</span>
 					<NuxtLink to="/faq" class="btn-faq">
 						{{ t.faq.linkLabel }}
 					</NuxtLink>
+				</h1>
+				<div class="user-info">
+					<span>{{ t.youAre }}: {{ user?.name }}</span>
 					<NuxtLink to="/settings" class="btn-settings">
 						{{ t.settings.button }}
 					</NuxtLink>
+					<button
+						class="btn-team-chat"
+						@click="toggleChatModal"
+						:disabled="!canUseTeamChat || !currentGame"
+						:title="!canUseTeamChat ? t.teamChat.disabledHint : undefined"
+					>
+						{{ t.teamChat.button }}
+						<span v-if="chatUnreadCount > 0" class="chat-badge">
+							{{ chatUnreadCount }}
+						</span>
+					</button>
 					<button @click="handleSignout" class="btn-signout">
 						{{ t.signout }}
 					</button>
@@ -116,17 +130,113 @@
 			</button>
 		</div>
 	</div>
+
+	<div v-if="isMoveErrorModalVisible" class="modal-overlay error-modal">
+		<div class="modal-content error-modal-content">
+			<h2 class="error-title">{{ t.moveErrors.notYourTurnTitle }}</h2>
+			<p class="error-message">{{ moveErrorModalMessage }}</p>
+		</div>
+	</div>
+
+	<div v-if="isChatOpen" class="modal-overlay chat-overlay">
+		<div
+			class="chat-modal"
+			role="dialog"
+			aria-modal="true"
+			:aria-label="t.teamChat.title"
+		>
+			<div class="chat-header">
+				<div>
+					<h2>{{ t.teamChat.title }}</h2>
+					<p class="chat-subtitle">{{ t.teamChat.subtitle }}</p>
+				</div>
+				<button
+					class="chat-close"
+					@click="closeChatModal"
+					:aria-label="t.close"
+				>
+					×
+				</button>
+			</div>
+			<div v-if="chatErrorMessage" class="chat-error">
+				{{ chatErrorMessage }}
+			</div>
+			<div class="chat-body" ref="chatBodyRef">
+				<div v-if="isChatLoading && !chatMessages.length" class="chat-loading">
+					{{ t.teamChat.loading }}
+				</div>
+				<div v-else-if="!chatMessages.length" class="chat-empty">
+					{{ t.teamChat.empty }}
+				</div>
+				<div v-else class="chat-messages">
+					<div
+						v-for="msg in chatMessages"
+						:key="msg.id"
+						class="chat-message"
+						:class="{ 'chat-message-self': msg.userId === user?._id }"
+					>
+						<div class="chat-meta">
+							<span class="chat-author">
+								{{ resolveChatUserName(msg.userId) }}
+								<span v-if="msg.userId === user?._id" class="chat-self-tag">
+									{{ t.teamChat.you }}
+								</span>
+							</span>
+							<span class="chat-time">
+								{{ formatChatTimestamp(msg.createdDateStr) }}
+							</span>
+						</div>
+						<p class="chat-text">{{ msg.message }}</p>
+					</div>
+				</div>
+			</div>
+			<form class="chat-form" @submit.prevent="sendChatMessage">
+				<textarea
+					class="chat-input"
+					rows="3"
+					v-model="chatInput"
+					:placeholder="t.teamChat.placeholder"
+					@keydown.enter.exact.prevent="sendChatMessage"
+				></textarea>
+				<div class="chat-form-actions">
+					<button
+						type="button"
+						class="chat-emoji-btn"
+						:aria-pressed="isEmojiPickerOpen"
+						@click="toggleEmojiPicker"
+						:title="t.teamChat.emojiToggle"
+					>
+						😊
+					</button>
+					<button
+						type="submit"
+						class="chat-send-btn"
+						:disabled="isChatSending || !chatInput.trim()"
+					>
+						{{ isChatSending ? t.teamChat.sending : t.teamChat.send }}
+					</button>
+				</div>
+				<emoji-picker
+					v-if="isEmojiPickerOpen"
+					class="emoji-picker"
+					@emoji-click="handleEmojiSelect"
+				></emoji-picker>
+			</form>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { Chess } from 'chess.js';
-import { computed, onUnmounted, ref, watch } from 'vue';
+import 'emoji-picker-element';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
 import { useAuth } from '~/composables/useAuth';
 import { useEscapeKey } from '~/composables/useEscapeKey';
 import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 import { maxMoveTimeMins } from '~/constants/game';
+import { formatDate } from '~/utils/formatDate';
 
 definePageMeta({
 	ssr: false,
@@ -134,7 +244,7 @@ definePageMeta({
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { user, isAuthenticated, signout, getAuthHeader } = useAuth();
 
 const currentGame = ref<any>(null);
@@ -150,6 +260,47 @@ const isShowDrawModal = ref(false);
 const errorMessage = ref('');
 const manualSignoutRedirect = ref<string | null>(null);
 let loadSequence: Promise<void> = Promise.resolve();
+const MOVE_ERROR_MODAL_DURATION_MS = 2000;
+
+type TeamChatMessage = {
+	id: string;
+	gameId: string;
+	side: 'white' | 'black';
+	userId: string;
+	message: string;
+	createdDateStr: string;
+};
+
+type EmojiClickEventDetail = {
+	unicode?: string;
+	emoji?: {
+		unicode?: string;
+	};
+};
+
+type TeamChatResponse = {
+	messages: TeamChatMessage[];
+	lastSeenAt: string | null;
+};
+
+const isChatOpen = ref(false);
+const chatMessages = ref<TeamChatMessage[]>([]);
+const chatInput = ref('');
+const chatErrorMessage = ref('');
+const isChatLoading = ref(false);
+const isChatSending = ref(false);
+const chatUnreadCount = ref(0);
+const chatIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
+const lastSeenChatTimestamp = ref<string | null>(null);
+const lastPersistedChatTimestamp = ref<string | null>(null);
+const pendingLastSeenUpload = ref<string | null>(null);
+const isPersistingLastSeen = ref(false);
+const chatBodyRef = ref<HTMLElement | null>(null);
+const isEmojiPickerOpen = ref(false);
+const pendingTimerReload = ref<LoadGameOptions | null>(null);
+const isMoveErrorModalVisible = ref(false);
+const moveErrorModalMessage = ref('');
+const moveErrorModalTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
 
 const requestedGameId = computed(() => {
 	const raw = Array.isArray(route.query.gameId)
@@ -158,7 +309,35 @@ const requestedGameId = computed(() => {
 	return typeof raw === 'string' && raw.length ? raw : undefined;
 });
 
+const userTeamSide = computed<'white' | 'black' | null>(() => {
+	if (currentGame.value && user.value) {
+		if (listIncludesUser(currentGame.value.whiteUserIds, user.value._id)) {
+			return 'white';
+		} else if (
+			listIncludesUser(currentGame.value.blackUserIds, user.value._id)
+		) {
+			return 'black';
+		}
+	}
+	return null;
+});
+
+const canUseTeamChat = computed(() => {
+	// console.log('canUseTeamChat:', currentGame.value, userTeamSide.value);
+	return Boolean(currentGame.value?._id && userTeamSide.value);
+});
+
+function listIncludesUser(list: any[] = [], value?: string | null) {
+	if (!value) return false;
+	return list.some((entry) => entry?.toString?.() === value);
+}
+
 useEscapeKey((event) => {
+	if (isChatOpen.value) {
+		closeChatModal();
+		event.preventDefault();
+		return;
+	}
 	if (isShowWinModal.value) {
 		isShowWinModal.value = false;
 		event.preventDefault();
@@ -261,6 +440,8 @@ function handleSignout() {
 	signout();
 	stopPolling();
 	stopTimer();
+	stopChatPolling();
+	resetChatState();
 	currentGame.value = null;
 	router.replace('/');
 }
@@ -431,6 +612,10 @@ async function handleMove(move: {
 			force: true,
 		});
 	} catch (e: any) {
+		if (isNotYourTurnError(e)) {
+			showMoveErrorModal(t.value.moveErrors.notYourTurnMessage);
+			return;
+		}
 		const friendly = translateServerError(e, t.value) || 'Failed to make move';
 		console.error('Error making move:', friendly, e);
 	}
@@ -446,10 +631,15 @@ function startTimer() {
 		if (timeRemaining.value <= 0) {
 			stopTimer();
 			if (currentGame.value) {
-				loadGame({
+				const reloadOptions: LoadGameOptions = {
 					excludeGameId: currentGame.value._id,
 					force: true,
-				});
+				};
+				if (isChatOpen.value) {
+					pendingTimerReload.value = reloadOptions;
+				} else {
+					void loadGame(reloadOptions);
+				}
 			}
 		}
 	}, 1000);
@@ -485,6 +675,350 @@ function formatTime(seconds: number): string {
 	return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+function isTimestampLater(candidate: string | null, reference: string | null) {
+	if (!candidate) return false;
+	if (!reference) return true;
+	return new Date(candidate).getTime() > new Date(reference).getTime();
+}
+
+function toggleChatModal() {
+	if (isChatOpen.value) closeChatModal();
+	else openChatModal();
+}
+
+function openChatModal() {
+	if (!canUseTeamChat.value) return;
+	isChatOpen.value = true;
+	fetchChatMessages({ force: true });
+	scrollChatToBottom();
+}
+
+function closeChatModal() {
+	if (!isChatOpen.value) return;
+	isChatOpen.value = false;
+	isEmojiPickerOpen.value = false;
+}
+
+async function sendChatMessage() {
+	if (isChatSending.value) return;
+	const trimmed = chatInput.value.trim();
+	const gameId = getCurrentGameId();
+	if (!trimmed || !gameId) return;
+	isChatSending.value = true;
+	const headers = getAuthHeader();
+	try {
+		await $fetch('/api/chat', {
+			method: 'POST',
+			body: { gameId, message: trimmed },
+			...(headers ? { headers } : {}),
+		});
+		chatInput.value = '';
+		chatErrorMessage.value = '';
+		await fetchChatMessages({ force: true });
+		await scrollChatToBottom();
+	} catch (err: any) {
+		chatErrorMessage.value =
+			translateServerError(err, t.value) || t.value.teamChat.sendError;
+	} finally {
+		isChatSending.value = false;
+	}
+}
+
+function toggleEmojiPicker() {
+	if (!isChatOpen.value) {
+		isEmojiPickerOpen.value = false;
+		return;
+	}
+	isEmojiPickerOpen.value = !isEmojiPickerOpen.value;
+}
+
+function handleEmojiSelect(event: CustomEvent<EmojiClickEventDetail>) {
+	const detail = event.detail;
+	const emojiValue = detail?.unicode || (detail as any)?.emoji?.unicode;
+	if (!emojiValue) return;
+	chatInput.value += emojiValue;
+	isEmojiPickerOpen.value = false;
+}
+
+function queuePersistLastSeen(timestamp: string | null) {
+	if (!timestamp) return;
+	if (
+		lastPersistedChatTimestamp.value &&
+		!isTimestampLater(timestamp, lastPersistedChatTimestamp.value)
+	) {
+		return;
+	}
+	pendingLastSeenUpload.value = timestamp;
+	if (!isPersistingLastSeen.value) {
+		void persistPendingLastSeen();
+	}
+}
+
+async function persistPendingLastSeen() {
+	const timestamp = pendingLastSeenUpload.value;
+	const targetGameId = getCurrentGameId();
+	if (!timestamp || !targetGameId) return;
+	if (
+		lastPersistedChatTimestamp.value &&
+		!isTimestampLater(timestamp, lastPersistedChatTimestamp.value)
+	) {
+		pendingLastSeenUpload.value = null;
+		return;
+	}
+	isPersistingLastSeen.value = true;
+	pendingLastSeenUpload.value = null;
+	const headers = getAuthHeader();
+	try {
+		const res = await $fetch<{ lastSeenAt: string }>('/api/chat/seen', {
+			method: 'POST',
+			body: { gameId: targetGameId, lastSeenAt: timestamp },
+			...(headers ? { headers } : {}),
+		});
+		if (targetGameId === getCurrentGameId()) {
+			lastPersistedChatTimestamp.value = res.lastSeenAt ?? timestamp;
+		}
+	} catch (err) {
+		console.error('Failed to persist chat last-seen timestamp', err);
+	} finally {
+		isPersistingLastSeen.value = false;
+		if (pendingLastSeenUpload.value) {
+			void persistPendingLastSeen();
+		}
+	}
+}
+
+function resolveChatUserName(userId: string) {
+	const map = (currentGame.value as any)?.userDataMap ?? {};
+	return map?.[userId]?.name ?? t.value.unknownPlayer;
+}
+
+function formatChatTimestamp(value: string) {
+	return formatDate(value, locale.value || 'en', '');
+}
+
+function clearMoveErrorModalTimer() {
+	if (moveErrorModalTimerId.value) {
+		clearTimeout(moveErrorModalTimerId.value);
+		moveErrorModalTimerId.value = null;
+	}
+}
+
+function hideMoveErrorModal() {
+	isMoveErrorModalVisible.value = false;
+	moveErrorModalMessage.value = '';
+	clearMoveErrorModalTimer();
+}
+
+function scheduleNextGameLoad() {
+	const options: LoadGameOptions = { force: true };
+	const currentId = getCurrentGameId();
+	if (currentId) {
+		options.excludeGameId = currentId;
+	}
+	void loadGame(options);
+}
+
+function showMoveErrorModal(message: string) {
+	clearMoveErrorModalTimer();
+	moveErrorModalMessage.value = message;
+	isMoveErrorModalVisible.value = true;
+	moveErrorModalTimerId.value = setTimeout(() => {
+		moveErrorModalTimerId.value = null;
+		hideMoveErrorModal();
+		scheduleNextGameLoad();
+	}, MOVE_ERROR_MODAL_DURATION_MS);
+}
+
+function extractErrorMessage(err: any): string {
+	const candidates = [
+		err?.data?.statusMessage,
+		err?.data?.message,
+		err?.statusMessage,
+		err?.response?.statusMessage,
+		err?.response?._data?.statusMessage,
+		err?.response?._data?.message,
+		err?.message,
+		typeof err === 'string' ? err : null,
+	];
+	for (const candidate of candidates) {
+		if (typeof candidate === 'string' && candidate.trim().length) {
+			return candidate.trim();
+		}
+	}
+	return '';
+}
+
+function isNotYourTurnError(err: any) {
+	const message = extractErrorMessage(err).toLowerCase();
+	return message.includes('not your turn');
+}
+
+function getCurrentGameId(): string | null {
+	const raw = currentGame.value?._id ?? null;
+	if (!raw) return null;
+	return typeof raw === 'string' ? raw : raw?.toString?.() ?? null;
+}
+
+async function fetchChatMessages(options: { force?: boolean } = {}) {
+	if (!canUseTeamChat.value) return;
+	const gameId = getCurrentGameId();
+	if (!gameId) return;
+	if (isChatLoading.value && !options.force) return;
+	isChatLoading.value = true;
+	const headers = getAuthHeader();
+	try {
+		const response = await $fetch<TeamChatResponse>('/api/chat', {
+			query: { gameId },
+			...(headers ? { headers } : {}),
+		});
+		const latestGameId = getCurrentGameId();
+		if (latestGameId !== gameId) {
+			return;
+		}
+		chatMessages.value = response.messages;
+		chatErrorMessage.value = '';
+		const serverLastSeen = response.lastSeenAt;
+		if (serverLastSeen) {
+			if (isTimestampLater(serverLastSeen, lastPersistedChatTimestamp.value)) {
+				lastPersistedChatTimestamp.value = serverLastSeen;
+			}
+			if (isTimestampLater(serverLastSeen, lastSeenChatTimestamp.value)) {
+				lastSeenChatTimestamp.value = serverLastSeen;
+			}
+		} else {
+			lastPersistedChatTimestamp.value = null;
+			lastSeenChatTimestamp.value = null;
+		}
+	} catch (err: any) {
+		chatErrorMessage.value =
+			translateServerError(err, t.value) || t.value.teamChat.loadError;
+	} finally {
+		isChatLoading.value = false;
+	}
+}
+
+function startChatPolling() {
+	stopChatPolling();
+	if (!canUseTeamChat.value || !getCurrentGameId()) return;
+	fetchChatMessages({ force: true });
+	chatIntervalId.value = setInterval(() => {
+		fetchChatMessages();
+	}, 5000);
+}
+
+function stopChatPolling() {
+	if (chatIntervalId.value) {
+		clearInterval(chatIntervalId.value);
+		chatIntervalId.value = null;
+	}
+}
+
+function resetChatState() {
+	chatMessages.value = [];
+	chatInput.value = '';
+	chatErrorMessage.value = '';
+	chatUnreadCount.value = 0;
+	lastSeenChatTimestamp.value = null;
+	lastPersistedChatTimestamp.value = null;
+	pendingLastSeenUpload.value = null;
+	isChatOpen.value = false;
+	isEmojiPickerOpen.value = false;
+	pendingTimerReload.value = null;
+}
+
+function markChatAsRead() {
+	const lastMessage = chatMessages.value[chatMessages.value.length - 1];
+	let targetTimestamp: string | null = null;
+	if (lastMessage) {
+		targetTimestamp = lastMessage.createdDateStr;
+	} else if (!lastSeenChatTimestamp.value) {
+		targetTimestamp = new Date().toISOString();
+	}
+	if (targetTimestamp) {
+		if (
+			isTimestampLater(targetTimestamp, lastSeenChatTimestamp.value) ||
+			!lastSeenChatTimestamp.value
+		) {
+			lastSeenChatTimestamp.value = targetTimestamp;
+		}
+		queuePersistLastSeen(targetTimestamp);
+	}
+	chatUnreadCount.value = 0;
+}
+
+function updateUnreadCountFromMessages() {
+	if (!chatMessages.value.length) {
+		chatUnreadCount.value = 0;
+		return;
+	}
+	const lastSeen = lastSeenChatTimestamp.value
+		? new Date(lastSeenChatTimestamp.value).getTime()
+		: null;
+	if (!lastSeen) {
+		chatUnreadCount.value = chatMessages.value.length;
+		return;
+	}
+	chatUnreadCount.value = chatMessages.value.filter((msg) => {
+		const msgTime = new Date(msg.createdDateStr).getTime();
+		return msgTime > lastSeen;
+	}).length;
+}
+
+async function scrollChatToBottom() {
+	await nextTick();
+	if (chatBodyRef.value) {
+		chatBodyRef.value.scrollTop = chatBodyRef.value.scrollHeight;
+	}
+}
+
+watch(
+	() => ({
+		gameId: getCurrentGameId(),
+		canChat: canUseTeamChat.value,
+	}),
+	(newState, oldState) => {
+		const gameChanged = newState.gameId !== oldState?.gameId;
+		if (gameChanged) {
+			resetChatState();
+		}
+		if (!newState.gameId || !newState.canChat) {
+			stopChatPolling();
+			if (!newState.canChat) {
+				resetChatState();
+			}
+			return;
+		}
+		if (gameChanged || newState.canChat !== oldState?.canChat) {
+			startChatPolling();
+		}
+	},
+	{ immediate: true }
+);
+
+watch(chatMessages, () => {
+	if (isChatOpen.value) {
+		markChatAsRead();
+		scrollChatToBottom();
+	} else {
+		updateUnreadCountFromMessages();
+	}
+});
+
+watch(isChatOpen, (open) => {
+	if (open) {
+		markChatAsRead();
+		scrollChatToBottom();
+	} else {
+		isEmojiPickerOpen.value = false;
+		markChatAsRead();
+		if (pendingTimerReload.value) {
+			const options = pendingTimerReload.value;
+			pendingTimerReload.value = null;
+			void loadGame(options);
+		}
+	}
+});
+
 watch(
 	() => isAuthenticated.value,
 	(newVal) => {
@@ -493,6 +1027,8 @@ watch(
 		} else {
 			stopPolling();
 			stopTimer();
+			stopChatPolling();
+			resetChatState();
 			currentGame.value = null;
 			if (manualSignoutRedirect.value) {
 				manualSignoutRedirect.value = null;
@@ -513,6 +1049,8 @@ watch(requestedGameId, (newVal, oldVal) => {
 onUnmounted(() => {
 	stopPolling();
 	stopTimer();
+	stopChatPolling();
+	clearMoveErrorModalTimer();
 });
 </script>
 
@@ -552,6 +1090,20 @@ onUnmounted(() => {
 .game-header h1 {
 	margin: 0;
 	color: #333;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.game-logo {
+	height: 48px;
+	width: auto;
+}
+
+.game-title-text {
+	font-size: 1.75rem;
+	font-weight: 600;
+	color: inherit;
 }
 
 .user-info {
@@ -585,6 +1137,7 @@ onUnmounted(() => {
 	text-decoration: none;
 	background: #fff;
 	transition: background 0.2s ease;
+	margin-left: 0.75rem;
 }
 
 .btn-faq:hover {
@@ -604,6 +1157,39 @@ onUnmounted(() => {
 .btn-settings:hover {
 	background: #4caf50;
 	color: #fff;
+}
+
+.btn-team-chat {
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
+	border: 1px solid #2563eb;
+	background: #2563eb;
+	color: #fff;
+	font-size: 0.9rem;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-team-chat:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.btn-team-chat:not(:disabled):hover {
+	background: #1d4ed8;
+}
+
+.chat-badge {
+	background: #f97316;
+	color: #fff;
+	border-radius: 999px;
+	padding: 0 0.45rem;
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1.4;
 }
 
 .btn-signout:hover {
@@ -851,6 +1437,24 @@ onUnmounted(() => {
 	gap: 1.5rem;
 }
 
+.error-modal-content {
+	border-top: 4px solid #f97316;
+	gap: 0.75rem;
+	padding: 2rem 1.5rem;
+}
+
+.error-title {
+	margin: 0;
+	color: #b45309;
+	font-size: 1.6rem;
+}
+
+.error-message {
+	margin: 0;
+	color: #92400e;
+	font-size: 1rem;
+}
+
 .win-header {
 	display: flex;
 	align-items: center;
@@ -890,6 +1494,213 @@ onUnmounted(() => {
 
 .close-btn:hover {
 	background: #388e3c;
+}
+
+.chat-overlay {
+	z-index: 10000;
+}
+
+.chat-modal {
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 8px 32px rgba(15, 23, 42, 0.25);
+	padding: 1.5rem;
+	width: min(92vw, 480px);
+	max-height: 85vh;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.chat-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.chat-header h2 {
+	margin: 0;
+	font-size: 1.5rem;
+	color: #0f172a;
+}
+
+.chat-subtitle {
+	margin: 0.15rem 0 0;
+	color: #475569;
+	font-size: 0.9rem;
+}
+
+.chat-close {
+	border: none;
+	background: transparent;
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	color: #475569;
+}
+
+.chat-error {
+	background: #fef3c7;
+	color: #92400e;
+	border: 1px solid #fde68a;
+	border-radius: 10px;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.85rem;
+}
+
+.chat-body {
+	background: #f8fafc;
+	border-radius: 12px;
+	padding: 0.75rem;
+	max-height: 45vh;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.chat-loading,
+.chat-empty {
+	color: #64748b;
+	text-align: center;
+	font-size: 0.9rem;
+	padding: 1rem 0;
+}
+
+.chat-messages {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.chat-message {
+	background: #fff;
+	border-radius: 12px;
+	padding: 0.5rem 0.75rem;
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.chat-message-self {
+	background: #dbeafe;
+	align-self: flex-end;
+}
+
+.chat-meta {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.75rem;
+	color: #64748b;
+}
+
+.chat-author {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.chat-message-self .chat-author {
+	color: #1e3a8a;
+}
+
+.chat-message-self .chat-meta {
+	color: #1e3a8a;
+}
+
+.chat-self-tag {
+	margin-left: 0.35rem;
+	padding: 0 0.4rem;
+	border-radius: 999px;
+	background: rgba(37, 99, 235, 0.17);
+	font-size: 0.65rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.chat-time {
+	color: inherit;
+}
+
+.chat-text {
+	margin: 0;
+	color: #0f172a;
+	word-break: break-word;
+}
+
+.chat-form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.chat-input {
+	width: 100%;
+	border: 1px solid #cbd5f5;
+	border-radius: 10px;
+	padding: 0.75rem;
+	font-size: 0.95rem;
+	font-family: inherit;
+	resize: none;
+}
+
+.chat-input:focus {
+	outline: 2px solid #2563eb;
+	outline-offset: 1px;
+}
+
+.chat-form-actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.chat-emoji-btn {
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	border: 1px solid #cbd5f5;
+	background: #fff;
+	font-size: 1.1rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-emoji-btn[aria-pressed='true'] {
+	background: #e0f2fe;
+	border-color: #0ea5e9;
+}
+
+.chat-emoji-btn:hover:not(:disabled) {
+	background: #f1f5f9;
+}
+
+.chat-send-btn {
+	border: none;
+	border-radius: 999px;
+	background: #2563eb;
+	color: #fff;
+	font-weight: 600;
+	padding: 0.5rem 1.5rem;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.chat-send-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.emoji-picker {
+	width: 100%;
+	max-height: 280px;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15);
+	overflow: hidden;
 }
 
 @media (max-width: 600px) {

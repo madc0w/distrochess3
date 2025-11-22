@@ -25,6 +25,13 @@ export default defineNuxtConfig({
 				host: 'localhost',
 			},
 		},
+		vue: {
+			template: {
+				compilerOptions: {
+					isCustomElement: (tag: string) => ['emoji-picker'].includes(tag),
+				},
+			},
+		},
 	},
 	hooks: {
 		'nitro:init': (nitro) => {

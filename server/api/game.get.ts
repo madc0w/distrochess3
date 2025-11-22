@@ -168,10 +168,15 @@ async function hydrateGameForUser(
 }
 
 async function buildUserDataMap(game: Game, db: Db) {
+	const candidateIds = [
+		...(game.history?.map((h) => h.userId).filter(Boolean) as ObjectId[]),
+		...(game.whiteUserIds ?? []),
+		...(game.blackUserIds ?? []),
+	];
+
 	const userIds = Array.from(
 		new Set(
-			game.history
-				.map((h) => h.userId)
+			candidateIds
 				.filter((id): id is ObjectId => id != null)
 				.map((id) => id.toString())
 		)

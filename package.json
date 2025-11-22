@@ -12,6 +12,7 @@
 		"@types/jsonwebtoken": "^9.0.10",
 		"canvas-confetti": "^1.9.4",
 		"chess.js": "^1.4.0",
+		"emoji-picker-element": "^1.21.6",
 		"jsonwebtoken": "^9.0.2",
 		"mailjet": "^0.0.1",
 		"mongodb": "^6.6.0",
