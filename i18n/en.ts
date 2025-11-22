@@ -46,9 +46,9 @@ export const en = {
 		featureTitle2: 'Snappy turns',
 		featureCopy2:
 			'Every move replicates worldwide in under a second thanks to the distributed engine powering the board.',
-		featureTitle3: 'Insightful analytics',
+		featureTitle3: 'Team chat',
 		featureCopy3:
-			'Understand streaks, openings, and score deltas with built-in telemetry tuned for async play.',
+			'Talk to your teammates on the same side using the built-in team chat feature. Discuss strategy, share tips, or just cheer each other on.',
 		communityTag: 'Built by ducks',
 		ctaHint: 'Start playing in seconds',
 		languageLabel: 'Language',
