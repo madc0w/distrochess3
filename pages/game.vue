@@ -182,9 +182,17 @@
 									{{ t.teamChat.you }}
 								</span>
 							</span>
-							<span class="chat-time">
-								{{ formatChatTimestamp(msg.createdDateStr) }}
-							</span>
+							<div class="chat-meta-details">
+								<span
+									v-if="typeof msg.moveNumber === 'number'"
+									class="chat-move"
+								>
+									{{ t.teamChat.moveNumberLabel({ move: msg.moveNumber }) }}
+								</span>
+								<span class="chat-time">
+									{{ formatChatTimestamp(msg.createdDateStr) }}
+								</span>
+							</div>
 						</div>
 						<p class="chat-text">{{ msg.message }}</p>
 					</div>
@@ -269,6 +277,7 @@ type TeamChatMessage = {
 	userId: string;
 	message: string;
 	createdDateStr: string;
+	moveNumber: number | null;
 };
 
 type EmojiClickEventDetail = {
@@ -1577,8 +1586,18 @@ onUnmounted(() => {
 .chat-meta {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+	gap: 0.35rem;
+	flex-wrap: wrap;
 	font-size: 0.75rem;
 	color: #64748b;
+}
+
+.chat-meta-details {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	color: inherit;
 }
 
 .chat-author {
@@ -1594,6 +1613,11 @@ onUnmounted(() => {
 	color: #1e3a8a;
 }
 
+.chat-move {
+	font-weight: 600;
+	color: inherit;
+}
+
 .chat-self-tag {
 	margin-left: 0.35rem;
 	padding: 0 0.4rem;
@@ -1607,6 +1631,7 @@ onUnmounted(() => {
 
 .chat-time {
 	color: inherit;
+	white-space: nowrap;
 }
 
 .chat-text {

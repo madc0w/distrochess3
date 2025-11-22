@@ -153,6 +153,7 @@ export const fr: Translations = {
 		emojiToggle: 'Afficher/masquer le sélecteur emoji',
 		loadError: 'Impossible de charger le chat. Veuillez réessayer.',
 		sendError: 'Impossible d’envoyer votre message. Veuillez réessayer.',
+		moveNumberLabel: 'Coup {move}',
 	},
 	moveErrors: {
 		notYourTurnTitle: 'Pas votre tour',

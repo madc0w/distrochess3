@@ -169,6 +169,7 @@ export const en = {
 		emojiToggle: 'Toggle emoji picker',
 		loadError: "Couldn't load chat. Please try again.",
 		sendError: "Couldn't send your message. Please try again.",
+		moveNumberLabel: 'Move {move}',
 	},
 	moveErrors: {
 		notYourTurnTitle: 'Not your turn',
