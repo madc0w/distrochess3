@@ -2,10 +2,35 @@
 	<div class="container" v-cloak>
 		<div class="landing">
 			<div class="topbar">
-				<div class="logo">{{ t.distroChess }}</div>
-				<div class="top-buttons">
-					<NuxtLink to="/signin" class="btn ghost">{{ t.signin }}</NuxtLink>
-					<NuxtLink to="/signup" class="btn primary">{{ t.signup }}</NuxtLink>
+				<div class="logo">
+					<img
+						src="/logo-medium.png"
+						alt="DistroChess logo"
+						class="logo-image"
+					/>
+					<span>{{ t.distroChess }}</span>
+				</div>
+				<div class="top-actions">
+					<label class="language-switcher">
+						<span class="visually-hidden">{{ t.landing.languageLabel }}</span>
+						<select
+							class="language-select"
+							v-model="selectedLocale"
+							:aria-label="t.landing.languageLabel"
+						>
+							<option
+								v-for="option in languageOptions"
+								:key="option.value"
+								:value="option.value"
+							>
+								{{ option.label }}
+							</option>
+						</select>
+					</label>
+					<div class="top-buttons">
+						<NuxtLink to="/signin" class="btn ghost">{{ t.signin }}</NuxtLink>
+						<NuxtLink to="/signup" class="btn primary">{{ t.signup }}</NuxtLink>
+					</div>
 				</div>
 			</div>
 
@@ -26,16 +51,16 @@
 
 			<div class="feature-grid">
 				<div class="feature-card">
-					<h3>{{ t.landing.featureTitleOne }}</h3>
-					<p>{{ t.landing.featureCopyOne }}</p>
+					<h3>{{ t.landing.featureTitle1 }}</h3>
+					<p>{{ t.landing.featureCopy1 }}</p>
 				</div>
 				<div class="feature-card">
-					<h3>{{ t.landing.featureTitleTwo }}</h3>
-					<p>{{ t.landing.featureCopyTwo }}</p>
+					<h3>{{ t.landing.featureTitle2 }}</h3>
+					<p>{{ t.landing.featureCopy2 }}</p>
 				</div>
 				<div class="feature-card">
-					<h3>{{ t.landing.featureTitleThree }}</h3>
-					<p>{{ t.landing.featureCopyThree }}</p>
+					<h3>{{ t.landing.featureTitle3 }}</h3>
+					<p>{{ t.landing.featureCopy3 }}</p>
 				</div>
 			</div>
 
@@ -48,11 +73,27 @@
 import { computed, watchEffect } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
+import { en } from '~/i18n';
 
-const { t } = useI18n();
+const { t, locale, setLocale } = useI18n();
 const { isAuthenticated } = useAuth();
 const router = useRouter();
 const route = useRoute();
+
+type LocaleKey = keyof typeof en.languages;
+const supportedLocales = Object.keys(en.languages) as LocaleKey[];
+
+const languageOptions = computed(() =>
+	supportedLocales.map((code) => ({
+		value: code,
+		label: t.value.languages?.[code] ?? en.languages[code] ?? code,
+	}))
+);
+
+const selectedLocale = computed({
+	get: () => locale.value,
+	set: (nextLocale: string) => setLocale(nextLocale),
+});
 
 const requestedGameId = computed(() => {
 	const raw = Array.isArray(route.query.gameId)
@@ -118,16 +159,69 @@ if (process.client) {
 	gap: 1rem;
 }
 
+.top-actions {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
 .logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
 	font-size: 1.25rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
 	color: #0f1115;
 }
 
+.logo-image {
+	height: 36px;
+	width: auto;
+	display: block;
+}
+
 .top-buttons {
 	display: flex;
 	gap: 0.75rem;
+}
+
+.language-switcher {
+	display: inline-flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.language-select {
+	appearance: none;
+	background-color: #fff;
+	border: 1px solid #cbd5e1;
+	border-radius: 999px;
+	padding: 0.5rem 2rem 0.5rem 0.75rem;
+	font-weight: 600;
+	color: #0f1115;
+	min-width: 160px;
+}
+
+.language-switcher::after {
+	content: '▾';
+	position: absolute;
+	right: 0.85rem;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #64748b;
+	pointer-events: none;
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
 }
 
 .btn {
@@ -259,9 +353,14 @@ if (process.client) {
 @media (max-width: 600px) {
 	.topbar,
 	.hero-cta,
-	.top-buttons {
+	.top-buttons,
+	.top-actions {
 		flex-direction: column;
 		align-items: stretch;
+		width: 100%;
+	}
+
+	.language-select {
 		width: 100%;
 	}
 

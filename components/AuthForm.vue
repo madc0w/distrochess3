@@ -53,6 +53,12 @@
 					/>
 				</div>
 
+				<div v-if="mode === 'signin'" class="form-row">
+					<NuxtLink class="forgot-link" to="/forgot-password">
+						{{ t.forgotPassword }}
+					</NuxtLink>
+				</div>
+
 				<button type="submit" class="primary" :disabled="isLoading">
 					{{ isLoading ? t.pleaseWait : primaryLabel }}
 				</button>
@@ -207,6 +213,22 @@ async function handleSubmit() {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+}
+
+.form-row {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.forgot-link {
+	font-size: 0.9rem;
+	color: #4caf50;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.forgot-link:hover {
+	text-decoration: underline;
 }
 
 .form-group label {

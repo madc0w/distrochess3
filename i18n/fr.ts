@@ -17,12 +17,18 @@ export const fr: Translations = {
 	signup: "S'inscrire",
 	signin: 'Se connecter',
 	signout: 'Se déconnecter',
+	forgotPassword: 'Mot de passe oublié ?',
+	resetPassword: 'Réinitialiser le mot de passe',
 	name: 'Nom',
 	email: 'Email',
 	password: 'Mot de passe',
+	confirmPassword: 'Confirmez le mot de passe',
 	enterName: 'Entrez votre nom (visible publiquement)',
 	enterEmail: 'Entrez votre email',
 	enterPassword: 'Entrez votre mot de passe (min 6 caractères)',
+	enterNewPassword: 'Entrez votre nouveau mot de passe (min 6 caractères)',
+	enterPasswordAgain: 'Saisissez de nouveau votre mot de passe',
+	passwordsMustMatch: 'Les mots de passe doivent correspondre.',
 	pleaseWait: 'Veuillez patienter...',
 	noAccount: "Vous n'avez pas de compte?",
 	haveAccount: 'Vous avez déjà un compte?',
@@ -36,17 +42,18 @@ export const fr: Translations = {
 		headline: 'Des échecs qui suivent votre fuseau horaire.',
 		description:
 			'DistroChess coordonne des parties distribuées, des cotes en direct et des coups asynchrones pour que les équipes jouent quand leurs agendas sont alignés.',
-		featureTitleOne: 'Classement global',
-		featureCopyOne:
+		featureTitle1: 'Classement global',
+		featureCopy1:
 			'Entrez dans un classement permanent et laissez DistroChess vous trouver le prochain adversaire idéal.',
-		featureTitleTwo: 'Coups instantanés',
-		featureCopyTwo:
+		featureTitle2: 'Coups instantanés',
+		featureCopy2:
 			"Chaque coup se réplique dans le monde en moins d'une seconde grâce au moteur distribué.",
-		featureTitleThree: 'Analyses intégrées',
-		featureCopyThree:
+		featureTitle3: 'Analyses intégrées',
+		featureCopy3:
 			'Suivez les séries, les ouvertures et les écarts de score grâce aux métriques pensées pour le jeu asynchrone.',
 		communityTag: 'Construit par la communauté DistroChess',
 		ctaHint: 'Commencez à jouer en quelques secondes',
+		languageLabel: 'Langue',
 	},
 	faq: {
 		linkLabel: 'FAQ',
@@ -97,6 +104,23 @@ export const fr: Translations = {
 		signupSubtitle:
 			"Nous avons seulement besoin d'un nom, d'un email et d'un mot de passe.",
 		backHome: "Retour à l'accueil",
+		forgotPasswordTitle: 'Besoin de réinitialiser votre mot de passe ?',
+		forgotPasswordSubtitle:
+			"Indiquez l'email associé à votre compte et nous vous enverrons un lien sécurisé.",
+		forgotPasswordCta: 'Envoyer le lien de réinitialisation',
+		forgotPasswordSuccessTitle: 'Vérifiez votre boîte mail',
+		forgotPasswordSuccessBody:
+			'Si cet email est enregistré, vous recevrez bientôt un lien de réinitialisation.',
+		resetPasswordTitle: 'Créez un nouveau mot de passe',
+		resetPasswordSubtitle:
+			'Rentrer un nouveau mot de passe pour retrouver l’accès à votre compte.',
+		resetPasswordCta: 'Mettre à jour le mot de passe',
+		resetPasswordSuccessTitle: 'Mot de passe mis à jour',
+		resetPasswordSuccessBody:
+			'Vous pouvez maintenant vous reconnecter avec votre nouveau mot de passe.',
+		resetPasswordExpired:
+			'Ce lien est invalide ou expiré. Demandez un nouveau lien ci-dessous.',
+		backToSignin: 'Retour à la connexion',
 	},
 	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
 	timeRemaining: 'Temps restant',
@@ -180,6 +204,15 @@ export const fr: Translations = {
 			ctaText: 'Visiter DistroChess.com',
 			footer: "À bientôt sur l'échiquier !",
 		},
+		passwordReset: {
+			subject: 'Réinitialisez votre mot de passe DistroChess',
+			greeting: 'Bonjour {name},',
+			body: 'Utilisez le lien sécurisé ci-dessous pour choisir un nouveau mot de passe.',
+			warning:
+				"Ce lien expire dans 60 minutes. Ignorez ce message si vous n'êtes pas à l'origine de la demande.",
+			ctaText: 'Réinitialiser le mot de passe',
+			footer: 'Des questions ? Répondez tout simplement à cet email.',
+		},
 	},
 
 	// Server error codes (dereference these on the client)
@@ -198,6 +231,12 @@ export const fr: Translations = {
 		ERR_UNAUTHORIZED_NO_TOKEN:
 			"Non autorisé : jeton d'authentification manquant",
 		ERR_INVALID_AUTH_TOKEN: "Jeton d'authentification invalide",
+		ERR_FORGOT_PASSWORD_FAILED:
+			'Impossible de traiter votre demande. Veuillez réessayer dans un instant.',
+		ERR_RESET_TOKEN_INVALID:
+			'Ce lien de réinitialisation est invalide ou expiré. Demandez-en un nouveau.',
+		ERR_RESET_PASSWORD_FAILED:
+			'Impossible de réinitialiser votre mot de passe. Veuillez réessayer.',
 		ERR_GENERIC: 'Une erreur est survenue. Veuillez réessayer.',
 	},
 	languages: {

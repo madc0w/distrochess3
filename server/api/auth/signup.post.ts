@@ -1,12 +1,10 @@
 import { createError, defineEventHandler, readBody } from 'h3';
 import jwt from 'jsonwebtoken';
-import { randomBytes, scryptSync } from 'node:crypto';
 import type { UserDoc } from '../../types/user';
 import { sendWelcomeEmail } from '../../utils/email';
+import { normalizeLocale } from '../../utils/locales';
 import { getDb } from '../../utils/mongo';
-
-const SUPPORTED_LOCALES = ['en', 'fr'] as const;
-type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+import { hashPassword } from '../../utils/password';
 
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
@@ -26,20 +24,6 @@ function generateToken(userId: string, email: string, name: string) {
 
 	// No expiration - token is valid forever
 	return jwt.sign(payload, secret);
-}
-
-function hashPassword(password: string): string {
-	const salt = randomBytes(16).toString('hex');
-	const derived = scryptSync(password, salt, 64);
-	return `${salt}:${derived.toString('hex')}`;
-}
-
-function normalizeLocale(value: unknown): SupportedLocale {
-	if (typeof value !== 'string') return 'en';
-	const langCode = value.split('-')[0].toLowerCase();
-	return SUPPORTED_LOCALES.includes(langCode as SupportedLocale)
-		? (langCode as SupportedLocale)
-		: 'en';
 }
 
 export default defineEventHandler(async (event) => {

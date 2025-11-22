@@ -1,8 +1,8 @@
 import { createError, defineEventHandler, readBody } from 'h3';
 import jwt from 'jsonwebtoken';
-import { scryptSync, timingSafeEqual } from 'node:crypto';
 import type { UserDoc } from '../../types/user';
 import { getDb } from '../../utils/mongo';
+import { verifyPassword } from '../../utils/password';
 
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
@@ -22,13 +22,6 @@ function generateToken(userId: string, email: string, name: string) {
 
 	// No expiration - token is valid forever
 	return jwt.sign(payload, secret);
-}
-
-function verifyPassword(password: string, hash: string): boolean {
-	const [salt, key] = hash.split(':');
-	const derived = scryptSync(password, salt, 64);
-	const keyBuffer = Buffer.from(key, 'hex');
-	return timingSafeEqual(derived, keyBuffer);
 }
 
 export default defineEventHandler(async (event) => {
