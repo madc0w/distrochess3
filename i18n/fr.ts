@@ -57,7 +57,7 @@ export const fr: Translations = {
 			"Qu'est-ce que DistroChess ? Comment ça fonctionne ?<br/>Vous êtes un peu perdu et voulez des réponses maintenant. Vous êtes au bon endroit.",
 		lastUpdated: 'Dernière mise à jour novembre 2025',
 		contactPrompt:
-			'Toujours perdu ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous rappellerons sous un jour ouvré.',
+			'Toujours perdu ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous répondrons pour éclaircir tous les mystères de la vie. Sauf les canards. Là, on ne peut rien faire.',
 		backToGame: 'Retour à votre partie',
 		backToLanding: 'Retour à l’accueil',
 		items: [
