@@ -183,12 +183,20 @@
 								</span>
 							</span>
 							<div class="chat-meta-details">
-								<span
+								<button
+									type="button"
 									v-if="typeof msg.moveNumber === 'number'"
 									class="chat-move"
+									@click="handleChatMoveJump(msg.moveNumber)"
+									:aria-label="
+										t.teamChat.moveNumberLabel({ move: msg.moveNumber + 1 })
+									"
+									:title="
+										t.teamChat.moveNumberLabel({ move: msg.moveNumber + 1 })
+									"
 								>
-									{{ t.teamChat.moveNumberLabel({ move: msg.moveNumber }) }}
-								</span>
+									{{ t.teamChat.moveNumberLabel({ move: msg.moveNumber + 1 }) }}
+								</button>
 								<span class="chat-time">
 									{{ formatChatTimestamp(msg.createdDateStr) }}
 								</span>
@@ -419,6 +427,18 @@ function goForward() {
 		historyIndex.value < currentGame.value.history.length - 1
 	)
 		historyIndex.value++;
+}
+
+function jumpToHistoryPosition(targetIndex: number) {
+	if (!currentGame.value || !currentGame.value.history?.length) return;
+	const maxIndex = currentGame.value.history.length - 1;
+	const nextIndex = Math.min(Math.max(0, targetIndex), maxIndex);
+	historyIndex.value = nextIndex;
+}
+
+function handleChatMoveJump(targetIndex: number) {
+	jumpToHistoryPosition(targetIndex);
+	closeChatModal();
 }
 
 const currentMovePlayerData = computed(() => {
@@ -1616,6 +1636,29 @@ onUnmounted(() => {
 .chat-move {
 	font-weight: 600;
 	color: inherit;
+	background: transparent;
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	padding: 0.1rem 0.55rem;
+	font-size: 0.75rem;
+	line-height: 1.2;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-move:hover {
+	background: rgba(15, 23, 42, 0.08);
+}
+
+.chat-message-self .chat-move:hover {
+	background: rgba(30, 58, 138, 0.15);
+}
+
+.chat-move:focus-visible {
+	outline: 2px solid #2563eb;
+	outline-offset: 2px;
 }
 
 .chat-self-tag {
