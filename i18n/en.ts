@@ -15,12 +15,18 @@ export const en = {
 	signup: 'Sign Up',
 	signin: 'Sign In',
 	signout: 'Sign Out',
+	forgotPassword: 'Forgot password?',
+	resetPassword: 'Reset password',
 	name: 'Name',
 	email: 'Email',
 	password: 'Password',
+	confirmPassword: 'Confirm password',
 	enterName: 'Enter your name (publicly visible)',
 	enterEmail: 'Enter your email',
 	enterPassword: 'Enter your password (min 6 characters)',
+	enterNewPassword: 'Enter your new password (min 6 characters)',
+	enterPasswordAgain: 'Re-enter your password',
+	passwordsMustMatch: 'Passwords must match.',
 	pleaseWait: 'Please wait...',
 	noAccount: "Don't have an account?",
 	haveAccount: 'Already have an account?',
@@ -30,21 +36,22 @@ export const en = {
 	yourTurn: "It's your move...",
 	youAre: 'You are',
 	landing: {
-		eyebrow: 'Async chess for builders',
-		headline: 'Chess that keeps pace with your team.',
+		eyebrow: 'Distributed chess, for humans and ducks',
+		headline: 'Keep on playing chess. Forever.',
 		description:
-			'DistroChess coordinates distributed matches, live ratings, and async moves so teams can play whenever time zones align.',
-		featureTitleOne: 'Global ladder',
-		featureCopyOne:
+			'Make a move, get a new game, make another move. Rinse and repeat.',
+		featureTitle1: 'Global ladder',
+		featureCopy1:
 			'Queue into one persistent ladder and let DistroChess match you with the next best opponent automatically.',
-		featureTitleTwo: 'Snappy turns',
-		featureCopyTwo:
+		featureTitle2: 'Snappy turns',
+		featureCopy2:
 			'Every move replicates worldwide in under a second thanks to the distributed engine powering the board.',
-		featureTitleThree: 'Insightful analytics',
-		featureCopyThree:
+		featureTitle3: 'Insightful analytics',
+		featureCopy3:
 			'Understand streaks, openings, and score deltas with built-in telemetry tuned for async play.',
-		communityTag: 'Built by the DistroChess community',
+		communityTag: 'Built by ducks',
 		ctaHint: 'Start playing in seconds',
+		languageLabel: 'Language',
 	},
 	faq: {
 		linkLabel: 'FAQ',
@@ -90,6 +97,23 @@ export const en = {
 		signupTitle: 'Create your DistroChess account.',
 		signupSubtitle: 'We just need a name, email, and password.',
 		backHome: 'Back to home',
+		forgotPasswordTitle: 'Need to reset your password?',
+		forgotPasswordSubtitle:
+			"Enter the email tied to your account and we'll send a secure link.",
+		forgotPasswordCta: 'Send reset link',
+		forgotPasswordSuccessTitle: 'Check your inbox',
+		forgotPasswordSuccessBody:
+			"If that email is registered, you'll get a password reset link shortly.",
+		resetPasswordTitle: 'Create a new password',
+		resetPasswordSubtitle:
+			'Choose a new password to regain access to your DistroChess account.',
+		resetPasswordCta: 'Update password',
+		resetPasswordSuccessTitle: 'Password updated',
+		resetPasswordSuccessBody:
+			"You're all set. Sign in with your new password to get back on the board.",
+		resetPasswordExpired:
+			'That reset link is invalid or has expired. Request a new link below.',
+		backToSignin: 'Back to sign in',
 	},
 
 	close: 'Close',
@@ -105,6 +129,12 @@ export const en = {
 		ERR_SIGNIN_FAILED: 'Sign in failed — please try again.',
 		ERR_UNAUTHORIZED_NO_TOKEN: 'Unauthorized: No authentication token provided',
 		ERR_INVALID_AUTH_TOKEN: 'Invalid authentication token',
+		ERR_FORGOT_PASSWORD_FAILED:
+			"We couldn't process your request. Please try again in a moment.",
+		ERR_RESET_TOKEN_INVALID:
+			'That reset link is invalid or has expired. Request a new one.',
+		ERR_RESET_PASSWORD_FAILED:
+			"We couldn't reset your password. Please try again.",
 		ERR_GENERIC: 'An error occurred. Please try again.',
 	},
 	winCongrats: "Congratulations! You've won the game.",
@@ -185,6 +215,15 @@ export const en = {
 				'Start a match, invite friends, and keep an eye on your live rating from any device.',
 			ctaText: 'Jump back into DistroChess.com',
 			footer: 'See you on the board!',
+		},
+		passwordReset: {
+			subject: 'Reset your DistroChess password',
+			greeting: 'Hi {name},',
+			body: 'Use the secure link below to pick a new password.',
+			warning:
+				'This link expires in 60 minutes. Ignore this email if you did not request a reset.',
+			ctaText: 'Reset password',
+			footer: 'Questions? Just reply to this email.',
 		},
 	},
 	languages: {

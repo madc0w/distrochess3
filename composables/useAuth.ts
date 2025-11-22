@@ -93,6 +93,44 @@ export function useAuth() {
 		auth.value = null;
 	}
 
+	async function requestPasswordReset(email: string) {
+		try {
+			await $fetch('/api/auth/forgot-password', {
+				method: 'POST',
+				body: { email, locale: locale.value },
+			});
+			return { success: true };
+		} catch (error: any) {
+			console.error('Forgot password error:', error);
+			return {
+				success: false,
+				error:
+					translateServerError(error, t.value) ||
+					t.value.errors?.ERR_GENERIC ||
+					'Request failed',
+			};
+		}
+	}
+
+	async function resetPassword(token: string, password: string) {
+		try {
+			await $fetch('/api/auth/reset-password', {
+				method: 'POST',
+				body: { token, password },
+			});
+			return { success: true };
+		} catch (error: any) {
+			console.error('Reset password error:', error);
+			return {
+				success: false,
+				error:
+					translateServerError(error, t.value) ||
+					t.value.errors?.ERR_GENERIC ||
+					'Reset failed',
+			};
+		}
+	}
+
 	function getAuthHeader() {
 		if (auth.value?.token) {
 			return { Authorization: `Bearer ${auth.value.token}` };
@@ -107,6 +145,8 @@ export function useAuth() {
 		signup,
 		signin,
 		signout,
+		requestPasswordReset,
+		resetPassword,
 		getAuthHeader,
 	};
 }
