@@ -54,7 +54,7 @@ export const en = {
 		intro:
 			"What is DistroChess? How does it work?<br/>You're confused, and you want answers now. You've come to the right place.",
 		lastUpdated: 'Last updated November 2025',
-		contactPrompt: `Still confused? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>, and we'll get back to you within one business day.`,
+		contactPrompt: `Still confused? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>, and we'll get back to you with the answers to all of life's mysteries. Except for ducks. We can't help with that.`,
 		backToGame: 'Back to your game',
 		backToLanding: 'Back to home',
 		items: [
@@ -70,7 +70,7 @@ export const en = {
 			},
 			{
 				question: 'How are scores calculated?',
-				answer: `Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this: In the case of a draw, nothing changes. In the case of a win, each winner gets a number of points added which is proprtional to their percentage of participation in the game. Likewise, each loser the same number of points subtracted based on their percentage of participation.`,
+				answer: `Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this: In the case of a draw, nothing changes. In the case of a win, each winner gets a number of points added which is proprtional to their percentage of participation in the game. Likewise, each loser has the same number of points deducted based on their percentage of participation. But don't worry, we won't let your score go below zero.`,
 			},
 			{
 				question:
@@ -80,7 +80,7 @@ export const en = {
 			{
 				question: 'Are ducks allowed to play? Can I play chess with ducks?',
 				answer:
-					"DistroChess welcomes all avian participants, so long as they don't make too much trouble.",
+					"DistroChess welcomes all avian species, so long as they don't make too much trouble.",
 			},
 		],
 	},
