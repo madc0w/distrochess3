@@ -18,6 +18,10 @@
 					<NuxtLink to="/signin" class="btn secondary">{{ t.signin }}</NuxtLink>
 				</div>
 				<p class="cta-hint">{{ t.landing.ctaHint }}</p>
+				<p class="faq-hint">
+					{{ t.faq.ctaPrompt }}
+					<NuxtLink to="/faq" class="faq-link">{{ t.faq.ctaLabel }}</NuxtLink>
+				</p>
 			</div>
 
 			<div class="feature-grid">
@@ -202,6 +206,22 @@ if (process.client) {
 .cta-hint {
 	color: #94a3b8;
 	font-size: 0.95rem;
+}
+
+.faq-hint {
+	color: #475467;
+	font-size: 0.95rem;
+}
+
+.faq-link {
+	color: #4caf50;
+	text-decoration: none;
+	font-weight: 600;
+	margin-left: 0.5rem;
+}
+
+.faq-link:hover {
+	text-decoration: underline;
 }
 
 .feature-grid {

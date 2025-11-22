@@ -5,6 +5,9 @@
 				<h1>{{ t.distroChess }}</h1>
 				<div class="user-info">
 					<span>{{ t.welcome }}, {{ user?.name }}!</span>
+					<NuxtLink to="/faq" class="btn-faq">
+						{{ t.faq.linkLabel }}
+					</NuxtLink>
 					<NuxtLink to="/settings" class="btn-settings">
 						{{ t.settings.button }}
 					</NuxtLink>
@@ -571,6 +574,21 @@ onUnmounted(() => {
 	font-size: 0.9rem;
 	cursor: pointer;
 	transition: background 0.2s;
+}
+
+.btn-faq {
+	padding: 0.45rem 0.9rem;
+	border: 1px solid #e2e8f0;
+	color: #0f172a;
+	border-radius: 999px;
+	font-size: 0.85rem;
+	text-decoration: none;
+	background: #fff;
+	transition: background 0.2s ease;
+}
+
+.btn-faq:hover {
+	background: #f8fafc;
 }
 
 .btn-settings {
