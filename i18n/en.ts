@@ -17,7 +17,7 @@ export const en = {
 	signout: 'Sign Out',
 	forgotPassword: 'Forgot password?',
 	resetPassword: 'Reset password',
-	name: 'Name',
+	name: 'Username',
 	email: 'Email',
 	password: 'Password',
 	confirmPassword: 'Confirm password',
@@ -37,12 +37,12 @@ export const en = {
 	youAre: 'You are',
 	landing: {
 		eyebrow: 'Distributed chess, for humans and ducks',
-		headline: 'Keep on playing chess. Forever.',
+		headline: 'Keep playing. Forever.',
 		description:
 			'Make a move, get a new game, make another move. Rinse and repeat.',
-		featureTitle1: 'Global ladder',
+		featureTitle1: 'Game queue',
 		featureCopy1:
-			'Queue into one persistent ladder and let DistroChess match you with the next best opponent automatically.',
+			'DistroChess matches you with the next available games automatically.',
 		featureTitle2: 'Snappy turns',
 		featureCopy2:
 			'Every move replicates worldwide in under a second thanks to the distributed engine powering the board.',
@@ -74,7 +74,7 @@ export const en = {
 		pageTitle: 'Frequently Asked Questions',
 		intro:
 			"What is DistroChess? How does it work?<br/>You're confused, and you want answers now. You've come to the right place.",
-		lastUpdated: 'Last updated November 2025',
+		lastUpdated: 'Last update: November 2025',
 		contactPrompt: `Still confused? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>, and we'll get back to you with the answers to all of life's mysteries. Except for ducks. We can't help with that.`,
 		backToGame: 'Back to your game',
 		backToLanding: 'Back to home',
@@ -171,6 +171,7 @@ export const en = {
 	gameDrawn: 'Game drawn!',
 	waitingForOpponent: 'Please wait for an opponent to make a move...',
 	timeRemaining: 'Time remaining',
+	pass: 'Pass',
 	loadingGame: 'Loading game...',
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',
@@ -213,6 +214,17 @@ export const en = {
 		readOnly: 'Read only',
 		updateSuccess: 'Settings updated successfully.',
 		backToGames: 'Back to games',
+		duckQuestion: 'How do you feel about ducks?',
+		duckFavor: 'In favor',
+		duckOpposed: 'Opposed',
+		changePassword: 'Change password',
+		changePasswordTitle: 'Change Password',
+		currentPassword: 'Current password',
+		newPassword: 'New password',
+		setNewPassword: 'Set new password',
+		cancel: 'Cancel',
+		incorrectPassword: 'Incorrect password',
+		passwordChanged: 'Password changed successfully.',
 	},
 	subscriptionPages: {
 		common: {
@@ -258,6 +270,44 @@ export const en = {
 	languages: {
 		en: 'English',
 		fr: 'French (Français)',
+	},
+	privacy: {
+		linkLabel: 'Privacy Policy',
+		pageTitle: 'Privacy Policy',
+		lastUpdated: 'Last update: November 2025',
+		contactPrompt: `Questions about your privacy? Email <a href="mailto:support@distrochess.com">support@distrochess.com</a>.`,
+		backToGame: 'Back to your game',
+		backToLanding: 'Back to home',
+		sections: [
+			{
+				title: 'Information We Collect',
+				content: `We collect information you provide when you create an account, including your name and email address. We also collect game data such as moves you make, games you participate in, and your score.`,
+			},
+			{
+				title: 'How We Use Your Information',
+				content: `We use your information to provide and improve our services, including sending you  notifications about your games. Your name is publicly visible to other players.`,
+			},
+			{
+				title: 'Data Storage and Security',
+				content: `We store your data securely using industry-standard practices. Your password is encrypted and we never store it in plain text. We retain your data as long as your account is active.`,
+			},
+			{
+				title: 'Sharing Your Information',
+				content: `<b>We do not sell or share your personal information with any third parties.</b> Your name is visible to other players in the game, but your email address remains private.`,
+			},
+			{
+				title: 'Your Rights',
+				content: `You can update your account information at any time through the settings page. You can also unsubscribe from email notifications. If you wish to delete your account, please contact us at <a href="mailto:support@distrochess.com">support@distrochess.com</a>.`,
+			},
+			{
+				title: 'Cookies and Tracking',
+				content: `We use essential cookies to maintain your session and keep you signed in. We do not use tracking cookies or third-party analytics.`,
+			},
+			{
+				title: 'Changes to This Policy',
+				content: `We may update this privacy policy from time to time. We will notify you of any material changes by email or through a notice on our website.`,
+			},
+		],
 	},
 };
 

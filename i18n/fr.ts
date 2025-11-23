@@ -41,10 +41,10 @@ export const fr: Translations = {
 		eyebrow: 'Échecs asynchrones pour les bâtisseurs',
 		headline: 'Des échecs qui suivent votre fuseau horaire.',
 		description:
-			'DistroChess coordonne des parties distribuées, des cotes en direct et des coups asynchrones pour que les équipes jouent quand leurs agendas sont alignés.',
-		featureTitle1: 'Classement global',
+			'Faites un coup, obtenez une nouvelle partie, faites un autre coup. Répétez encore et encore.',
+		featureTitle1: 'File de parties',
 		featureCopy1:
-			'Entrez dans un classement permanent et laissez DistroChess vous trouver le prochain adversaire idéal.',
+			'DistroChess vous associe automatiquement aux prochaines parties disponibles.',
 		featureTitle2: 'Coups instantanés',
 		featureCopy2:
 			"Chaque coup se réplique dans le monde en moins d'une seconde grâce au moteur distribué.",
@@ -76,7 +76,7 @@ export const fr: Translations = {
 		pageTitle: 'Questions fréquentes',
 		intro:
 			"Qu'est-ce que DistroChess ? Comment ça fonctionne ?<br/>Vous êtes un peu perdu et voulez des réponses maintenant. Vous êtes au bon endroit.",
-		lastUpdated: 'Dernière mise à jour novembre 2025',
+		lastUpdated: 'Dernière mise à jour : novembre 2025',
 		contactPrompt:
 			'Toujours perdu ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>, et nous vous répondrons pour éclaircir tous les mystères de la vie. Sauf les canards. Là, on ne peut rien faire.',
 		backToGame: 'Retour à votre partie',
@@ -138,6 +138,7 @@ export const fr: Translations = {
 	},
 	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
 	timeRemaining: 'Temps restant',
+	pass: 'Passer',
 	loadingGame: 'Chargement du jeu...',
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',
@@ -184,6 +185,17 @@ export const fr: Translations = {
 		readOnly: 'Lecture seule',
 		updateSuccess: 'Paramètres mis à jour avec succès.',
 		backToGames: 'Retour au jeu',
+		duckQuestion: 'Que pensez-vous des canards ?',
+		duckFavor: 'En faveur',
+		duckOpposed: 'Opposé',
+		changePassword: 'Changer le mot de passe',
+		changePasswordTitle: 'Changer le mot de passe',
+		currentPassword: 'Mot de passe actuel',
+		newPassword: 'Nouveau mot de passe',
+		setNewPassword: 'Définir le nouveau mot de passe',
+		cancel: 'Annuler',
+		incorrectPassword: 'Mot de passe incorrect',
+		passwordChanged: 'Mot de passe modifié avec succès.',
 	},
 	subscriptionPages: {
 		common: {
@@ -257,5 +269,43 @@ export const fr: Translations = {
 	languages: {
 		en: 'Anglais (English)',
 		fr: 'Français',
+	},
+	privacy: {
+		linkLabel: 'Politique de confidentialité',
+		pageTitle: 'Politique de confidentialité',
+		lastUpdated: 'Dernière mise à jour : novembre 2025',
+		contactPrompt: `Des questions sur votre vie privée ? Écrivez à <a href="mailto:support@distrochess.com">support@distrochess.com</a>.`,
+		backToGame: 'Retour à votre partie',
+		backToLanding: "Retour à l'accueil",
+		sections: [
+			{
+				title: 'Informations que nous collectons',
+				content: `Nous collectons les informations que vous fournissez lors de la création de votre compte, notamment votre nom et votre adresse e-mail. Nous collectons également les données de jeu telles que les coups que vous jouez, les parties auxquelles vous participez et votre score.`,
+			},
+			{
+				title: 'Comment nous utilisons vos informations',
+				content: `Nous utilisons vos informations pour fournir et améliorer nos services, notamment pour vous associer à des parties, calculer les scores et vous envoyer des notifications importantes concernant vos parties. Votre nom est visible publiquement par les autres joueurs.`,
+			},
+			{
+				title: 'Stockage et sécurité des données',
+				content: `Nous stockons vos données de manière sécurisée en utilisant des pratiques conformes aux normes de l'industrie. Votre mot de passe est crypté et nous ne le stockons jamais en texte clair. Nous conservons vos données tant que votre compte est actif.`,
+			},
+			{
+				title: 'Partage de vos informations',
+				content: `Nous ne vendons ni ne partageons vos informations personnelles avec des tiers. Votre nom est visible par les autres joueurs dans le jeu, mais votre adresse e-mail reste privée.`,
+			},
+			{
+				title: 'Vos droits',
+				content: `Vous pouvez mettre à jour les informations de votre compte à tout moment via la page des paramètres. Vous pouvez également vous désabonner des notifications par e-mail. Si vous souhaitez supprimer votre compte, veuillez nous contacter à <a href="mailto:support@distrochess.com">support@distrochess.com</a>.`,
+			},
+			{
+				title: 'Cookies et suivi',
+				content: `Nous utilisons des cookies essentiels pour maintenir votre session et vous garder connecté. Nous n'utilisons pas de cookies de suivi ni d'analyses tierces.`,
+			},
+			{
+				title: 'Modifications de cette politique',
+				content: `Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de tout changement important par e-mail ou via un avis sur notre site Web.`,
+			},
+		],
 	},
 };

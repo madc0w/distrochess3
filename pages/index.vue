@@ -105,6 +105,12 @@
 			<p class="community-tag animate-in delay-8">
 				{{ t.landing.communityTag }}
 			</p>
+
+			<p class="privacy-link-wrapper animate-in delay-9">
+				<NuxtLink to="/privacy" class="privacy-link">{{
+					t.privacy.linkLabel.toUpperCase()
+				}}</NuxtLink>
+			</p>
 		</div>
 	</div>
 </template>
@@ -136,11 +142,6 @@ const languageOptions = computed(() =>
 		label: t.value.languages?.[code] ?? en.languages[code] ?? code,
 	}))
 );
-
-const selectedLocale = computed({
-	get: () => locale.value,
-	set: (nextLocale: string) => setLocale(nextLocale),
-});
 
 const showLanguageMenu = ref(false);
 const langButton = ref<HTMLElement | null>(null);
@@ -403,7 +404,7 @@ if (process.client) {
 }
 
 .logo-image {
-	height: 36px;
+	height: 60px;
 	width: auto;
 	display: block;
 	border-radius: 8px;
@@ -673,6 +674,9 @@ if (process.client) {
 .delay-8 {
 	animation-delay: 0.8s;
 }
+.delay-9 {
+	animation-delay: 0.9s;
+}
 
 @keyframes slideInUp {
 	from {
@@ -833,6 +837,25 @@ if (process.client) {
 	text-align: center;
 	margin-top: 2rem;
 	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.privacy-link-wrapper {
+	text-align: center;
+	margin-top: 1.5rem;
+}
+
+.privacy-link {
+	color: rgba(255, 255, 255, 0.8);
+	text-decoration: none;
+	font-size: 0.85rem;
+	letter-spacing: 0.1em;
+	transition: all 0.3s ease;
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.privacy-link:hover {
+	color: rgba(255, 255, 255, 1);
+	text-decoration: underline;
 }
 
 /* Mobile optimizations */

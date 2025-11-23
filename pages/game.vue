@@ -15,6 +15,7 @@
 				<div class="user-info">
 					<span>{{ t.youAre }}: {{ user?.name }}</span>
 					<NuxtLink to="/settings" class="btn-settings">
+						<img src="/settings.svg" alt="" class="settings-icon" />
 						{{ t.settings.button }}
 					</NuxtLink>
 					<button
@@ -113,6 +114,15 @@
 						<div class="timer-value" :class="{ warning: timeRemaining < 20 }">
 							{{ formatTime(timeRemaining) }}
 						</div>
+					</div>
+					<div class="pass-btn-container">
+						<button
+							class="btn-pass"
+							@click="handlePass"
+							:disabled="!currentGame"
+						>
+							{{ t.pass }}
+						</button>
 					</div>
 				</div>
 			</div>
@@ -485,6 +495,16 @@ function handleSignout() {
 	resetChatState();
 	currentGame.value = null;
 	router.replace('/');
+}
+
+async function handlePass() {
+	if (!currentGame.value) return;
+
+	const currentGameId = currentGame.value._id;
+	await loadGame({
+		excludeGameId: currentGameId,
+		force: true,
+	});
 }
 
 type LoadGameOptions = {
@@ -1172,17 +1192,28 @@ onUnmounted(() => {
 
 .btn-settings {
 	padding: 0.5rem 1rem;
-	border: 1px solid #74d66d;
-	color: #74d66d;
+	border: 1px solid #5cb85c;
+	background: #5cb85c;
+	color: #fff;
 	border-radius: 4px;
 	font-size: 0.9rem;
+	font-weight: 500;
 	text-decoration: none;
-	transition: background 0.2s, color 0.2s;
+	transition: background 0.2s, transform 0.1s;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.settings-icon {
+	width: 16px;
+	height: 16px;
 }
 
 .btn-settings:hover {
-	background: #74d66d;
-	color: #fff;
+	background: #4a9d4a;
+	border-color: #4a9d4a;
+	transform: translateY(-1px);
 }
 
 .btn-team-chat {
@@ -1297,6 +1328,33 @@ onUnmounted(() => {
 	padding: 1.25rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pass-btn-container {
+	display: flex;
+	justify-content: center;
+	margin-top: 0.5rem;
+}
+
+.btn-pass {
+	padding: 0.35rem 1rem;
+	background: #64748b;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-size: 0.8rem;
+	cursor: pointer;
+	transition: background 0.2s;
+	width: 120px;
+}
+
+.btn-pass:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-pass:not(:disabled):hover {
+	background: #475569;
 }
 
 .timer-section.timer-below {

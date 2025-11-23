@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
 				score: 1,
 				createdDate: 1,
 				preferredLocale: 1,
+				duckOpinion: 1,
 			},
 		}
 	);
@@ -33,5 +34,6 @@ export default defineEventHandler(async (event) => {
 		score: user.score,
 		preferredLocale: user.preferredLocale,
 		createdDate: user.createdDate?.toISOString() ?? null,
+		duckOpinion: user.duckOpinion,
 	};
 });

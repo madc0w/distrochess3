@@ -13,6 +13,7 @@ export interface UserDoc {
 	unsubscribeDate?: Date | null;
 	resetPasswordToken?: string | null;
 	resetPasswordExpires?: Date | null;
+	duckOpinion?: 'favor' | 'opposed';
 }
 
 export interface PublicUser extends Omit<UserDoc, 'passwordHash'> {

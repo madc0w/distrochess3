@@ -20,8 +20,7 @@ function normalizeLocale(value: unknown): SupportedLocale {
 export default defineEventHandler(async (event) => {
 	const userId = verifyAuthToken(event);
 	const body = await readBody(event);
-	const { name, email, preferredLocale } = body || {};
-
+	const { name, email, preferredLocale, duckOpinion } = body || {};
 	if (!name || typeof name !== 'string' || !name.trim()) {
 		throw createError({
 			statusCode: 400,
@@ -52,6 +51,7 @@ export default defineEventHandler(async (event) => {
 				score: 1,
 				createdDate: 1,
 				preferredLocale: 1,
+				duckOpinion: 1,
 			},
 		}
 	);
@@ -76,14 +76,20 @@ export default defineEventHandler(async (event) => {
 		}
 	}
 
+	const updateFields: any = {
+		name: trimmedName,
+		email: normalizedEmail,
+		preferredLocale: normalizedLocale,
+	};
+
+	if (duckOpinion === 'favor' || duckOpinion === 'opposed') {
+		updateFields.duckOpinion = duckOpinion;
+	}
+
 	await users.updateOne(
 		{ _id: userId },
 		{
-			$set: {
-				name: trimmedName,
-				email: normalizedEmail,
-				preferredLocale: normalizedLocale,
-			},
+			$set: updateFields,
 		}
 	);
 
@@ -96,6 +102,7 @@ export default defineEventHandler(async (event) => {
 				score: 1,
 				createdDate: 1,
 				preferredLocale: 1,
+				duckOpinion: 1,
 			},
 		}
 	);
@@ -114,5 +121,6 @@ export default defineEventHandler(async (event) => {
 		score: updatedUser.score,
 		preferredLocale: updatedUser.preferredLocale,
 		createdDate: updatedUser.createdDate?.toISOString() ?? null,
+		duckOpinion: updatedUser.duckOpinion,
 	};
 });

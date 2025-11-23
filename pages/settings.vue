@@ -31,8 +31,20 @@
 						<input id="email" type="email" required v-model="form.email" />
 					</div>
 
+					<div class="form-group form-group-full">
+						<button
+							type="button"
+							class="btn-change-password"
+							@click="openPasswordModal"
+						>
+							{{ t.settings.changePassword }}
+						</button>
+					</div>
+
 					<div class="form-group">
-						<label for="language">{{ t.settings.language }}</label>
+						<label for="language" class="language-label">{{
+							t.settings.language
+						}}</label>
 						<select id="language" v-model="form.preferredLocale">
 							<option
 								v-for="option in languageOptions"
@@ -42,6 +54,30 @@
 								{{ option.label }}
 							</option>
 						</select>
+					</div>
+
+					<div class="form-group form-group-full">
+						<label>{{ t.settings.duckQuestion }}</label>
+						<div class="radio-group">
+							<label class="radio-label">
+								<input
+									type="radio"
+									name="duckOpinion"
+									value="favor"
+									v-model="form.duckOpinion"
+								/>
+								<span>{{ t.settings.duckFavor }}</span>
+							</label>
+							<label class="radio-label">
+								<input
+									type="radio"
+									name="duckOpinion"
+									value="opposed"
+									v-model="form.duckOpinion"
+								/>
+								<span>{{ t.settings.duckOpposed }}</span>
+							</label>
+						</div>
 					</div>
 				</div>
 
@@ -65,12 +101,80 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Change Password Modal -->
+		<Teleport to="body">
+			<div
+				v-if="isShowPasswordModal"
+				class="modal-overlay"
+				@click="closePasswordModal"
+			>
+				<div class="modal-content" @click.stop>
+					<div class="modal-header">
+						<h2>{{ t.settings.changePasswordTitle }}</h2>
+						<button
+							class="close-btn"
+							@click="closePasswordModal"
+							aria-label="Close"
+						>
+							×
+						</button>
+					</div>
+					<form @submit.prevent="handlePasswordChange" class="password-form">
+						<div class="form-group">
+							<label for="currentPassword">{{
+								t.settings.currentPassword
+							}}</label>
+							<input
+								id="currentPassword"
+								type="password"
+								required
+								v-model="passwordForm.currentPassword"
+								:class="{ 'input-error': passwordError }"
+							/>
+							<span v-if="passwordError" class="error-message">{{
+								t.settings.incorrectPassword
+							}}</span>
+						</div>
+						<div class="form-group">
+							<label for="newPassword">{{ t.settings.newPassword }}</label>
+							<input
+								id="newPassword"
+								type="password"
+								required
+								minlength="6"
+								v-model="passwordForm.newPassword"
+							/>
+						</div>
+						<div class="modal-actions">
+							<button
+								type="button"
+								class="btn-secondary"
+								@click="closePasswordModal"
+							>
+								{{ t.settings.cancel }}
+							</button>
+							<button
+								type="submit"
+								class="btn-primary"
+								:disabled="isChangingPassword"
+							>
+								{{
+									isChangingPassword ? t.pleaseWait : t.settings.setNewPassword
+								}}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</Teleport>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { useAuth, type AuthPayload } from '~/composables/useAuth';
+import { useEscapeKey } from '~/composables/useEscapeKey';
 import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
 import { en } from '~/i18n/en';
@@ -95,10 +199,21 @@ const isLoading = ref(false);
 const isSaving = ref(false);
 const error = ref('');
 const success = ref('');
-const form = reactive<Pick<PublicUser, 'name' | 'email' | 'preferredLocale'>>({
+const form = reactive<
+	Pick<PublicUser, 'name' | 'email' | 'preferredLocale' | 'duckOpinion'>
+>({
 	name: '',
 	email: '',
 	preferredLocale: 'en',
+	duckOpinion: undefined,
+});
+
+const isShowPasswordModal = ref(false);
+const isChangingPassword = ref(false);
+const passwordError = ref(false);
+const passwordForm = reactive({
+	currentPassword: '',
+	newPassword: '',
 });
 
 function deserializeUser(user: PublicUserResponse): PublicUser {
@@ -131,7 +246,8 @@ const canSubmit = computed(() => {
 		!isSaving.value &&
 		(form.name !== user.value.name ||
 			form.email !== user.value.email ||
-			locale !== originalLocale)
+			locale !== originalLocale ||
+			form.duckOpinion !== user.value.duckOpinion)
 	);
 });
 
@@ -152,6 +268,7 @@ async function loadProfile() {
 		form.name = user.value.name;
 		form.email = user.value.email;
 		form.preferredLocale = user.value.preferredLocale || 'en';
+		form.duckOpinion = user.value.duckOpinion;
 		setLocale(form.preferredLocale);
 	} catch (err: any) {
 		error.value =
@@ -182,12 +299,14 @@ async function handleSave() {
 				name: form.name,
 				email: form.email,
 				preferredLocale: form.preferredLocale,
+				duckOpinion: form.duckOpinion,
 			},
 		});
 		user.value = deserializeUser(payload);
 		form.name = user.value.name;
 		form.email = user.value.email;
 		form.preferredLocale = user.value.preferredLocale || 'en';
+		form.duckOpinion = user.value.duckOpinion;
 		setLocale(form.preferredLocale);
 		success.value = t.value.settings.updateSuccess;
 		if (authState.value) {
@@ -208,6 +327,67 @@ async function handleSave() {
 		isSaving.value = false;
 	}
 }
+
+function openPasswordModal() {
+	isShowPasswordModal.value = true;
+	passwordError.value = false;
+	passwordForm.currentPassword = '';
+	passwordForm.newPassword = '';
+}
+
+function closePasswordModal() {
+	isShowPasswordModal.value = false;
+	passwordError.value = false;
+	passwordForm.currentPassword = '';
+	passwordForm.newPassword = '';
+}
+
+async function handlePasswordChange() {
+	if (!isAuthenticated.value) return;
+	const headers = getAuthHeader();
+	if (!headers) {
+		await router.replace('/');
+		return;
+	}
+
+	isChangingPassword.value = true;
+	passwordError.value = false;
+	error.value = '';
+	success.value = '';
+
+	try {
+		await $fetch('/api/user/change-password', {
+			method: 'POST',
+			headers,
+			body: {
+				currentPassword: passwordForm.currentPassword,
+				newPassword: passwordForm.newPassword,
+			},
+		});
+
+		success.value = t.value.settings.passwordChanged;
+		closePasswordModal();
+	} catch (err: any) {
+		if (
+			err?.statusCode === 401 &&
+			err?.statusMessage === 'ERR_INCORRECT_PASSWORD'
+		) {
+			passwordError.value = true;
+		} else {
+			error.value =
+				translateServerError(err, t.value) || 'Failed to change password.';
+			closePasswordModal();
+		}
+	} finally {
+		isChangingPassword.value = false;
+	}
+}
+
+useEscapeKey(() => {
+	if (isShowPasswordModal.value) {
+		closePasswordModal();
+	}
+});
 
 watch(
 	() => isAuthenticated.value,
@@ -339,11 +519,59 @@ watch(
 	gap: 1.25rem;
 }
 
+.form-group-full {
+	grid-column: 1 / -1;
+}
+
 .form-group label {
 	display: block;
 	margin-bottom: 0.4rem;
 	font-weight: 600;
 	color: #444;
+}
+
+.form-group .language-label {
+	display: flex !important;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.language-label::before {
+	content: '';
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23444444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	flex-shrink: 0;
+}
+
+.radio-group {
+	display: flex;
+	gap: 1.5rem;
+	margin-top: 0.5rem;
+}
+
+.radio-label {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	cursor: pointer;
+	font-weight: 400;
+	color: #555;
+}
+
+.radio-label input[type='radio'] {
+	width: auto;
+	cursor: pointer;
+	accent-color: #74d66d;
+	margin-right: 0.5rem;
+}
+
+.radio-label span {
+	user-select: none;
 }
 
 .form-group input,
@@ -383,6 +611,145 @@ watch(
 
 .btn-primary:not(:disabled):hover {
 	background: #5ec854;
+}
+
+.btn-change-password {
+	background: transparent;
+	color: #74d66d;
+	border: 1px solid #74d66d;
+	border-radius: 999px;
+	padding: 0.6rem 1.5rem;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.btn-change-password:hover {
+	background: #74d66d;
+	color: #fff;
+}
+
+.btn-secondary {
+	background: #e5e5e5;
+	color: #333;
+	border: none;
+	border-radius: 999px;
+	padding: 0.75rem 1.75rem;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+	background: #d4d4d4;
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.modal-content {
+	background: #fff;
+	border-radius: 16px;
+	padding: 2rem;
+	max-width: 480px;
+	width: 90%;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+	margin: 0;
+	font-size: 1.5rem;
+	color: #222;
+}
+
+.close-btn {
+	background: none;
+	border: none;
+	font-size: 2rem;
+	color: #999;
+	cursor: pointer;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	transition: all 0.2s;
+}
+
+.close-btn:hover {
+	background: #f0f0f0;
+	color: #333;
+}
+
+.password-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.password-form .form-group {
+	margin: 0;
+}
+
+.modal-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+}
+
+.input-error {
+	border-color: #c63737 !important;
+}
+
+.error-message {
+	display: block;
+	color: #c63737;
+	font-size: 0.85rem;
+	margin-top: 0.4rem;
 }
 
 .readonly-grid {

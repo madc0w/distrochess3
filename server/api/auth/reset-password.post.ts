@@ -3,8 +3,7 @@ import { createHash } from 'node:crypto';
 import type { UserDoc } from '../../types/user';
 import { getDb } from '../../utils/mongo';
 import { hashPassword } from '../../utils/password';
-
-const MIN_PASSWORD_LENGTH = 6;
+import { validatePassword } from '../../utils/validation';
 
 function hashToken(token: string): string {
 	return createHash('sha256').update(token).digest('hex');
@@ -22,16 +21,7 @@ export default defineEventHandler(async (event) => {
 			});
 		}
 
-		if (
-			!password ||
-			typeof password !== 'string' ||
-			password.length < MIN_PASSWORD_LENGTH
-		) {
-			throw createError({
-				statusCode: 400,
-				statusMessage: 'ERR_PASSWORD_TOO_SHORT',
-			});
-		}
+		validatePassword(password);
 
 		const hashedToken = hashToken(token);
 		const now = new Date();

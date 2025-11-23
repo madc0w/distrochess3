@@ -5,6 +5,7 @@ import { sendWelcomeEmail } from '../../utils/email';
 import { normalizeLocale } from '../../utils/locales';
 import { getDb } from '../../utils/mongo';
 import { hashPassword } from '../../utils/password';
+import { validatePassword } from '../../utils/validation';
 
 // Generate JWT token (never expires)
 function generateToken(userId: string, email: string, name: string) {
@@ -44,12 +45,7 @@ export default defineEventHandler(async (event) => {
 				statusMessage: 'ERR_NAME_REQUIRED',
 			});
 		}
-		if (!password || typeof password !== 'string' || password.length < 6) {
-			throw createError({
-				statusCode: 400,
-				statusMessage: 'ERR_PASSWORD_TOO_SHORT',
-			});
-		}
+		validatePassword(password);
 
 		const db = await getDb();
 		const users = db.collection<UserDoc>('users');
