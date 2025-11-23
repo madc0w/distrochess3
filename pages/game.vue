@@ -3,7 +3,7 @@
 		<div class="game-container">
 			<div class="game-header">
 				<h1>
-					<img src="/logo-medium.png" alt="DistroChess" class="game-logo" />
+					<img src="/logo-small.jpg" alt="DistroChess" class="game-logo" />
 					<span class="game-title-text">{{ t.distroChess }}</span>
 					<NuxtLink to="/faq" class="btn-faq">
 						{{ t.faq.linkLabel }}

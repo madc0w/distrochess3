@@ -4,7 +4,7 @@
 			<div class="topbar">
 				<div class="logo">
 					<img
-						src="/logo-medium.png"
+						src="/logo-small.jpg"
 						alt="DistroChess logo"
 						class="logo-image"
 					/>
