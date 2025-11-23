@@ -1125,21 +1125,19 @@ function markChatAsRead() {
 }
 
 function updateUnreadCountFromMessages() {
-	if (!chatMessages.value.length) {
+	if (chatMessages.value.length) {
+		if (lastSeenChatTimestamp.value) {
+			const lastSeen = new Date(lastSeenChatTimestamp.value).getTime();
+			chatUnreadCount.value = chatMessages.value.filter((msg) => {
+				const msgTime = new Date(msg.createdDateStr).getTime();
+				return msgTime > lastSeen;
+			}).length;
+		} else {
+			chatUnreadCount.value = chatMessages.value.length;
+		}
+	} else {
 		chatUnreadCount.value = 0;
-		return;
 	}
-	const lastSeen = lastSeenChatTimestamp.value
-		? new Date(lastSeenChatTimestamp.value).getTime()
-		: null;
-	if (!lastSeen) {
-		chatUnreadCount.value = chatMessages.value.length;
-		return;
-	}
-	chatUnreadCount.value = chatMessages.value.filter((msg) => {
-		const msgTime = new Date(msg.createdDateStr).getTime();
-		return msgTime > lastSeen;
-	}).length;
 }
 
 async function scrollChatToBottom() {

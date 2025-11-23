@@ -1,18 +1,18 @@
 <template>
 	<div class="container" v-cloak>
 		<div class="leaderboard-page">
+			<div class="nav-links">
+				<NuxtLink v-if="isAuthenticated" to="/game" class="btn-link">
+					{{ t.leaderboard.backToGame }}
+				</NuxtLink>
+				<NuxtLink v-else to="/" class="btn-link">
+					{{ t.leaderboard.backToHome }}
+				</NuxtLink>
+			</div>
+
 			<div class="page-header">
 				<h1>{{ t.leaderboard.title }}</h1>
 				<p class="subtitle">{{ t.leaderboard.subtitle }}</p>
-			</div>
-
-			<div class="nav-links">
-				<NuxtLink to="/game" class="btn-link">
-					{{ t.leaderboard.backToGame }}
-				</NuxtLink>
-				<NuxtLink to="/" class="btn-link">
-					{{ t.leaderboard.backToHome }}
-				</NuxtLink>
 			</div>
 
 			<div v-if="isLoading" class="loading-state">
@@ -24,17 +24,16 @@
 				<p>{{ errorMessage }}</p>
 			</div>
 
-			<div v-else-if="!players.length" class="empty-state">
-				<p>{{ t.leaderboard.noPlayers }}</p>
-			</div>
-
-			<div v-else class="leaderboard-table">
+			<div v-else-if="players.length" class="leaderboard-table">
 				<table>
 					<thead>
 						<tr>
 							<th class="rank-col">{{ t.leaderboard.rank }}</th>
 							<th class="name-col">{{ t.leaderboard.player }}</th>
 							<th class="score-col">{{ t.leaderboard.score }}</th>
+							<th class="stat-col">{{ t.leaderboard.wins }}</th>
+							<th class="stat-col">{{ t.leaderboard.losses }}</th>
+							<th class="stat-col">{{ t.leaderboard.draws }}</th>
 							<th class="date-col">{{ t.leaderboard.memberSince }}</th>
 						</tr>
 					</thead>
@@ -61,21 +60,32 @@
 							<td class="score-col">
 								{{ Math.round(player.score) }}
 							</td>
+							<td class="stat-col">
+								{{ player.wins }}
+							</td>
+							<td class="stat-col">
+								{{ player.losses }}
+							</td>
+							<td class="stat-col">
+								{{ player.draws }}
+							</td>
 							<td class="date-col">
-								{{
-									formatMemberSince(player.createdDate, user?.preferredLocale)
-								}}
+								{{ formatMemberSince(player.createdDate, timeAgoTranslations) }}
 							</td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div v-else class="empty-state">
+				<p>{{ t.leaderboard.noPlayers }}</p>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+const { isAuthenticated } = useAuth();
+import { computed, onMounted, ref } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
@@ -86,6 +96,34 @@ definePageMeta({
 });
 
 const { t } = useI18n();
+
+const timeAgoTranslations = computed(() => ({
+	today: t.value.leaderboard.timeAgo.today,
+	day:
+		typeof t.value.leaderboard.timeAgo.day === 'function'
+			? t.value.leaderboard.timeAgo.day()
+			: t.value.leaderboard.timeAgo.day,
+	days:
+		typeof t.value.leaderboard.timeAgo.days === 'function'
+			? t.value.leaderboard.timeAgo.days()
+			: t.value.leaderboard.timeAgo.days,
+	month:
+		typeof t.value.leaderboard.timeAgo.month === 'function'
+			? t.value.leaderboard.timeAgo.month()
+			: t.value.leaderboard.timeAgo.month,
+	months:
+		typeof t.value.leaderboard.timeAgo.months === 'function'
+			? t.value.leaderboard.timeAgo.months()
+			: t.value.leaderboard.timeAgo.months,
+	year:
+		typeof t.value.leaderboard.timeAgo.year === 'function'
+			? t.value.leaderboard.timeAgo.year()
+			: t.value.leaderboard.timeAgo.year,
+	years:
+		typeof t.value.leaderboard.timeAgo.years === 'function'
+			? t.value.leaderboard.timeAgo.years()
+			: t.value.leaderboard.timeAgo.years,
+}));
 const { user, getAuthHeader } = useAuth();
 
 type Player = {
@@ -93,6 +131,9 @@ type Player = {
 	name: string;
 	score: number;
 	createdDate: Date | string | null;
+	wins: number;
+	losses: number;
+	draws: number;
 };
 
 const players = ref<Player[]>([]);
@@ -100,21 +141,27 @@ const isLoading = ref(false);
 const errorMessage = ref('');
 
 async function fetchLeaderboard() {
+	console.log('[Client] Starting fetchLeaderboard...');
 	isLoading.value = true;
 	errorMessage.value = '';
 
 	try {
-		const authHeaders = getAuthHeader();
+		console.log('[Client] Calling $fetch...');
 		const response = await $fetch<Player[]>('/api/leaderboard', {
-			...(authHeaders ? { headers: authHeaders } : {}),
+			timeout: 10000, // 10 second timeout
 		});
 
+		console.log('[Client] Got response:', response);
 		players.value = response;
+		console.log('[Client] Players set:', players.value);
 	} catch (err: any) {
+		console.error('[Client] Failed to fetch leaderboard:', err);
 		errorMessage.value =
 			translateServerError(err, t.value) || t.value.errors.ERR_GENERIC;
 	} finally {
+		console.log('[Client] Setting isLoading to false');
 		isLoading.value = false;
+		console.log('[Client] isLoading is now:', isLoading.value);
 	}
 }
 
@@ -133,6 +180,7 @@ onMounted(() => {
 
 .leaderboard-page {
 	padding: 1rem 0;
+	position: relative;
 }
 
 .page-header {
@@ -155,25 +203,33 @@ onMounted(() => {
 }
 
 .nav-links {
+	position: absolute;
+	top: 0;
+	right: 0;
 	display: flex;
-	justify-content: center;
 	gap: 1rem;
-	margin-bottom: 2rem;
 	flex-wrap: wrap;
+	z-index: 10;
 }
 
 .btn-link {
-	padding: 0.6rem 1.25rem;
-	border: 1px solid #74d66d;
-	color: #74d66d;
+	padding: 0.75rem 1.5rem;
+	border: 2px solid #74d66d;
+	color: white;
 	text-decoration: none;
-	font-size: 0.95rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+	background: #74d66d;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	transition: all 0.2s;
+	border-radius: 4px;
 }
 
 .btn-link:hover {
-	background: #74d66d;
+	background: #5fc158;
 	color: white;
+	box-shadow: 0 4px 8px rgba(116, 214, 109, 0.3);
+	transform: translateY(-1px);
 }
 
 .loading-state,
@@ -252,6 +308,11 @@ th:last-child {
 
 .score-col {
 	width: 120px;
+	text-align: center;
+}
+
+.stat-col {
+	width: 80px;
 	text-align: center;
 }
 

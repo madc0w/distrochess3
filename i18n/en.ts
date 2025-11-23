@@ -60,12 +60,24 @@ export const en = {
 		rank: 'Rank',
 		player: 'Player',
 		score: 'Score',
+		wins: 'Wins',
+		losses: 'Losses',
+		draws: 'Draws',
 		memberSince: 'Member Since',
 		you: 'You',
 		loading: 'Loading leaderboard...',
 		noPlayers: 'No players yet',
 		backToGame: 'Back to game',
 		backToHome: 'Back to home',
+		timeAgo: {
+			today: 'Today',
+			day: '{count} day',
+			days: '{count} days',
+			month: '{count} month',
+			months: '{count} months',
+			year: '{count} year',
+			years: '{count} years',
+		},
 	},
 	faq: {
 		linkLabel: 'FAQ',
@@ -271,6 +283,7 @@ export const en = {
 	languages: {
 		en: 'English',
 		fr: 'French (Français)',
+		de: 'German (Deutsch)',
 	},
 	privacy: {
 		linkLabel: 'Privacy Policy',

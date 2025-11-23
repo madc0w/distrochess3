@@ -40,7 +40,15 @@ export function formatDateOnly(
 
 export function formatMemberSince(
 	value: DateInput,
-	locale = 'en',
+	translations: {
+		today: string;
+		day: string;
+		days: string;
+		month: string;
+		months: string;
+		year: string;
+		years: string;
+	},
 	fallback = '--'
 ): string {
 	const date = toDate(value);
@@ -51,28 +59,20 @@ export function formatMemberSince(
 	const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
 	if (diffDays < 1) {
-		return locale === 'fr' ? "Aujourd'hui" : 'Today';
+		return translations.today;
 	} else if (diffDays === 1) {
-		return locale === 'fr' ? '1 jour' : '1 day';
+		return translations.day.replace('{count}', '1');
 	} else if (diffDays < 30) {
-		return locale === 'fr' ? `${diffDays} jours` : `${diffDays} days`;
+		return translations.days.replace('{count}', String(diffDays));
 	} else if (diffDays < 365) {
 		const months = Math.floor(diffDays / 30);
-		return locale === 'fr'
-			? months === 1
-				? '1 mois'
-				: `${months} mois`
-			: months === 1
-			? '1 month'
-			: `${months} months`;
+		return months === 1
+			? translations.month.replace('{count}', '1')
+			: translations.months.replace('{count}', String(months));
 	} else {
 		const years = Math.floor(diffDays / 365);
-		return locale === 'fr'
-			? years === 1
-				? '1 an'
-				: `${years} ans`
-			: years === 1
-			? '1 year'
-			: `${years} years`;
+		return years === 1
+			? translations.year.replace('{count}', '1')
+			: translations.years.replace('{count}', String(years));
 	}
 }
