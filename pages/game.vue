@@ -52,29 +52,38 @@
 					/>
 
 					<div class="parent-history-bar">
-						<div class="history-message" v-if="isViewingHistory">
-							{{ t.gameHistory }}
-						</div>
-						<div class="history-controls">
-							<button
-								class="history-btn"
-								@click.prevent="goBack"
-								:disabled="isAtStart"
-								:aria-label="t.previousPosition"
+						<div class="history-row">
+							<span v-if="isViewingHistory" class="history-pill">
+								{{ t.gameHistory }}
+							</span>
+							<div class="history-controls">
+								<button
+									class="history-btn"
+									@click.prevent="goBack"
+									:disabled="isAtStart"
+									:aria-label="t.previousPosition"
+								>
+									‹
+								</button>
+								<span class="history-pos"
+									>{{ historyIndex + 1 }} / {{ totalPositions }}</span
+								>
+								<button
+									class="history-btn"
+									@click.prevent="goForward"
+									:disabled="isAtEnd"
+									:aria-label="t.nextPosition"
+								>
+									›
+								</button>
+							</div>
+							<span
+								v-if="isViewingHistory"
+								class="history-pill history-pill--ghost"
+								aria-hidden="true"
 							>
-								‹
-							</button>
-							<span class="history-pos"
-								>{{ historyIndex + 1 }} / {{ totalPositions }}</span
-							>
-							<button
-								class="history-btn"
-								@click.prevent="goForward"
-								:disabled="isAtEnd"
-								:aria-label="t.nextPosition"
-							>
-								›
-							</button>
+								{{ t.gameHistory }}
+							</span>
 						</div>
 
 						<div
@@ -1347,11 +1356,37 @@ onUnmounted(() => {
 	position: relative;
 }
 
+.parent-history-bar .history-row {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.65rem;
+	flex-wrap: wrap;
+}
+
 .parent-history-bar .history-controls {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 12px;
+}
+
+.parent-history-bar .history-pill {
+	font-weight: 700;
+	color: #1e293b;
+	background: #e2e8f0;
+	border: 1px solid #cbd5f5;
+	border-radius: 999px;
+	padding: 0.25rem 0.85rem;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.parent-history-bar .history-pill.history-pill--ghost {
+	visibility: hidden;
+	pointer-events: none;
 }
 
 .parent-history-bar .history-btn {
@@ -1410,12 +1445,6 @@ onUnmounted(() => {
 .parent-history-bar .move-name {
 	color: #333;
 	font-weight: 500;
-}
-
-.parent-history-bar .history-message {
-	font-weight: 600;
-	color: #444;
-	margin-bottom: 4px;
 }
 
 .parent-history-bar .history-btn[disabled] {
