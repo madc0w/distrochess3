@@ -13,11 +13,72 @@
 					</NuxtLink>
 				</h1>
 				<div class="user-info">
-					<span>{{ t.youAre }}: {{ user?.name }}</span>
-					<NuxtLink to="/settings" class="btn-settings">
-						<img src="/settings.svg" alt="" class="settings-icon" />
-						{{ t.settings.button }}
-					</NuxtLink>
+					<div class="profile-dropdown">
+						<button
+							class="btn-profile"
+							@click="toggleProfileMenu"
+							:aria-label="t.profile || 'Profile'"
+							ref="profileButton"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 512 512"
+								width="24"
+								height="24"
+								fill="currentColor"
+							>
+								<path
+									d="M256 0c141.385 0 256 114.615 256 256S397.385 512 256 512 0 397.385 0 256 114.615 0 256 0zm0 480c123.712 0 224-100.288 224-224S379.712 32 256 32 32 132.288 32 256s100.288 224 224 224z"
+								/>
+								<path
+									d="M256 192c35.346 0 64-28.654 64-64s-28.654-64-64-64-64 28.654-64 64 28.654 64 64 64zm0-96c17.673 0 32 14.327 32 32s-14.327 32-32 32-32-14.327-32-32 14.327-32 32-32zm116.8 192c-22.4-28.8-67.2-48-116.8-48s-94.4 19.2-116.8 48c-6.4 9.6-9.6 19.2-9.6 32 0 35.2 28.8 64 64 64h128c35.2 0 64-28.8 64-64 0-12.8-3.2-22.4-12.8-32zm-180.8 64c-17.6 0-32-14.4-32-32 0-3.2 0-6.4 3.2-9.6 12.8-19.2 51.2-38.4 92.8-38.4s80 19.2 92.8 38.4c3.2 3.2 3.2 6.4 3.2 9.6 0 17.6-14.4 32-32 32H192z"
+								/>
+							</svg>
+						</button>
+						<Teleport to="body">
+							<div
+								v-if="isShowingProfileMenu"
+								class="profile-menu"
+								:style="profileMenuPosition"
+							>
+								<div class="profile-menu-header">
+									<strong>{{ displayUser?.name }}</strong>
+								</div>
+								<div class="profile-menu-item">
+									<span class="profile-label">Score:</span>
+									<span class="profile-value">{{
+										Math.round(displayUser?.score ?? 0)
+									}}</span>
+								</div>
+								<div class="profile-menu-item">
+									<span class="profile-label">Wins:</span>
+									<span class="profile-value">{{
+										displayUser?.wins?.length ?? 0
+									}}</span>
+								</div>
+								<div class="profile-menu-item">
+									<span class="profile-label">Losses:</span>
+									<span class="profile-value">{{
+										displayUser?.losses?.length ?? 0
+									}}</span>
+								</div>
+								<div class="profile-menu-item">
+									<span class="profile-label">Draws:</span>
+									<span class="profile-value">{{
+										displayUser?.draws?.length ?? 0
+									}}</span>
+								</div>
+								<div class="profile-menu-divider"></div>
+								<button
+									class="profile-menu-settings"
+									@click="navigateToSettings"
+								>
+									<img src="/settings.svg" alt="" class="settings-icon-small" />
+									{{ t.settings.button }}
+								</button>
+							</div>
+						</Teleport>
+					</div>
 					<button
 						class="btn-team-chat"
 						@click="toggleChatModal"
@@ -267,7 +328,7 @@
 <script setup lang="ts">
 import { Chess } from 'chess.js';
 import 'emoji-picker-element';
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import ChessBoard from '~/components/ChessBoard.vue';
 import { useAuth } from '~/composables/useAuth';
 import { useEscapeKey } from '~/composables/useEscapeKey';
@@ -341,6 +402,11 @@ const isMoveErrorModalVisible = ref(false);
 const moveErrorModalMessage = ref('');
 const moveErrorModalTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
 
+const isShowingProfileMenu = ref(false);
+const profileButton = ref<HTMLElement | null>(null);
+const profileMenuPosition = ref({});
+const freshUserData = ref<any>(null);
+
 const requestedGameId = computed(() => {
 	const raw = Array.isArray(route.query.gameId)
 		? route.query.gameId[0]
@@ -366,12 +432,69 @@ const canUseTeamChat = computed(() => {
 	return Boolean(currentGame.value?._id && userTeamSide.value);
 });
 
+const displayUser = computed(() => freshUserData.value || user.value);
+
+async function fetchFreshUserData() {
+	const headers = getAuthHeader();
+	if (!headers) return;
+	try {
+		const data = await $fetch('/api/user', { headers });
+		freshUserData.value = data;
+	} catch (err) {
+		console.error('Failed to fetch user data:', err);
+	}
+}
+
 function listIncludesUser(list: any[] = [], value?: string | null) {
 	if (!value) return false;
 	return list.some((entry) => entry?.toString?.() === value);
 }
 
+const toggleProfileMenu = () => {
+	isShowingProfileMenu.value = !isShowingProfileMenu.value;
+
+	if (isShowingProfileMenu.value) {
+		fetchFreshUserData();
+		if (profileButton.value) {
+			nextTick(() => {
+				const rect = profileButton.value!.getBoundingClientRect();
+				profileMenuPosition.value = {
+					position: 'fixed',
+					top: `${rect.bottom + 8}px`,
+					right: `${window.innerWidth - rect.right}px`,
+					zIndex: 999999,
+				};
+			});
+		}
+	}
+};
+
+const navigateToSettings = () => {
+	isShowingProfileMenu.value = false;
+	router.push('/settings');
+};
+
+if (process.client) {
+	onMounted(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const target = event.target as HTMLElement;
+			if (!target.closest('.profile-dropdown')) {
+				isShowingProfileMenu.value = false;
+			}
+		};
+		document.addEventListener('click', handleClickOutside);
+		onUnmounted(() => {
+			document.removeEventListener('click', handleClickOutside);
+		});
+	});
+}
+
 useEscapeKey((event) => {
+	if (isShowingProfileMenu.value) {
+		isShowingProfileMenu.value = false;
+		event.preventDefault();
+		return;
+	}
 	if (isChatOpen.value) {
 		closeChatModal();
 		event.preventDefault();
@@ -1190,8 +1313,96 @@ onUnmounted(() => {
 	background: #f8fafc;
 }
 
-.btn-settings {
+.profile-dropdown {
+	position: relative;
+	z-index: 100000;
+}
+
+.btn-profile {
+	padding: 0.5rem;
+	border: 2px solid #5cb85c;
+	background: #5cb85c;
+	color: #fff;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+}
+
+.btn-profile:hover {
+	background: #4a9d4a;
+	border-color: #4a9d4a;
+	transform: scale(1.1);
+}
+
+.btn-profile svg {
+	width: 24px;
+	height: 24px;
+}
+
+.profile-menu {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+	min-width: 220px;
+	animation: slideDownMenu 0.2s ease-out;
+	pointer-events: auto;
+}
+
+@keyframes slideDownMenu {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.profile-menu-header {
+	padding: 1rem;
+	background: #f9f9f9;
+	border-bottom: 1px solid #eee;
+	text-align: center;
+	font-size: 1rem;
+	color: #333;
+}
+
+.profile-menu-item {
+	padding: 0.75rem 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #f5f5f5;
+	font-size: 0.9rem;
+}
+
+.profile-label {
+	color: #666;
+	font-weight: 500;
+}
+
+.profile-value {
+	color: #333;
+	font-weight: 600;
+}
+
+.profile-menu-divider {
+	height: 1px;
+	background: #ddd;
+	margin: 0.5rem 0;
+}
+
+.profile-menu-settings {
 	padding: 0.5rem 1rem;
+	margin: 0.75rem;
 	border: 1px solid #5cb85c;
 	background: #5cb85c;
 	color: #fff;
@@ -1202,18 +1413,23 @@ onUnmounted(() => {
 	transition: background 0.2s, transform 0.1s;
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 0.4rem;
+	width: calc(100% - 1.5rem);
+	box-sizing: border-box;
+	cursor: pointer;
+	font-family: inherit;
 }
 
-.settings-icon {
-	width: 16px;
-	height: 16px;
-}
-
-.btn-settings:hover {
+.profile-menu-settings:hover {
 	background: #4a9d4a;
 	border-color: #4a9d4a;
 	transform: translateY(-1px);
+}
+
+.settings-icon-small {
+	width: 16px;
+	height: 16px;
 }
 
 .btn-team-chat {

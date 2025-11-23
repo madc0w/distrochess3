@@ -9,6 +9,12 @@ export type AuthPayload = {
 		email: string;
 		name: string;
 		preferredLocale?: string;
+		score: number;
+		wins?: string[];
+		losses?: string[];
+		draws?: string[];
+		unsubscribeDate?: Date | null;
+		duckOpinion?: 'favor' | 'opposed';
 	};
 	token: string;
 };
