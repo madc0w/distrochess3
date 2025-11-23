@@ -149,6 +149,7 @@ export const fr: Translations = {
 	winCongrats: 'Félicitations ! Vous avez gagné la partie.',
 	gameDrawn: 'Partie nulle !',
 	gameHistory: 'Historique de la partie',
+	exitHistory: "Quitter l'historique",
 	unknownPlayer: 'Inconnu',
 	moveBy: 'Coup joué par :',
 	lastMoveBy: 'Dernier coup par :',

@@ -176,6 +176,7 @@ export const en = {
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',
 	gameHistory: 'Game history',
+	exitHistory: 'Exit history',
 	requestedGameNotFound:
 		"We couldn't find that game. Loading your next available game instead.",
 	requestedGameNotAvailable:
@@ -185,8 +186,8 @@ export const en = {
 	lastMoveBy: 'Last move by:',
 	score: 'Score',
 	teamChat: {
-		button: 'Team chat',
-		title: 'Team chat',
+		button: 'Team Chat',
+		title: 'Team Chat',
 		subtitle: 'Only teammates on your side can read these messages.',
 		placeholder: 'Share your plan or encouragement...',
 		send: 'Send',

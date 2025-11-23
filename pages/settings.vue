@@ -130,9 +130,9 @@
 								type="password"
 								required
 								v-model="passwordForm.currentPassword"
-								:class="{ 'input-error': passwordError }"
+								:class="{ 'input-error': isPasswordError }"
 							/>
-							<span v-if="passwordError" class="error-message">{{
+							<span v-if="isPasswordError" class="error-message">{{
 								t.settings.incorrectPassword
 							}}</span>
 						</div>
@@ -210,7 +210,7 @@ const form = reactive<
 
 const isShowPasswordModal = ref(false);
 const isChangingPassword = ref(false);
-const passwordError = ref(false);
+const isPasswordError = ref(false);
 const passwordForm = reactive({
 	currentPassword: '',
 	newPassword: '',
@@ -330,14 +330,14 @@ async function handleSave() {
 
 function openPasswordModal() {
 	isShowPasswordModal.value = true;
-	passwordError.value = false;
+	isPasswordError.value = false;
 	passwordForm.currentPassword = '';
 	passwordForm.newPassword = '';
 }
 
 function closePasswordModal() {
 	isShowPasswordModal.value = false;
-	passwordError.value = false;
+	isPasswordError.value = false;
 	passwordForm.currentPassword = '';
 	passwordForm.newPassword = '';
 }
@@ -351,7 +351,7 @@ async function handlePasswordChange() {
 	}
 
 	isChangingPassword.value = true;
-	passwordError.value = false;
+	isPasswordError.value = false;
 	error.value = '';
 	success.value = '';
 
@@ -372,7 +372,7 @@ async function handlePasswordChange() {
 			err?.statusCode === 401 &&
 			err?.statusMessage === 'ERR_INCORRECT_PASSWORD'
 		) {
-			passwordError.value = true;
+			isPasswordError.value = true;
 		} else {
 			error.value =
 				translateServerError(err, t.value) || 'Failed to change password.';
@@ -447,17 +447,22 @@ watch(
 .back-link {
 	align-self: center;
 	text-decoration: none;
-	color: #74d66d;
-	font-weight: 600;
-	border: 1px solid #74d66d;
-	padding: 0.5rem 1rem;
+	color: #fff;
+	background: #74d66d;
+	font-weight: 700;
+	font-size: 1rem;
+	border: 2px solid #74d66d;
+	padding: 0.75rem 1.5rem;
 	border-radius: 999px;
-	transition: background 0.2s, color 0.2s;
+	transition: all 0.2s;
+	box-shadow: 0 2px 8px rgba(116, 214, 109, 0.3);
 }
 
 .back-link:hover {
-	background: #74d66d;
-	color: #fff;
+	background: #5ec854;
+	border-color: #5ec854;
+	box-shadow: 0 4px 12px rgba(116, 214, 109, 0.4);
+	transform: translateY(-1px);
 }
 
 .alert {
@@ -614,20 +619,23 @@ watch(
 }
 
 .btn-change-password {
-	background: transparent;
-	color: #74d66d;
-	border: 1px solid #74d66d;
+	background: #74d66d;
+	color: #fff;
+	border: 2px solid #74d66d;
 	border-radius: 999px;
-	padding: 0.6rem 1.5rem;
-	font-size: 0.95rem;
-	font-weight: 600;
+	padding: 0.75rem 1.75rem;
+	font-size: 1rem;
+	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s;
+	box-shadow: 0 2px 8px rgba(116, 214, 109, 0.3);
 }
 
 .btn-change-password:hover {
-	background: #74d66d;
-	color: #fff;
+	background: #5ec854;
+	border-color: #5ec854;
+	box-shadow: 0 4px 12px rgba(116, 214, 109, 0.4);
+	transform: translateY(-1px);
 }
 
 .btn-secondary {

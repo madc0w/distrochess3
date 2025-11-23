@@ -118,9 +118,13 @@
 
 					<div class="parent-history-bar">
 						<div class="history-row">
-							<span v-if="isViewingHistory" class="history-pill">
-								{{ t.gameHistory }}
-							</span>
+							<button
+								v-if="isViewingHistory"
+								class="history-pill history-pill-btn"
+								@click="exitHistory"
+							>
+								{{ t.exitHistory }}
+							</button>
 							<div class="history-controls">
 								<button
 									class="history-btn"
@@ -147,7 +151,7 @@
 								class="history-pill history-pill--ghost"
 								aria-hidden="true"
 							>
-								{{ t.gameHistory }}
+								{{ t.exitHistory }}
 							</span>
 						</div>
 
@@ -572,6 +576,11 @@ function goForward() {
 		historyIndex.value < currentGame.value.history.length - 1
 	)
 		historyIndex.value++;
+}
+
+function exitHistory() {
+	if (!currentGame.value) return;
+	historyIndex.value = currentGame.value.history.length - 1;
 }
 
 function jumpToHistoryPosition(targetIndex: number) {
@@ -1290,27 +1299,30 @@ onUnmounted(() => {
 	padding: 0.5rem 1rem;
 	background: #f44336;
 	color: white;
-	border: none;
+	border: 1px solid #f44336;
 	border-radius: 4px;
 	font-size: 0.9rem;
+	font-weight: 500;
 	cursor: pointer;
-	transition: background 0.2s;
+	transition: all 0.2s ease;
 }
 
 .btn-faq {
-	padding: 0.45rem 0.9rem;
-	border: 1px solid #e2e8f0;
-	color: #0f172a;
-	border-radius: 999px;
-	font-size: 0.85rem;
+	padding: 0.5rem 1rem;
+	border: 1px solid #5cb85c;
+	color: #fff;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	font-weight: 500;
 	text-decoration: none;
-	background: #fff;
-	transition: background 0.2s ease;
+	background: #5cb85c;
+	transition: all 0.2s ease;
 	margin-left: 0.75rem;
 }
 
 .btn-faq:hover {
-	background: #f8fafc;
+	background: #4a9d4a;
+	border-color: #4a9d4a;
 }
 
 .profile-dropdown {
@@ -1439,11 +1451,12 @@ onUnmounted(() => {
 	background: #2563eb;
 	color: #fff;
 	font-size: 0.9rem;
+	font-weight: 500;
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
-	transition: background 0.2s ease, opacity 0.2s ease;
+	transition: all 0.2s ease;
 }
 
 .btn-team-chat:disabled {
@@ -1453,6 +1466,7 @@ onUnmounted(() => {
 
 .btn-team-chat:not(:disabled):hover {
 	background: #1d4ed8;
+	border-color: #1d4ed8;
 }
 
 .chat-badge {
@@ -1467,6 +1481,7 @@ onUnmounted(() => {
 
 .btn-signout:hover {
 	background: #d32f2f;
+	border-color: #d32f2f;
 }
 
 .game-status {
@@ -1553,14 +1568,15 @@ onUnmounted(() => {
 }
 
 .btn-pass {
-	padding: 0.35rem 1rem;
+	padding: 0.5rem 1rem;
 	background: #64748b;
 	color: white;
-	border: none;
+	border: 1px solid #64748b;
 	border-radius: 4px;
-	font-size: 0.8rem;
+	font-size: 0.9rem;
+	font-weight: 500;
 	cursor: pointer;
-	transition: background 0.2s;
+	transition: all 0.2s ease;
 	width: 120px;
 }
 
@@ -1571,6 +1587,7 @@ onUnmounted(() => {
 
 .btn-pass:not(:disabled):hover {
 	background: #475569;
+	border-color: #475569;
 }
 
 .timer-section.timer-below {
@@ -1659,6 +1676,18 @@ onUnmounted(() => {
 	font-size: 0.85rem;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
+}
+
+.parent-history-bar .history-pill-btn {
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-family: inherit;
+}
+
+.parent-history-bar .history-pill-btn:hover {
+	background: #cbd5e1;
+	border-color: #94a3b8;
+	transform: translateY(-1px);
 }
 
 .parent-history-bar .history-pill.history-pill--ghost {
