@@ -28,8 +28,8 @@
 
 		<section class="faq-list">
 			<article v-for="item in faqs" :key="item.question" class="faq-item">
-				<h2>{{ item.question }}</h2>
-				<p>{{ item.answer }}</p>
+				<h2 v-html="item.question"></h2>
+				<p v-html="item.answer"></p>
 			</article>
 		</section>
 

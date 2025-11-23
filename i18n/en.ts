@@ -53,6 +53,20 @@ export const en = {
 		ctaHint: 'Start playing in seconds',
 		languageLabel: 'Language',
 	},
+	leaderboard: {
+		linkLabel: 'Leaderboard',
+		title: 'Leaderboard',
+		subtitle: 'Top players by score',
+		rank: 'Rank',
+		player: 'Player',
+		score: 'Score',
+		memberSince: 'Member Since',
+		you: 'You',
+		loading: 'Loading leaderboard...',
+		noPlayers: 'No players yet',
+		backToGame: 'Back to game',
+		backToHome: 'Back to home',
+	},
 	faq: {
 		linkLabel: 'FAQ',
 		ctaPrompt: 'Need more details?',
@@ -77,12 +91,22 @@ export const en = {
 			},
 			{
 				question: 'How are scores calculated?',
-				answer: `Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this: In the case of a draw, nothing changes. In the case of a win, each winner gets a number of points added which is proprtional to their percentage of participation in the game. Likewise, each loser has the same number of points deducted based on their percentage of participation. But don't worry, we won't let your score go below zero.`,
+				answer: `<p>Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this:</p>
+				<ul style="margin: 1rem 0; padding-left: 1.5rem;">
+					<li style="margin-bottom: 0.5rem;">In the case of a draw, nothing changes.</li>
+					<li style="margin-bottom: 0.5rem;">In the case of a win, each winner gets a number of points added which is proportional to their percentage of participation in the game. Likewise, each loser has the same number of points deducted based on their percentage of participation.</li>
+				</ul>
+				<p>But don't worry, we won't let your score go below zero.</p>`,
 			},
 			{
 				question:
 					'What if nobody wants to make a move, for example if position is hopeless? How to resign?',
 				answer: `After 48 hours of inactivity in a game, the system will first notify all players on the side to move. If still nobody has made a move after another 24 hours, then the game will be auto-resigned, and points allocated accordingly.`,
+			},
+			{
+				question: 'Just... why?',
+				answer:
+					"I was bored, OK?<br/>This is now the third iteration of this idea. The last time was back in 2019, and I saw several hundred players sign up back then. Let's see if this duck can still fly in 2025.",
 			},
 			{
 				question: 'Are ducks allowed to play? Can I play chess with ducks?',

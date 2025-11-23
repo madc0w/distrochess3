@@ -8,6 +8,9 @@
 					<NuxtLink to="/faq" class="btn-faq">
 						{{ t.faq.linkLabel }}
 					</NuxtLink>
+					<NuxtLink to="/leaderboard" class="btn-faq">
+						{{ t.leaderboard.linkLabel }}
+					</NuxtLink>
 				</h1>
 				<div class="user-info">
 					<span>{{ t.youAre }}: {{ user?.name }}</span>
