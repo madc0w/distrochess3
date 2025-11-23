@@ -183,7 +183,7 @@ async function handleSubmit() {
 	text-transform: uppercase;
 	font-size: 0.75rem;
 	letter-spacing: 0.2em;
-	color: #4caf50;
+	color: #74d66d;
 	margin-bottom: 0.5rem;
 }
 
@@ -217,8 +217,8 @@ async function handleSubmit() {
 
 .form-group input:focus {
 	outline: none;
-	border-color: #4caf50;
-	box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+	border-color: #74d66d;
+	box-shadow: 0 0 0 2px rgba(116, 214, 109, 0.15);
 }
 
 .alert {

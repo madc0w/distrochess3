@@ -124,9 +124,9 @@ const faqs = computed(() => t.value.faq.items ?? []);
 }
 
 .btn.primary {
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
-	box-shadow: 0 10px 20px rgba(76, 175, 80, 0.25);
+	box-shadow: 0 10px 20px rgba(116, 214, 109, 0.25);
 }
 
 .btn.primary:hover {
@@ -135,8 +135,8 @@ const faqs = computed(() => t.value.faq.items ?? []);
 
 .btn.secondary {
 	background: #fff;
-	color: #4caf50;
-	border-color: #4caf50;
+	color: #74d66d;
+	border-color: #74d66d;
 }
 
 .btn.ghost {
@@ -155,7 +155,7 @@ const faqs = computed(() => t.value.faq.items ?? []);
 	text-transform: uppercase;
 	letter-spacing: 0.3em;
 	font-size: 0.7rem;
-	color: #4caf50;
+	color: #74d66d;
 }
 
 .faq-hero h1 {

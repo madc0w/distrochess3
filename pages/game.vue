@@ -1172,8 +1172,8 @@ onUnmounted(() => {
 
 .btn-settings {
 	padding: 0.5rem 1rem;
-	border: 1px solid #4caf50;
-	color: #4caf50;
+	border: 1px solid #74d66d;
+	color: #74d66d;
 	border-radius: 4px;
 	font-size: 0.9rem;
 	text-decoration: none;
@@ -1181,7 +1181,7 @@ onUnmounted(() => {
 }
 
 .btn-settings:hover {
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
 }
 
@@ -1247,7 +1247,7 @@ onUnmounted(() => {
 	width: 50px;
 	height: 50px;
 	border: 4px solid #f3f3f3;
-	border-top: 4px solid #4caf50;
+	border-top: 4px solid #74d66d;
 	border-radius: 50%;
 	animation: spin 1s linear infinite;
 	margin: 0 auto;
@@ -1326,7 +1326,7 @@ onUnmounted(() => {
 }
 
 .timer-value {
-	color: #4caf50;
+	color: #74d66d;
 	font-weight: bold;
 	font-size: 1.5rem;
 	font-family: 'Courier New', monospace;
@@ -1515,7 +1515,7 @@ onUnmounted(() => {
 
 .win-title {
 	font-size: 2.2rem;
-	color: #4caf50;
+	color: #74d66d;
 	margin: 0;
 }
 
@@ -1529,7 +1529,7 @@ onUnmounted(() => {
 .close-btn {
 	padding: 0.75rem 2rem;
 	font-size: 1.1rem;
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
 	border: none;
 	border-radius: 8px;

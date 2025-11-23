@@ -267,16 +267,16 @@ watch(
 .back-link {
 	align-self: center;
 	text-decoration: none;
-	color: #4caf50;
+	color: #74d66d;
 	font-weight: 600;
-	border: 1px solid #4caf50;
+	border: 1px solid #74d66d;
 	padding: 0.5rem 1rem;
 	border-radius: 999px;
 	transition: background 0.2s, color 0.2s;
 }
 
 .back-link:hover {
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
 }
 
@@ -313,7 +313,7 @@ watch(
 	width: 42px;
 	height: 42px;
 	border: 4px solid #e5e5e5;
-	border-top-color: #4caf50;
+	border-top-color: #74d66d;
 	border-radius: 50%;
 	animation: spin 1s linear infinite;
 }
@@ -359,13 +359,13 @@ watch(
 .form-group input:focus,
 .form-group select:focus {
 	outline: none;
-	border-color: #4caf50;
-	box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+	border-color: #74d66d;
+	box-shadow: 0 0 0 3px rgba(116, 214, 109, 0.15);
 }
 
 .btn-primary {
 	align-self: flex-start;
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
 	border: none;
 	border-radius: 999px;
@@ -377,12 +377,12 @@ watch(
 }
 
 .btn-primary:disabled {
-	background: #cdd5ce;
+	background: #d4e8d2;
 	cursor: not-allowed;
 }
 
 .btn-primary:not(:disabled):hover {
-	background: #43a047;
+	background: #5ec854;
 }
 
 .readonly-grid {

@@ -81,20 +81,24 @@ export const en = {
 		items: [
 			{
 				question: 'How are game matches made?',
-				answer:
-					'You will be presented with a game in which either you have never played, or you are playing on the side whose turn it is. If no such game exists, you will wait for one to become available, when one of your oppoenents makes a move. Once in a while, you might get a fresh new game instead.',
+				answer: `You will be presented with a game in which either:
+					<ul style="margin: 1rem 0; padding-left: 1.5rem;">
+						<li>you haven't played yet, or</li>
+						<li>you are playing for the current side</li>
+					</ul>
+					 If no such game exists, you will wait for one to become available, when one of your opponents makes a move. Once in a while, you might get a fresh new game instead.`,
 			},
 			{
 				question: 'What happens when I finish a move?',
 				answer:
-					'The next available game will be presented to you automatically, so you can keep playing without delay. If no game is currently available, you will wait until one of your opponents makes a move.',
+					'The next available game will be presented to you automatically after you make your move, so you can keep playing without delay. If no game is currently available, you will wait until one of your opponents makes a move.',
 			},
 			{
 				question: 'How are scores calculated?',
 				answer: `<p>Each player begins with a score of 1000. When a game completes, scores for all participating players are adjusted like this:</p>
 				<ul style="margin: 1rem 0; padding-left: 1.5rem;">
-					<li style="margin-bottom: 0.5rem;">In the case of a draw, nothing changes.</li>
-					<li style="margin-bottom: 0.5rem;">In the case of a win, each winner gets a number of points added which is proportional to their percentage of participation in the game. Likewise, each loser has the same number of points deducted based on their percentage of participation.</li>
+					<li>In the case of a draw, nothing changes.</li>
+					<li>In the case of a win, each winner gets a number of points added which is proportional to their percentage of participation in the game. Likewise, each loser a proportional number of points deducted based on their percentage of participation.</li>
 				</ul>
 				<p>But don't worry, we won't let your score go below zero.</p>`,
 			},

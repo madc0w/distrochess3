@@ -27,24 +27,35 @@
 					<NuxtLink to="/faq" class="btn-faq">
 						{{ t.faq.linkLabel }}
 					</NuxtLink>
+					<div class="language-dropdown">
+						<button
+							class="btn-lang"
+							@click="toggleLanguageMenu"
+							:aria-label="t.landing.languageLabel"
+							ref="langButton"
+						>
+							{{ locale.toUpperCase() }}
+						</button>
+						<Teleport to="body">
+							<div
+								v-if="showLanguageMenu"
+								class="language-menu"
+								:style="menuPosition"
+							>
+								<button
+									v-for="option in languageOptions"
+									:key="option.value"
+									class="language-option"
+									:class="{ active: locale === option.value }"
+									@click="selectLanguage(option.value)"
+								>
+									{{ option.label }}
+								</button>
+							</div>
+						</Teleport>
+					</div>
 				</div>
 				<div class="top-actions">
-					<label class="language-switcher">
-						<span class="visually-hidden">{{ t.landing.languageLabel }}</span>
-						<select
-							class="language-select"
-							v-model="selectedLocale"
-							:aria-label="t.landing.languageLabel"
-						>
-							<option
-								v-for="option in languageOptions"
-								:key="option.value"
-								:value="option.value"
-							>
-								{{ option.label }}
-							</option>
-						</select>
-					</label>
 					<div class="top-buttons">
 						<NuxtLink to="/signin" class="btn ghost">{{ t.signin }}</NuxtLink>
 						<NuxtLink to="/signup" class="btn primary glow">{{
@@ -99,7 +110,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue';
+import {
+	computed,
+	nextTick,
+	onMounted,
+	onUnmounted,
+	ref,
+	watchEffect,
+} from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
 import { en } from '~/i18n';
@@ -124,6 +142,38 @@ const selectedLocale = computed({
 	set: (nextLocale: string) => setLocale(nextLocale),
 });
 
+const showLanguageMenu = ref(false);
+const langButton = ref<HTMLElement | null>(null);
+const menuPosition = ref({});
+
+const toggleLanguageMenu = () => {
+	showLanguageMenu.value = !showLanguageMenu.value;
+
+	if (showLanguageMenu.value && langButton.value) {
+		nextTick(() => {
+			const rect = langButton.value!.getBoundingClientRect();
+			menuPosition.value = {
+				position: 'fixed',
+				top: `${rect.bottom + 8}px`,
+				right: `${window.innerWidth - rect.right}px`,
+				zIndex: 999999,
+			};
+		});
+	}
+};
+
+const selectLanguage = (lang: string) => {
+	setLocale(lang);
+	showLanguageMenu.value = false;
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+	const target = event.target as HTMLElement;
+	if (!target.closest('.language-dropdown')) {
+		showLanguageMenu.value = false;
+	}
+};
+
 const requestedGameId = computed(() => {
 	const raw = Array.isArray(route.query.gameId)
 		? route.query.gameId[0]
@@ -132,6 +182,14 @@ const requestedGameId = computed(() => {
 });
 
 if (process.client) {
+	onMounted(() => {
+		document.addEventListener('click', handleClickOutside);
+	});
+
+	onUnmounted(() => {
+		document.removeEventListener('click', handleClickOutside);
+	});
+
 	watchEffect(() => {
 		const gameId = requestedGameId.value;
 		if (isAuthenticated.value) {
@@ -160,7 +218,7 @@ if (process.client) {
 	padding: 1.25rem;
 	min-height: 100vh;
 	position: relative;
-	overflow: hidden;
+	overflow: visible;
 	animation: fadeInPage 0.15s ease-out;
 }
 
@@ -183,61 +241,23 @@ if (process.client) {
 	width: 100%;
 	height: 100%;
 	z-index: -2;
-	background: linear-gradient(
-		135deg,
-		#667eea 0%,
-		#764ba2 25%,
-		#f093fb 50%,
-		#4facfe 75%,
-		#00f2fe 100%
-	);
-	background-size: 400% 400%;
-	animation: gradientShift 15s ease infinite;
-}
-
-@keyframes gradientShift {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+	background: #1a4d2e;
 }
 
 .gradient-orb {
-	position: absolute;
-	border-radius: 50%;
-	filter: blur(80px);
-	opacity: 0.6;
-	animation: float 20s ease-in-out infinite;
+	display: none;
 }
 
 .orb-1 {
-	width: 500px;
-	height: 500px;
-	background: radial-gradient(circle, rgba(76, 175, 80, 0.8), transparent);
-	top: -10%;
-	left: -10%;
-	animation-delay: 0s;
+	display: none;
 }
 
 .orb-2 {
-	width: 400px;
-	height: 400px;
-	background: radial-gradient(circle, rgba(79, 172, 254, 0.8), transparent);
-	bottom: -10%;
-	right: -10%;
-	animation-delay: -7s;
+	display: none;
 }
 
 .orb-3 {
-	width: 600px;
-	height: 600px;
-	background: radial-gradient(circle, rgba(240, 147, 251, 0.6), transparent);
-	top: 40%;
+	display: none;
 	right: 20%;
 	animation-delay: -14s;
 }
@@ -345,6 +365,8 @@ if (process.client) {
 	align-items: center;
 	gap: 1rem;
 	animation: slideDown 0.6s ease-out;
+	position: relative;
+	z-index: 10000;
 }
 
 @keyframes slideDown {
@@ -405,44 +427,94 @@ if (process.client) {
 	background: rgba(255, 255, 255, 0.25);
 }
 
+.language-dropdown {
+	position: relative;
+	margin-left: 0.5rem;
+	z-index: 100000;
+}
+
+.btn-lang {
+	padding: 0.45rem 0.75rem;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	color: #ffffff;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.15);
+	backdrop-filter: blur(10px);
+	transition: all 0.2s ease;
+	cursor: pointer;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.btn-lang::before {
+	content: '';
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.btn-lang:hover {
+	background: rgba(255, 255, 255, 0.25);
+	transform: scale(1.05);
+}
+
+.language-menu {
+	background: rgba(255, 255, 255, 0.98);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
+	min-width: 140px;
+	animation: slideDownMenu 0.2s ease-out;
+	pointer-events: auto;
+}
+
+@keyframes slideDownMenu {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.language-option {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: none;
+	background: transparent;
+	color: #0f1115;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.language-option:hover {
+	background: rgba(116, 214, 109, 0.15);
+}
+
+.language-option.active {
+	background: rgba(116, 214, 109, 0.25);
+	font-weight: 600;
+}
+
 .top-buttons {
 	display: flex;
 	gap: 0.75rem;
-}
-
-.language-switcher {
-	display: inline-flex;
-	flex-direction: column;
-	position: relative;
-}
-
-.language-select {
-	appearance: none;
-	background: rgba(255, 255, 255, 0.95);
-	backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	border-radius: 999px;
-	padding: 0.5rem 2rem 0.5rem 0.75rem;
-	font-weight: 600;
-	color: #0f1115;
-	min-width: 160px;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.language-select:hover {
-	background: rgba(255, 255, 255, 1);
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.language-switcher::after {
-	content: '▾';
-	position: absolute;
-	right: 0.85rem;
-	top: 50%;
-	transform: translateY(-50%);
-	color: #64748b;
-	pointer-events: none;
 }
 
 .visually-hidden {
@@ -489,7 +561,7 @@ if (process.client) {
 }
 
 .btn.primary {
-	background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+	background: linear-gradient(135deg, #74d66d 0%, #5ec854 100%);
 	color: #fff;
 	box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
 	position: relative;
@@ -765,16 +837,22 @@ if (process.client) {
 
 /* Mobile optimizations */
 @media (max-width: 600px) {
-	.topbar,
-	.hero-cta,
-	.top-buttons,
-	.top-actions {
+	.topbar {
 		flex-direction: column;
 		align-items: stretch;
 		width: 100%;
 	}
 
-	.language-select {
+	.logo {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.hero-cta,
+	.top-buttons,
+	.top-actions {
+		flex-direction: column;
+		align-items: stretch;
 		width: 100%;
 	}
 

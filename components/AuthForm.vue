@@ -180,7 +180,7 @@ async function handleSubmit() {
 	text-transform: uppercase;
 	font-size: 0.75rem;
 	letter-spacing: 0.2em;
-	color: #4caf50;
+	color: #74d66d;
 	margin-bottom: 0.5rem;
 }
 
@@ -200,7 +200,7 @@ async function handleSubmit() {
 }
 
 .switch-link {
-	color: #4caf50;
+	color: #74d66d;
 	font-weight: 600;
 	text-decoration: none;
 }
@@ -222,7 +222,7 @@ async function handleSubmit() {
 
 .forgot-link {
 	font-size: 0.9rem;
-	color: #4caf50;
+	color: #74d66d;
 	text-decoration: none;
 	font-weight: 500;
 }
@@ -248,12 +248,12 @@ async function handleSubmit() {
 
 .form-group input:focus {
 	outline: none;
-	border-color: #4caf50;
-	box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+	border-color: #74d66d;
+	box-shadow: 0 0 0 2px rgba(116, 214, 109, 0.15);
 }
 
 .primary {
-	background: #4caf50;
+	background: #74d66d;
 	color: #fff;
 	border: none;
 	padding: 0.9rem;
@@ -271,7 +271,7 @@ async function handleSubmit() {
 
 .primary:hover:not(:disabled) {
 	transform: translateY(-1px);
-	box-shadow: 0 12px 30px rgba(76, 175, 80, 0.25);
+	box-shadow: 0 12px 30px rgba(116, 214, 109, 0.25);
 }
 
 .error {

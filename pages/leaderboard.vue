@@ -164,15 +164,15 @@ onMounted(() => {
 
 .btn-link {
 	padding: 0.6rem 1.25rem;
-	border: 1px solid #4caf50;
-	color: #4caf50;
+	border: 1px solid #74d66d;
+	color: #74d66d;
 	text-decoration: none;
 	font-size: 0.95rem;
 	transition: all 0.2s;
 }
 
 .btn-link:hover {
-	background: #4caf50;
+	background: #74d66d;
 	color: white;
 }
 
@@ -184,10 +184,10 @@ onMounted(() => {
 }
 
 .loading-spinner {
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	border: 4px solid #f3f3f3;
-	border-top: 4px solid #4caf50;
+	border-top: 4px solid #74d66d;
 	border-radius: 50%;
 	animation: spin 1s linear infinite;
 	margin: 0 auto 1.5rem;
@@ -326,7 +326,7 @@ tbody tr:nth-child(3) .rank-badge {
 	display: inline-block;
 	margin-left: 0.5rem;
 	padding: 0.15rem 0.5rem;
-	background: #4caf50;
+	background: #74d66d;
 	color: white;
 	border-radius: 12px;
 	font-size: 0.75rem;
