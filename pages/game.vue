@@ -213,8 +213,12 @@
 		</div>
 	</div>
 
-	<div v-if="isShowWinModal" class="modal-overlay">
-		<div class="modal-content">
+	<div
+		v-if="isShowWinModal"
+		class="modal-overlay"
+		@click="isShowWinModal = false"
+	>
+		<div class="modal-content" @click.stop>
 			<div class="win-header">
 				<span class="win-icon" aria-hidden="true">🎉</span>
 				<h1 class="win-title">{{ t.winCongrats }}</h1>
@@ -228,8 +232,12 @@
 			</button>
 		</div>
 	</div>
-	<div v-else-if="isShowDrawModal" class="modal-overlay">
-		<div class="modal-content">
+	<div
+		v-else-if="isShowDrawModal"
+		class="modal-overlay"
+		@click="isShowDrawModal = false"
+	>
+		<div class="modal-content" @click.stop>
 			<h1 class="win-title">{{ t.gameDrawn }}</h1>
 			<button class="close-btn" @click="isShowDrawModal = false">
 				{{ t.close }}
@@ -237,15 +245,23 @@
 		</div>
 	</div>
 
-	<div v-if="isMoveErrorModalVisible" class="modal-overlay error-modal">
-		<div class="modal-content error-modal-content">
+	<div
+		v-if="isMoveErrorModalVisible"
+		class="modal-overlay error-modal"
+		@click="hideMoveErrorModal"
+	>
+		<div class="modal-content error-modal-content" @click.stop>
 			<h2 class="error-title">{{ t.moveErrors.notYourTurnTitle }}</h2>
 			<p class="error-message">{{ moveErrorModalMessage }}</p>
 		</div>
 	</div>
 
-	<div v-if="isOfferDrawModalVisible" class="modal-overlay">
-		<div class="modal-content">
+	<div
+		v-if="isOfferDrawModalVisible"
+		class="modal-overlay"
+		@click="isOfferDrawModalVisible = false"
+	>
+		<div class="modal-content" @click.stop>
 			<h2 class="modal-title">{{ t.drawOffer.title }}</h2>
 			<p class="modal-message" v-html="t.drawOffer.message"></p>
 			<div class="modal-actions">
@@ -259,12 +275,17 @@
 		</div>
 	</div>
 
-	<div v-if="isChatOpen" class="modal-overlay chat-overlay">
+	<div
+		v-if="isChatOpen"
+		class="modal-overlay chat-overlay"
+		@click="closeChatModal"
+	>
 		<div
 			class="chat-modal"
 			role="dialog"
 			aria-modal="true"
 			:aria-label="t.teamChat.title"
+			@click.stop
 		>
 			<div class="chat-header">
 				<div>
