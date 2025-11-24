@@ -113,7 +113,9 @@
 						:fen="displayFen"
 						:player-color="playerColor"
 						:is-viewing-history="isViewingHistory"
+						:is-draw-offered="isDrawOfferedToUser"
 						@move="handleMove"
+						@blocked-move="handleBlockedMove"
 					/>
 
 					<div class="parent-history-bar">
@@ -173,20 +175,44 @@
 					</div>
 				</div>
 				<div class="timer-section timer-below">
-					<h3>{{ t.yourTurn }}</h3>
-					<div class="timer">
+					<h3 v-if="!isDrawOfferedToUser">{{ t.yourTurn }}</h3>
+					<h3 v-else class="draw-offered-title">{{ t.drawOffered.title }}</h3>
+					<div class="timer" v-if="!isDrawOfferedToUser">
 						<div class="timer-label">{{ t.timeRemaining }}:</div>
 						<div class="timer-value" :class="{ warning: timeRemaining < 20 }">
 							{{ formatTime(timeRemaining) }}
 						</div>
 					</div>
-					<div class="pass-btn-container">
+					<div v-if="isDrawOfferedToUser" class="draw-offered-actions">
+						<button
+							:class="['btn-accept-draw', { pulse: isPulsingDrawButtons }]"
+							@click="handleAcceptDraw"
+							:disabled="!currentGame"
+						>
+							{{ t.drawOffered.accept }}
+						</button>
+						<button
+							:class="['btn-decline-draw', { pulse: isPulsingDrawButtons }]"
+							@click="handleDeclineDraw"
+							:disabled="!currentGame"
+						>
+							{{ t.drawOffered.decline }}
+						</button>
+					</div>
+					<div v-else class="pass-btn-container">
 						<button
 							class="btn-pass"
 							@click="handlePass"
 							:disabled="!currentGame"
 						>
 							{{ t.pass }}
+						</button>
+						<button
+							class="btn-offer-draw"
+							@click="showOfferDrawModal"
+							:disabled="!currentGame || !canOfferDraw"
+						>
+							{{ t.offerDraw }}
 						</button>
 					</div>
 				</div>
@@ -222,6 +248,21 @@
 		<div class="modal-content error-modal-content">
 			<h2 class="error-title">{{ t.moveErrors.notYourTurnTitle }}</h2>
 			<p class="error-message">{{ moveErrorModalMessage }}</p>
+		</div>
+	</div>
+
+	<div v-if="isOfferDrawModalVisible" class="modal-overlay">
+		<div class="modal-content">
+			<h2 class="modal-title">{{ t.drawOffer.title }}</h2>
+			<p class="modal-message" v-html="t.drawOffer.message"></p>
+			<div class="modal-actions">
+				<button class="btn-primary" @click="handleOfferDraw">
+					{{ t.drawOffer.confirm }}
+				</button>
+				<button class="btn-secondary" @click="isOfferDrawModalVisible = false">
+					{{ t.drawOffer.cancel }}
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -410,6 +451,16 @@ const isShowingProfileMenu = ref(false);
 const profileButton = ref<HTMLElement | null>(null);
 const profileMenuPosition = ref({});
 const freshUserData = ref<any>(null);
+const isOfferDrawModalVisible = ref(false);
+const isPulsingDrawButtons = ref(false);
+
+const isDrawOfferedToUser = computed(() => {
+	if (!currentGame.value || !user.value) return false;
+	const drawOfferUserId = currentGame.value.drawOfferUserId;
+	if (!drawOfferUserId) return false;
+	// Draw is offered TO the current user if someone else offered it
+	return drawOfferUserId.toString() !== user.value._id.toString();
+});
 
 const requestedGameId = computed(() => {
 	const raw = Array.isArray(route.query.gameId)
@@ -499,6 +550,11 @@ useEscapeKey((event) => {
 		event.preventDefault();
 		return;
 	}
+	if (isOfferDrawModalVisible.value) {
+		isOfferDrawModalVisible.value = false;
+		event.preventDefault();
+		return;
+	}
 	if (isChatOpen.value) {
 		closeChatModal();
 		event.preventDefault();
@@ -564,6 +620,12 @@ const isAtStart = computed(() => historyIndex.value <= 0);
 const isAtEnd = computed(() => {
 	if (!currentGame.value) return true;
 	return historyIndex.value >= currentGame.value.history.length - 1;
+});
+
+const canOfferDraw = computed(() => {
+	if (!currentGame.value) return false;
+	// Allow draw offers only after more than 6 moves
+	return (currentGame.value.history?.length ?? 0) > 6;
 });
 
 function goBack() {
@@ -637,6 +699,76 @@ async function handlePass() {
 		excludeGameId: currentGameId,
 		force: true,
 	});
+}
+
+function showOfferDrawModal() {
+	isOfferDrawModalVisible.value = true;
+}
+
+async function handleOfferDraw() {
+	if (!currentGame.value) return;
+	isOfferDrawModalVisible.value = false;
+
+	try {
+		const authHeaders = getAuthHeader();
+		await $fetch('/api/draw-offer', {
+			method: 'POST',
+			body: { gameId: currentGame.value._id },
+			headers: authHeaders,
+		});
+		// Load next game after offering draw
+		await loadGame({
+			excludeGameId: currentGame.value._id,
+			force: true,
+		});
+	} catch (e: any) {
+		const friendly = translateServerError(e, t.value) || 'Failed to offer draw';
+		console.error('Error offering draw:', friendly, e);
+	}
+}
+
+async function handleAcceptDraw() {
+	if (!currentGame.value) return;
+
+	try {
+		const authHeaders = getAuthHeader();
+		await $fetch('/api/draw-respond', {
+			method: 'POST',
+			body: { gameId: currentGame.value._id, accept: true },
+			headers: authHeaders,
+		});
+		isShowDrawModal.value = true;
+		await loadGame({
+			excludeGameId: currentGame.value._id,
+			force: true,
+		});
+	} catch (e: any) {
+		const friendly =
+			translateServerError(e, t.value) || 'Failed to accept draw';
+		console.error('Error accepting draw:', friendly, e);
+	}
+}
+
+async function handleDeclineDraw() {
+	if (!currentGame.value) return;
+
+	try {
+		const authHeaders = getAuthHeader();
+		await $fetch('/api/draw-respond', {
+			method: 'POST',
+			body: { gameId: currentGame.value._id, accept: false },
+			headers: authHeaders,
+		});
+		// Immediately load next game after declining
+		await loadGame({
+			excludeGameId: currentGame.value._id,
+			force: true,
+		});
+	} catch (e: any) {
+		const friendly =
+			translateServerError(e, t.value) || 'Failed to decline draw';
+		console.error('Error declining draw:', friendly, e);
+	}
 }
 
 type LoadGameOptions = {
@@ -774,6 +906,14 @@ type MoveResponse = {
 	success: boolean;
 	result: any;
 };
+
+function handleBlockedMove() {
+	// Trigger pulse animation when move is blocked due to draw offer
+	isPulsingDrawButtons.value = true;
+	setTimeout(() => {
+		isPulsingDrawButtons.value = false;
+	}, 600);
+}
 
 async function handleMove(move: {
 	from: string;
@@ -1558,7 +1698,9 @@ onUnmounted(() => {
 .pass-btn-container {
 	display: flex;
 	justify-content: center;
+	gap: 0.75rem;
 	margin-top: 0.5rem;
+	flex-wrap: wrap;
 }
 
 .btn-pass {
@@ -1582,6 +1724,107 @@ onUnmounted(() => {
 .btn-pass:not(:disabled):hover {
 	background: #475569;
 	border-color: #475569;
+}
+
+.btn-offer-draw {
+	padding: 0.5rem 1rem;
+	background: #f59e0b;
+	color: white;
+	border: 1px solid #f59e0b;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	width: 120px;
+}
+
+.btn-offer-draw:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-offer-draw:not(:disabled):hover {
+	background: #d97706;
+	border-color: #d97706;
+}
+
+.draw-offered-title {
+	color: #f59e0b;
+	font-size: 1.5rem;
+	text-align: center;
+	margin: 0 0 1rem 0;
+}
+
+.draw-offered-actions {
+	display: flex;
+	justify-content: center;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.btn-accept-draw {
+	padding: 0.5rem 1rem;
+	background: #22c55e;
+	color: white;
+	border: 1px solid #22c55e;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 140px;
+}
+
+.btn-accept-draw:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-accept-draw:not(:disabled):hover {
+	background: #16a34a;
+	border-color: #16a34a;
+}
+
+.btn-decline-draw {
+	padding: 0.5rem 1rem;
+	background: #64748b;
+	color: white;
+	border: 1px solid #64748b;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 140px;
+}
+
+.btn-decline-draw:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-decline-draw:not(:disabled):hover {
+	background: #475569;
+	border-color: #475569;
+}
+
+@keyframes pulseButton {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.btn-accept-draw.pulse,
+.btn-decline-draw.pulse {
+	animation: pulseButton 0.3s ease-in-out 2;
 }
 
 .timer-section.timer-below {
@@ -1837,6 +2080,61 @@ onUnmounted(() => {
 
 .close-btn:hover {
 	background: #388e3c;
+}
+
+.modal-title {
+	font-size: 1.8rem;
+	color: #333;
+	margin: 0 0 1rem 0;
+}
+
+.modal-message {
+	margin: 0 0 1.5rem 0;
+	font-size: 1rem;
+	color: #444;
+	line-height: 1.6;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.btn-primary {
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	background: #f59e0b;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+	min-width: 160px;
+	font-weight: 600;
+}
+
+.btn-primary:hover {
+	background: #d97706;
+}
+
+.btn-secondary {
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	background: #e5e7eb;
+	color: #374151;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+	min-width: 160px;
+	font-weight: 600;
+}
+
+.btn-secondary:hover {
+	background: #d1d5db;
 }
 
 .chat-overlay {

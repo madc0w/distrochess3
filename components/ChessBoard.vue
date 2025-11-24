@@ -50,11 +50,13 @@ interface Props {
 	fen: string;
 	playerColor: 'white' | 'black';
 	isViewingHistory?: boolean;
+	isDrawOffered?: boolean;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
 	move: [move: { from: string; to: string; promotion?: string }];
+	blockedMove: [];
 }>();
 
 const game = ref(new Chess(props.fen));
@@ -68,6 +70,9 @@ const draggedPiece = ref<string | null>(null);
 
 // Support parent prop `isViewingHistory` (use `props.isViewingHistory` at runtime)
 const isViewingHistory = computed(() => !!(props as any).isViewingHistory);
+
+// Support parent prop `isDrawOffered` to block moves when a draw is offered
+const isDrawOffered = computed(() => !!(props as any).isDrawOffered);
 
 // Unicode chess pieces
 const pieceSymbols: Record<string, string> = {
@@ -140,6 +145,12 @@ function isLightSquare(square: string): boolean {
 function handleSquareClick(square: string) {
 	// When viewing history (not on the latest move), disable moving
 	if (isViewingHistory.value) return;
+	// When a draw is offered, disable moving but notify parent
+	if (isDrawOffered.value) {
+		emit('blockedMove');
+		return;
+	}
+
 	const piece = game.value.get(square as any);
 	const currentTurn = game.value.turn() === 'w' ? 'white' : 'black';
 
@@ -204,6 +215,12 @@ function handleDragStart(event: DragEvent, square: string) {
 		event.preventDefault();
 		return;
 	}
+	// disable dragging when a draw is offered
+	if (isDrawOffered.value) {
+		event.preventDefault();
+		emit('blockedMove');
+		return;
+	}
 
 	const piece = game.value.get(square as any);
 	const currentTurn = game.value.turn() === 'w' ? 'white' : 'black';
@@ -239,6 +256,7 @@ function handleDrop(event: DragEvent, square: string) {
 	event.preventDefault();
 
 	if (isViewingHistory.value) return;
+	if (isDrawOffered.value) return;
 
 	if (draggedPiece.value && validMoves.value.includes(square)) {
 		makeMove(draggedPiece.value, square);
@@ -261,6 +279,12 @@ function handleDragEnd() {
 function handleTouchStart(event: TouchEvent, square: string) {
 	// disable touch moving when viewing history
 	if (isViewingHistory.value) return;
+	// disable touch moving when a draw is offered
+	if (isDrawOffered.value) {
+		emit('blockedMove');
+		return;
+	}
+
 	const piece = game.value.get(square as any);
 	const currentTurn = game.value.turn() === 'w' ? 'white' : 'black';
 
@@ -290,6 +314,8 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 
 	// disable touch drops when viewing history
 	if (isViewingHistory.value) return;
+	// disable touch drops when a draw is offered
+	if (isDrawOffered.value) return;
 
 	event.preventDefault();
 

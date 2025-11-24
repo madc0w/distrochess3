@@ -15,4 +15,5 @@ export interface Game {
 	currentTurnUserId?: ObjectId | null;
 	currentTurnStartDate?: Date | null;
 	result?: 'white-win' | 'black-win' | 'draw' | null;
+	drawOfferUserId?: ObjectId | null;
 }

@@ -151,6 +151,20 @@ export const fr: Translations = {
 	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
 	timeRemaining: 'Temps restant',
 	pass: 'Passer',
+	offerDraw: 'Proposer nulle',
+	drawOffer: {
+		title: 'Proposer nulle ?',
+		message:
+			'Êtes-vous sûr de vouloir proposer la nulle ? Si le prochain adversaire accepte, cette partie sera nulle. Aucun point ne sera attribué.',
+		confirm: 'Oui, proposer la nulle',
+		cancel: 'Annuler',
+	},
+	drawOffered: {
+		title: 'Nulle proposée',
+		message: 'Votre adversaire a proposé la nulle.',
+		accept: 'Accepter la nulle',
+		decline: 'Continuer à jouer',
+	},
 	loadingGame: 'Chargement du jeu...',
 	noGameAvailable: 'Aucun jeu disponible',
 	gameId: 'ID de la partie',

@@ -184,6 +184,20 @@ export const en = {
 	waitingForOpponent: 'Please wait for an opponent to make a move...',
 	timeRemaining: 'Time remaining',
 	pass: 'Pass',
+	offerDraw: 'Offer Draw',
+	drawOffer: {
+		title: 'Offer Draw?',
+		message:
+			'Are you sure you want to offer a draw?<br/>The game will only be offered to opponents who have already played in it. If the next opponent accepts, then this game will be drawn, and no points will be assigned to either side.',
+		confirm: 'Yes, offer a draw',
+		cancel: 'Never mind',
+	},
+	drawOffered: {
+		title: 'Draw Offered!',
+		message: 'Your opponent has offered a draw.',
+		accept: 'Accept Draw',
+		decline: 'Decline & Keep Playing',
+	},
 	loadingGame: 'Loading game...',
 	noGameAvailable: 'No game available',
 	gameId: 'Game ID',

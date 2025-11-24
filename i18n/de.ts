@@ -188,6 +188,20 @@ export const de = {
 	waitingForOpponent: 'Bitte warten Sie, bis ein Gegner einen Zug macht...',
 	timeRemaining: 'Verbleibende Zeit',
 	pass: 'Passen',
+	offerDraw: 'Remis anbieten',
+	drawOffer: {
+		title: 'Remis anbieten?',
+		message:
+			'Sind Sie sicher, dass Sie ein Remis anbieten möchten? Wenn der nächste Gegner akzeptiert, endet dieses Spiel unentschieden. Keiner Seite werden Punkte zugewiesen.',
+		confirm: 'Ja, Remis anbieten',
+		cancel: 'Abbrechen',
+	},
+	drawOffered: {
+		title: 'Remis angeboten',
+		message: 'Ihr Gegner hat ein Remis angeboten.',
+		accept: 'Remis akzeptieren',
+		decline: 'Weiterspielen',
+	},
 	loadingGame: 'Spiel wird geladen...',
 	noGameAvailable: 'Kein Spiel verfügbar',
 	gameId: 'Spiel-ID',

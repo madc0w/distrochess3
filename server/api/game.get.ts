@@ -127,6 +127,12 @@ function isGameAvailableToUser(game: Game, userId: ObjectId): boolean {
 	const playerIsUnassigned =
 		!includesId(game.whiteUserIds, userId) &&
 		!includesId(game.blackUserIds, userId);
+
+	// If there's a draw offer pending, only allow existing players (not new players)
+	if (game.drawOfferUserId && playerIsUnassigned) {
+		return false;
+	}
+
 	if (playerIsUnassigned) return true;
 
 	const latestFen = game.history?.[game.history.length - 1]?.fen;
