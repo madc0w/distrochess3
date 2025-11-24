@@ -1155,8 +1155,8 @@ watch(
 		canChat: canUseTeamChat.value,
 	}),
 	(newState, oldState) => {
-		const gameChanged = newState.gameId !== oldState?.gameId;
-		if (gameChanged) {
+		const isGameChanged = newState.gameId !== oldState?.gameId;
+		if (isGameChanged) {
 			resetChatState();
 		}
 		if (!newState.gameId || !newState.canChat) {
@@ -1164,10 +1164,9 @@ watch(
 			if (!newState.canChat) {
 				resetChatState();
 			}
-			// return;
 		}
 		// Fetch chat messages when game changes to update unread count
-		if (newState.gameId && newState.canChat && gameChanged) {
+		if (newState.gameId && newState.canChat && isGameChanged) {
 			fetchChatMessages({ force: true });
 		}
 		// if (gameChanged || newState.canChat !== oldState?.canChat) {

@@ -141,27 +141,25 @@ const isLoading = ref(false);
 const errorMessage = ref('');
 
 async function fetchLeaderboard() {
-	console.log('[Client] Starting fetchLeaderboard...');
+	// console.log('[Client] Starting fetchLeaderboard...');
 	isLoading.value = true;
 	errorMessage.value = '';
 
 	try {
-		console.log('[Client] Calling $fetch...');
-		const response = await $fetch<Player[]>('/api/leaderboard', {
-			timeout: 10000, // 10 second timeout
-		});
+		// console.log('[Client] Calling $fetch...');
+		const response = await $fetch<Player[]>('/api/leaderboard');
 
-		console.log('[Client] Got response:', response);
+		// console.log('[Client] Got response:', response);
 		players.value = response;
-		console.log('[Client] Players set:', players.value);
+		// console.log('[Client] Players set:', players.value);
 	} catch (err: any) {
-		console.error('[Client] Failed to fetch leaderboard:', err);
+		// console.error('[Client] Failed to fetch leaderboard:', err);
 		errorMessage.value =
 			translateServerError(err, t.value) || t.value.errors.ERR_GENERIC;
 	} finally {
-		console.log('[Client] Setting isLoading to false');
+		// console.log('[Client] Setting isLoading to false');
 		isLoading.value = false;
-		console.log('[Client] isLoading is now:', isLoading.value);
+		// console.log('[Client] isLoading is now:', isLoading.value);
 	}
 }
 

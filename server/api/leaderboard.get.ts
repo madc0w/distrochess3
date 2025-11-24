@@ -2,11 +2,11 @@ import { createError, defineEventHandler } from 'h3';
 import { getDb } from '~/server/utils/mongo';
 
 export default defineEventHandler(async (event) => {
-	console.log('[Leaderboard] Request received');
+	// console.log('[Leaderboard] Request received');
 
 	try {
 		const db = await getDb();
-		console.log('[Leaderboard] DB connected');
+		// console.log('[Leaderboard] DB connected');
 
 		const usersCollection = db.collection('users');
 		const players = await usersCollection
@@ -36,10 +36,10 @@ export default defineEventHandler(async (event) => {
 			draws: player.draws?.length || 0,
 		}));
 
-		console.log(`[Leaderboard] Returning ${playersWithCounts.length} players`);
+		// console.log(`[Leaderboard] Returning ${playersWithCounts.length} players`);
 		return playersWithCounts;
 	} catch (error: any) {
-		console.error('[Leaderboard] Error:', error);
+		// console.error('[Leaderboard] Error:', error);
 		throw createError({
 			statusCode: 500,
 			statusMessage: 'Failed to fetch leaderboard',
