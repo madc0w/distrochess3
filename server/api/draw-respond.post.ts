@@ -8,9 +8,9 @@ import { updateUserScores } from '../utils/scores';
 export default defineEventHandler(async (event) => {
 	const userId = verifyAuthToken(event);
 	const body = await readBody(event);
-	const { gameId, accept } = body;
+	const { gameId, accept: isAcceptDraw } = body;
 
-	if (!gameId || accept === undefined || !userId) {
+	if (!gameId || isAcceptDraw === undefined || !userId) {
 		throw createError({
 			statusCode: 400,
 			statusMessage: 'ERR_MISSING_FIELDS',
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	if (accept) {
+	if (isAcceptDraw) {
 		// Accept draw - set game result to draw and update scores
 		await db.collection<Game>('games').updateOne(
 			{ _id: new ObjectId(gameId as string) },

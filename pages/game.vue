@@ -697,7 +697,7 @@ async function handlePass() {
 	const currentGameId = currentGame.value._id;
 	await loadGame({
 		excludeGameId: currentGameId,
-		force: true,
+		isForce: true,
 	});
 }
 
@@ -719,7 +719,7 @@ async function handleOfferDraw() {
 		// Load next game after offering draw
 		await loadGame({
 			excludeGameId: currentGame.value._id,
-			force: true,
+			isForce: true,
 		});
 	} catch (e: any) {
 		const friendly = translateServerError(e, t.value) || 'Failed to offer draw';
@@ -734,13 +734,13 @@ async function handleAcceptDraw() {
 		const authHeaders = getAuthHeader();
 		await $fetch('/api/draw-respond', {
 			method: 'POST',
-			body: { gameId: currentGame.value._id, accept: true },
+			body: { gameId: currentGame.value._id, isAcceptDraw: true },
 			headers: authHeaders,
 		});
 		isShowDrawModal.value = true;
 		await loadGame({
 			excludeGameId: currentGame.value._id,
-			force: true,
+			isForce: true,
 		});
 	} catch (e: any) {
 		const friendly =
@@ -756,13 +756,13 @@ async function handleDeclineDraw() {
 		const authHeaders = getAuthHeader();
 		await $fetch('/api/draw-respond', {
 			method: 'POST',
-			body: { gameId: currentGame.value._id, accept: false },
+			body: { gameId: currentGame.value._id, isAcceptDraw: false },
 			headers: authHeaders,
 		});
 		// Immediately load next game after declining
 		await loadGame({
 			excludeGameId: currentGame.value._id,
-			force: true,
+			isForce: true,
 		});
 	} catch (e: any) {
 		const friendly =
@@ -774,14 +774,14 @@ async function handleDeclineDraw() {
 type LoadGameOptions = {
 	excludeGameId?: string;
 	requestedGameId?: string;
-	force?: boolean;
+	isForce?: boolean;
 };
 
 async function loadGame(options: LoadGameOptions = {}) {
-	const shouldForce = Boolean(
-		options.force || options.excludeGameId || options.requestedGameId
+	const isForce = Boolean(
+		options.isForce || options.excludeGameId || options.requestedGameId
 	);
-	if (isGameLoading.value && !shouldForce) {
+	if (isGameLoading.value && !isForce) {
 		return currentGame.value;
 	}
 
@@ -832,7 +832,7 @@ async function loadRequestedGame(gameId: string) {
 	try {
 		const response = await loadGame({
 			requestedGameId: gameId,
-			force: true,
+			isForce: true,
 		});
 		return Boolean(response);
 	} catch (err: any) {
@@ -884,7 +884,7 @@ async function loadAccordingToQuery() {
 		if (loadedRequested) {
 			return;
 		}
-		await loadGame({ force: true });
+		await loadGame({ isForce: true });
 		return;
 	}
 
@@ -942,7 +942,7 @@ async function handleMove(move: {
 		stopTimer();
 		await loadGame({
 			excludeGameId: currentGame.value._id,
-			force: true,
+			isForce: true,
 		});
 	} catch (e: any) {
 		if (isNotYourTurnError(e)) {
@@ -966,7 +966,7 @@ function startTimer() {
 			if (currentGame.value) {
 				const reloadOptions: LoadGameOptions = {
 					excludeGameId: currentGame.value._id,
-					force: true,
+					isForce: true,
 				};
 				if (isChatOpen.value) {
 					pendingTimerReload.value = reloadOptions;
@@ -992,7 +992,7 @@ function startPolling() {
 		if (!currentGame.value) {
 			await loadGame();
 		}
-	}, 2000);
+	}, 4000);
 }
 
 function stopPolling() {
@@ -1143,7 +1143,7 @@ function hideMoveErrorModal() {
 }
 
 function scheduleNextGameLoad() {
-	const options: LoadGameOptions = { force: true };
+	const options: LoadGameOptions = { isForce: true };
 	const currentId = getCurrentGameId();
 	if (currentId) {
 		options.excludeGameId = currentId;
