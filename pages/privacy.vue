@@ -101,17 +101,23 @@ const privacySections = computed(() => t.value.privacy.sections ?? []);
 }
 
 .ghost-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 	text-decoration: none;
 	color: #0f172a;
+	background: rgba(15, 23, 42, 0.06);
 	font-weight: 500;
-	padding: 0.5rem 0.85rem;
+	padding: 0.65rem 1.35rem;
 	border-radius: 999px;
 	border: 1px solid rgba(15, 23, 42, 0.15);
-	transition: background 0.2s ease;
+	transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .ghost-link:hover {
-	background: rgba(15, 23, 42, 0.05);
+	background: rgba(15, 23, 42, 0.1);
+	transform: translateY(-1px);
 }
 
 .btn {

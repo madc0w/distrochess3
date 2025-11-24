@@ -449,14 +449,17 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 /* Mobile optimizations */
 @media (max-width: 600px) {
 	.chess-board {
-		width: 100vw;
-		height: 100vw;
+		width: 100%;
+		max-width: 95vw;
 		border-width: 1px;
 		aspect-ratio: 1;
-		max-width: none;
 	}
 	.piece {
-		font-size: clamp(1.5rem, 10vw, 2.5rem);
+		font-size: clamp(1.5rem, 8vw, 2.5rem);
+	}
+	.chess-board-wrapper {
+		width: 100%;
+		max-width: 95vw;
 	}
 }
 

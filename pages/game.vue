@@ -120,13 +120,6 @@
 
 					<div class="parent-history-bar">
 						<div class="history-row">
-							<button
-								v-if="isViewingHistory"
-								class="history-pill history-pill-btn"
-								@click="exitHistory"
-							>
-								{{ t.exitHistory }}
-							</button>
 							<div class="history-controls">
 								<button
 									class="history-btn"
@@ -148,14 +141,14 @@
 									›
 								</button>
 							</div>
-							<span
-								v-if="isViewingHistory"
-								class="history-pill history-pill--ghost"
-								aria-hidden="true"
-							>
-								{{ t.exitHistory }}
-							</span>
 						</div>
+						<button
+							v-if="isViewingHistory"
+							class="history-pill history-pill-btn"
+							@click="exitHistory"
+						>
+							{{ t.exitHistory }}
+						</button>
 
 						<div
 							class="history-player"
@@ -178,7 +171,7 @@
 					<h3 v-if="!isDrawOfferedToUser">{{ t.yourTurn }}</h3>
 					<h3 v-else class="draw-offered-title">{{ t.drawOffered.title }}</h3>
 					<div class="timer" v-if="!isDrawOfferedToUser">
-						<div class="timer-label">{{ t.timeRemaining }}:</div>
+						<!-- <div class="timer-label">{{ t.timeRemaining }}:</div> -->
 						<div class="timer-value" :class="{ warning: timeRemaining < 20 }">
 							{{ formatTime(timeRemaining) }}
 						</div>
@@ -513,10 +506,41 @@ const toggleProfileMenu = () => {
 		if (profileButton.value) {
 			nextTick(() => {
 				const rect = profileButton.value!.getBoundingClientRect();
+				const menuWidth = 220; // min-width from CSS
+				const menuHeight = 350; // approximate height
+				const padding = 8;
+				const viewportWidth = window.innerWidth;
+				const viewportHeight = window.innerHeight;
+
+				// Calculate initial position
+				let top = rect.bottom + padding;
+				let right = viewportWidth - rect.right;
+
+				// Prevent overflow on the right
+				const leftPosition = viewportWidth - right - menuWidth;
+				if (leftPosition < padding) {
+					right = viewportWidth - menuWidth - padding;
+				}
+
+				// Prevent overflow on the left
+				if (right > viewportWidth - menuWidth - padding) {
+					right = viewportWidth - menuWidth - padding;
+				}
+
+				// Prevent overflow on the bottom
+				if (top + menuHeight > viewportHeight - padding) {
+					// Position above the button instead
+					top = rect.top - menuHeight - padding;
+					// If still doesn't fit, position at the top with some padding
+					if (top < padding) {
+						top = padding;
+					}
+				}
+
 				profileMenuPosition.value = {
 					position: 'fixed',
-					top: `${rect.bottom + 8}px`,
-					right: `${window.innerWidth - rect.right}px`,
+					top: `${top}px`,
+					right: `${right}px`,
 					zIndex: 999999,
 				};
 			});
@@ -1375,6 +1399,12 @@ onUnmounted(() => {
 	animation: fadeInPage 0.15s ease-out;
 }
 
+@media (max-width: 600px) {
+	.container {
+		padding: 0.5rem;
+	}
+}
+
 @keyframes fadeInPage {
 	from {
 		opacity: 0;
@@ -1397,6 +1427,8 @@ onUnmounted(() => {
 	margin-bottom: 1.25rem;
 	padding-bottom: 0.5rem;
 	border-bottom: 2px solid #eee;
+	flex-wrap: wrap;
+	gap: 1rem;
 }
 
 .game-header h1 {
@@ -1422,6 +1454,7 @@ onUnmounted(() => {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
+	flex-wrap: wrap;
 }
 
 .user-info span {
@@ -1497,8 +1530,11 @@ onUnmounted(() => {
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 	overflow: hidden;
 	min-width: 220px;
+	max-width: calc(100vw - 16px);
+	max-height: calc(100vh - 16px);
 	animation: slideDownMenu 0.2s ease-out;
 	pointer-events: auto;
+	overflow-y: auto;
 }
 
 @keyframes slideDownMenu {
@@ -1668,6 +1704,13 @@ onUnmounted(() => {
 	padding: 0.5rem;
 }
 
+@media (max-width: 600px) {
+	.active-game {
+		padding: 0.25rem;
+		gap: 0.25rem;
+	}
+}
+
 .chessboard-area {
 	display: flex;
 	flex-direction: column;
@@ -1679,7 +1722,7 @@ onUnmounted(() => {
 	margin-top: 0.75rem;
 	margin-bottom: 0.25rem;
 	width: 100%;
-	max-width: 480px;
+	max-width: min(480px, 95vw);
 	padding: 0.25rem 0.5rem;
 }
 
@@ -1829,8 +1872,18 @@ onUnmounted(() => {
 
 .timer-section.timer-below {
 	width: 100%;
-	max-width: 480px;
+	max-width: min(480px, 95vw);
 	margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+	.timer-section {
+		padding: 1rem;
+	}
+
+	.timer-section h3 {
+		font-size: 1.25rem;
+	}
 }
 
 .timer-section h3 {
@@ -1854,7 +1907,7 @@ onUnmounted(() => {
 }
 
 .timer-value {
-	color: #74d66d;
+	color: #2d8a26;
 	font-weight: bold;
 	font-size: 1.5rem;
 	font-family: 'Courier New', monospace;
@@ -1893,7 +1946,6 @@ onUnmounted(() => {
 	justify-content: center;
 	align-items: center;
 	gap: 0.65rem;
-	flex-wrap: wrap;
 }
 
 .parent-history-bar .history-controls {
@@ -1913,6 +1965,7 @@ onUnmounted(() => {
 	font-size: 0.85rem;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
+	margin-top: 0.5rem;
 }
 
 .parent-history-bar .history-pill-btn {
@@ -1925,11 +1978,6 @@ onUnmounted(() => {
 	background: #cbd5e1;
 	border-color: #94a3b8;
 	transform: translateY(-1px);
-}
-
-.parent-history-bar .history-pill.history-pill--ghost {
-	visibility: hidden;
-	pointer-events: none;
 }
 
 .parent-history-bar .history-btn {
@@ -2383,15 +2431,59 @@ onUnmounted(() => {
 	overflow: hidden;
 }
 
+@media (max-width: 768px) {
+	.game-header {
+		justify-content: center;
+	}
+
+	.game-header h1 {
+		flex-basis: 100%;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.user-info {
+		flex-basis: 100%;
+		justify-content: center;
+	}
+
+	.game-title-text {
+		font-size: 1.25rem;
+	}
+
+	.game-logo {
+		height: 52px;
+		border-radius: 8px;
+	}
+
+	.btn-faq {
+		padding: 0.4rem 0.7rem;
+		font-size: 0.8rem;
+		margin-left: 0.5rem;
+	}
+
+	.btn-profile {
+		width: 40px;
+		height: 40px;
+	}
+
+	.btn-team-chat,
+	.btn-signout {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.85rem;
+	}
+}
+
 @media (max-width: 600px) {
 	.user-info {
-		flex-direction: column;
-		align-items: flex-start;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.active-game {
-		padding: 0.5rem;
-		gap: 1rem;
+		padding: 0.25rem;
+		gap: 0.5rem;
 	}
 
 	.timer-section {
