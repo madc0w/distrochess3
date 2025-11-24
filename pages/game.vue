@@ -623,7 +623,7 @@ function handleSignout() {
 	signout();
 	stopPolling();
 	stopTimer();
-	stopChatPolling();
+	// stopChatPolling();
 	resetChatState();
 	currentGame.value = null;
 	router.replace('/');
@@ -1067,6 +1067,8 @@ async function fetchChatMessages(options: { force?: boolean } = {}) {
 			lastPersistedChatTimestamp.value = null;
 			lastSeenChatTimestamp.value = null;
 		}
+
+		updateUnreadCountFromMessages();
 	} catch (err: any) {
 		chatErrorMessage.value =
 			translateServerError(err, t.value) || t.value.teamChat.loadError;
@@ -1075,21 +1077,21 @@ async function fetchChatMessages(options: { force?: boolean } = {}) {
 	}
 }
 
-function startChatPolling() {
-	stopChatPolling();
-	if (!canUseTeamChat.value || !getCurrentGameId()) return;
-	fetchChatMessages({ force: true });
-	chatIntervalId.value = setInterval(() => {
-		fetchChatMessages();
-	}, 5000);
-}
+// function startChatPolling() {
+// 	stopChatPolling();
+// 	if (!canUseTeamChat.value || !getCurrentGameId()) return;
+// 	fetchChatMessages({ force: true });
+// 	chatIntervalId.value = setInterval(() => {
+// 		fetchChatMessages();
+// 	}, 5000);
+// }
 
-function stopChatPolling() {
-	if (chatIntervalId.value) {
-		clearInterval(chatIntervalId.value);
-		chatIntervalId.value = null;
-	}
-}
+// function stopChatPolling() {
+// 	if (chatIntervalId.value) {
+// 		clearInterval(chatIntervalId.value);
+// 		chatIntervalId.value = null;
+// 	}
+// }
 
 function resetChatState() {
 	chatMessages.value = [];
@@ -1158,15 +1160,19 @@ watch(
 			resetChatState();
 		}
 		if (!newState.gameId || !newState.canChat) {
-			stopChatPolling();
+			// stopChatPolling();
 			if (!newState.canChat) {
 				resetChatState();
 			}
-			return;
+			// return;
 		}
-		if (gameChanged || newState.canChat !== oldState?.canChat) {
-			startChatPolling();
+		// Fetch chat messages when game changes to update unread count
+		if (newState.gameId && newState.canChat && gameChanged) {
+			fetchChatMessages({ force: true });
 		}
+		// if (gameChanged || newState.canChat !== oldState?.canChat) {
+		// 	startChatPolling();
+		// }
 	},
 	{ immediate: true }
 );
@@ -1203,7 +1209,7 @@ watch(
 		} else {
 			stopPolling();
 			stopTimer();
-			stopChatPolling();
+			// stopChatPolling();
 			resetChatState();
 			currentGame.value = null;
 			if (manualSignoutRedirect.value) {
@@ -1225,7 +1231,7 @@ watch(requestedGameId, (newVal, oldVal) => {
 onUnmounted(() => {
 	stopPolling();
 	stopTimer();
-	stopChatPolling();
+	// stopChatPolling();
 	clearMoveErrorModalTimer();
 });
 </script>
