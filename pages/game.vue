@@ -1442,6 +1442,7 @@ onUnmounted(() => {
 .game-logo {
 	height: 48px;
 	width: auto;
+	border-radius: 8px;
 }
 
 .game-title-text {
@@ -1753,7 +1754,7 @@ onUnmounted(() => {
 	border: 1px solid #64748b;
 	border-radius: 4px;
 	font-size: 0.9rem;
-	font-weight: 500;
+	font-weight: 800;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	width: 120px;
@@ -1772,11 +1773,11 @@ onUnmounted(() => {
 .btn-offer-draw {
 	padding: 0.5rem 1rem;
 	background: #f59e0b;
-	color: white;
+	/* color: white; */
 	border: 1px solid #f59e0b;
 	border-radius: 4px;
 	font-size: 0.9rem;
-	font-weight: 500;
+	font-weight: 800;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	width: 120px;
@@ -2155,13 +2156,13 @@ onUnmounted(() => {
 	padding: 0.75rem 1.5rem;
 	font-size: 1rem;
 	background: #f59e0b;
-	color: #fff;
+	/* color: #fff; */
 	border: none;
 	border-radius: 8px;
 	cursor: pointer;
 	transition: background 0.2s;
 	min-width: 160px;
-	font-weight: 600;
+	font-weight: 800;
 }
 
 .btn-primary:hover {
@@ -2178,7 +2179,7 @@ onUnmounted(() => {
 	cursor: pointer;
 	transition: background 0.2s;
 	min-width: 160px;
-	font-weight: 600;
+	font-weight: 800;
 }
 
 .btn-secondary:hover {
