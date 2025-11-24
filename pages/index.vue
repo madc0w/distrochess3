@@ -16,7 +16,7 @@
 		</div>
 
 		<div class="landing">
-			<div class="topbar">
+			<div class="logo-row">
 				<div class="logo">
 					<img
 						src="/logo-small.jpg"
@@ -24,6 +24,11 @@
 						class="logo-image"
 					/>
 					<span>{{ t.distroChess }}</span>
+				</div>
+			</div>
+
+			<div class="topbar">
+				<div class="topbar-left">
 					<NuxtLink to="/faq" class="btn-faq">
 						{{ t.faq.linkLabel }}
 					</NuxtLink>
@@ -57,10 +62,10 @@
 				</div>
 				<div class="top-actions">
 					<div class="top-buttons">
-						<NuxtLink to="/signin" class="btn ghost">{{ t.signin }}</NuxtLink>
 						<NuxtLink to="/signup" class="btn primary glow">{{
 							t.signup
 						}}</NuxtLink>
+						<NuxtLink to="/signin" class="btn ghost">{{ t.signin }}</NuxtLink>
 					</div>
 				</div>
 			</div>
@@ -294,9 +299,9 @@ if (process.client) {
 .chess-piece {
 	position: absolute;
 	font-size: 120px;
-	color: rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.25);
 	animation: floatPiece 25s ease-in-out infinite;
-	text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+	text-shadow: 0 0 50px rgba(255, 255, 255, 0.4);
 }
 
 .piece-1 {
@@ -338,29 +343,39 @@ if (process.client) {
 	0%,
 	100% {
 		transform: translate(0, 0) rotate(0deg);
-		opacity: 0.08;
+		opacity: 0.32;
 	}
 	25% {
-		transform: translate(20px, -40px) rotate(5deg);
-		opacity: 0.12;
+		transform: translate(20px, -40px) rotate(12deg);
+		opacity: 0.4;
 	}
 	50% {
-		transform: translate(-15px, -20px) rotate(-3deg);
-		opacity: 0.06;
+		transform: translate(-15px, -20px) rotate(-12deg);
+		opacity: 0.44;
 	}
 	75% {
-		transform: translate(25px, 30px) rotate(4deg);
-		opacity: 0.1;
+		transform: translate(25px, 30px) rotate(24deg);
+		opacity: 0.28;
 	}
 }
 
 .landing {
 	display: flex;
 	flex-direction: column;
-	gap: 2.5rem;
+	gap: 1.5rem;
 	padding: 2rem 0 3rem 0;
 	position: relative;
 	z-index: 1;
+}
+
+.logo-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: slideDown 0.6s ease-out;
+	position: relative;
+	z-index: 10000;
+	margin-bottom: 0.5rem;
 }
 
 .topbar {
@@ -369,8 +384,18 @@ if (process.client) {
 	align-items: center;
 	gap: 1rem;
 	animation: slideDown 0.6s ease-out;
+	animation-delay: 0.1s;
+	opacity: 0;
+	animation-fill-mode: forwards;
 	position: relative;
 	z-index: 10000;
+}
+
+.topbar-left {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-shrink: 0;
 }
 
 @keyframes slideDown {
@@ -393,8 +418,8 @@ if (process.client) {
 .logo {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.5rem;
-	font-size: 1.25rem;
+	gap: 1rem;
+	font-size: 2rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
 	color: #ffffff;
@@ -407,11 +432,11 @@ if (process.client) {
 }
 
 .logo-image {
-	height: 60px;
+	height: 96px;
 	width: auto;
 	display: block;
-	border-radius: 8px;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	border-radius: 12px;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn-faq {
@@ -424,7 +449,8 @@ if (process.client) {
 	background: rgba(255, 255, 255, 0.15);
 	backdrop-filter: blur(10px);
 	transition: background 0.2s ease;
-	margin-left: 0.75rem;
+	width: fit-content;
+	white-space: nowrap;
 }
 
 .btn-faq:hover {
@@ -433,7 +459,6 @@ if (process.client) {
 
 .language-dropdown {
 	position: relative;
-	margin-left: 0.5rem;
 	z-index: 100000;
 }
 
@@ -863,14 +888,22 @@ if (process.client) {
 
 /* Mobile optimizations */
 @media (max-width: 600px) {
+	.logo {
+		font-size: 1.5rem;
+		gap: 0.75rem;
+	}
+
+	.logo-image {
+		height: 128px;
+	}
+
 	.topbar {
 		flex-direction: column;
 		align-items: stretch;
 		width: 100%;
 	}
 
-	.logo {
-		flex-wrap: wrap;
+	.topbar-left {
 		justify-content: center;
 	}
 
