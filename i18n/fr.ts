@@ -38,21 +38,22 @@ export const fr: Translations = {
 	yourTurn: "C'est à vous de jouer...",
 	youAre: 'Vous êtes',
 	landing: {
-		eyebrow: 'Échecs asynchrones pour les bâtisseurs',
-		headline: 'Des échecs qui suivent votre fuseau horaire.',
-		description:
-			'Faites un coup, obtenez une nouvelle partie, faites un autre coup. Répétez encore et encore.',
+		eyebrow: 'Échecs distribués, pour les humains et les canards',
+		headline: 'Un nouveau jeu à chaque tour',
+		description: `<p>Distrochess, c'est les échecs distribués. Cela signifie que vous ne jouez pas une seule partie contre une seule personne. Au lieu de cela, vous jouez plusieurs parties contre plusieurs autres utilisateurs. C'est un peu comme une simultanée, mais au lieu de plusieurs personnes jouant contre un seul adversaire, il y a plusieurs joueurs de chaque côté de la table.</p>
+			<p>Après avoir effectué un coup, cette partie est remise dans la file d'attente afin qu'un autre utilisateur puisse avoir l'occasion de répondre. Pendant ce temps, vous recevrez une partie aléatoire de la file d'attente. Pour éviter que les joueurs ne jouent contre eux-mêmes, chaque joueur joue toujours du même côté pour une partie donnée.</p>
+			<p>Ce projet est la réincarnation d'une ancienne idée, initialement nommée Discochess vers 2008, relancée en 2019, et maintenant à nouveau en 2025.</p>`,
 		featureTitle1: 'File de parties',
 		featureCopy1:
 			'DistroChess vous associe automatiquement aux prochaines parties disponibles.',
 		featureTitle2: 'Coups instantanés',
 		featureCopy2:
-			"Chaque coup se réplique dans le monde en moins d'une seconde grâce au moteur distribué.",
-		featureTitle3: 'Analyses intégrées',
+			"Chaque coup se réplique dans le monde en moins d'une seconde grâce au moteur distribué qui alimente le plateau.",
+		featureTitle3: "Chat d'équipe",
 		featureCopy3:
-			'Suivez les séries, les ouvertures et les écarts de score grâce aux métriques pensées pour le jeu asynchrone.',
-		communityTag: 'Construit par la communauté DistroChess',
-		ctaHint: 'Commencez à jouer en quelques secondes',
+			"Parlez à vos coéquipiers du même côté en utilisant la fonctionnalité de chat d'équipe intégrée. Discutez de stratégie, partagez des conseils ou encouragez-vous mutuellement.",
+		communityTag: 'Construit par des canards',
+		ctaHint: 'Commencez à jouer maintenant !',
 		languageLabel: 'Langue',
 	},
 	leaderboard: {

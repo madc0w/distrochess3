@@ -68,7 +68,11 @@
 			<div class="hero">
 				<p class="hero-eyebrow animate-in">{{ t.landing.eyebrow }}</p>
 				<h1 class="hero-title animate-in delay-1">{{ t.landing.headline }}</h1>
-				<p class="hero-copy animate-in delay-2">{{ t.landing.description }}</p>
+				<div
+					class="hero-copy animate-in delay-2"
+					v-html="t.landing.description"
+				></div>
+				<p class="cta-hint animate-in delay-4">{{ t.landing.ctaHint }}</p>
 				<div class="hero-cta animate-in delay-3">
 					<NuxtLink to="/signup" class="btn primary glow pulse">{{
 						t.signup
@@ -77,7 +81,6 @@
 						t.signin
 					}}</NuxtLink>
 				</div>
-				<p class="cta-hint animate-in delay-4">{{ t.landing.ctaHint }}</p>
 				<p class="faq-hint animate-in delay-4">
 					{{ t.faq.ctaPrompt }}
 					<NuxtLink to="/faq" class="faq-link">{{ t.faq.ctaLabel }}</NuxtLink>

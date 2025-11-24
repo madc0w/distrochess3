@@ -37,9 +37,10 @@ export const en = {
 	youAre: 'You are',
 	landing: {
 		eyebrow: 'Distributed chess, for humans and ducks',
-		headline: 'Keep playing. Forever.',
-		description:
-			'Make a move, get a new game, make another move. Rinse and repeat.',
+		headline: 'A New Game at Every Turn',
+		description: `<p>Distrochess is distributed chess. This means that you don't play a single game against a single person. Instead you play many games against many other users. It's a bit like a simultaneous match, but instead of many people playing against a single opponent, there are several players on each side of the table.</p>
+			<p>After you make a move, that game is placed back on the queue so that another user can have an opportunity to respond. Meanwhile, you will be given a random game off the queue. In order to avoid players playing against themselves, each player always plays the same side of a given game.</p>
+			<p>This project is the reincarnation of an old idea, originally named Discochess back around 2008, and relaunched in 2019, and now again in 2025.</p>`,
 		featureTitle1: 'Game queue',
 		featureCopy1:
 			'DistroChess matches you with the next available games automatically.',
@@ -50,7 +51,7 @@ export const en = {
 		featureCopy3:
 			'Talk to your teammates on the same side using the built-in team chat feature. Discuss strategy, share tips, or just cheer each other on.',
 		communityTag: 'Built by ducks',
-		ctaHint: 'Start playing in seconds',
+		ctaHint: 'Start playing now!',
 		languageLabel: 'Language',
 	},
 	leaderboard: {
