@@ -298,6 +298,7 @@ export const fr: Translations = {
 		fr: 'Français',
 		en: 'Anglais (English)',
 		de: 'Allemand (Deutsch)',
+		es: 'Espagnol (Español)',
 	},
 	privacy: {
 		linkLabel: 'Politique de confidentialité',

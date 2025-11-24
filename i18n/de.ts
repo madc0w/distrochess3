@@ -308,6 +308,7 @@ export const de = {
 		de: 'Deutsch',
 		en: 'Englisch (English)',
 		fr: 'Französisch (Français)',
+		es: 'Spanisch (Español)',
 	},
 	privacy: {
 		linkLabel: 'Datenschutzerklärung',

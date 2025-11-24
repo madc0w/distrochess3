@@ -299,6 +299,7 @@ export const en = {
 		en: 'English',
 		fr: 'French (Français)',
 		de: 'German (Deutsch)',
+		es: 'Spanish (Español)',
 	},
 	privacy: {
 		linkLabel: 'Privacy Policy',
