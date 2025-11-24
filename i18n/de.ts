@@ -309,6 +309,7 @@ export const de = {
 		en: 'Englisch (English)',
 		fr: 'Französisch (Français)',
 		es: 'Spanisch (Español)',
+		jp: 'Japanisch (日本語)',
 	},
 	privacy: {
 		linkLabel: 'Datenschutzerklärung',

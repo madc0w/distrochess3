@@ -1,4 +1,4 @@
-const SUPPORTED_LOCALES = ['en', 'fr'] as const;
+const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es', 'jp'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
 export function normalizeLocale(value: unknown): SupportedLocale {

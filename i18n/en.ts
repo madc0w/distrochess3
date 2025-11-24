@@ -300,6 +300,7 @@ export const en = {
 		fr: 'French (Français)',
 		de: 'German (Deutsch)',
 		es: 'Spanish (Español)',
+		jp: 'Japanese (日本語)',
 	},
 	privacy: {
 		linkLabel: 'Privacy Policy',

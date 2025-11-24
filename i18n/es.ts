@@ -308,6 +308,7 @@ export const es = {
 		fr: 'Francés (Français)',
 		de: 'Alemán (Deutsch)',
 		es: 'Español',
+		jp: 'Japonés (日本語)',
 	},
 	privacy: {
 		linkLabel: 'Política de privacidad',
