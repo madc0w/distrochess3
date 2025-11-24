@@ -125,7 +125,7 @@ const faqs = computed(() => t.value.faq.items ?? []);
 
 .btn.primary {
 	background: #74d66d;
-	color: #fff;
+	color: #000;
 	box-shadow: 0 10px 20px rgba(116, 214, 109, 0.25);
 }
 

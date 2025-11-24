@@ -563,7 +563,7 @@ if (process.client) {
 
 .btn.primary {
 	background: linear-gradient(135deg, #74d66d 0%, #5ec854 100%);
-	color: #fff;
+	color: #000000 !important;
 	box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
 	position: relative;
 }

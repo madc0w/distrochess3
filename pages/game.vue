@@ -1156,22 +1156,13 @@ watch(
 	}),
 	(newState, oldState) => {
 		const isGameChanged = newState.gameId !== oldState?.gameId;
-		if (isGameChanged) {
+		if (isGameChanged || !newState.canChat) {
 			resetChatState();
-		}
-		if (!newState.gameId || !newState.canChat) {
-			// stopChatPolling();
-			if (!newState.canChat) {
-				resetChatState();
-			}
 		}
 		// Fetch chat messages when game changes to update unread count
 		if (newState.gameId && newState.canChat && isGameChanged) {
 			fetchChatMessages({ force: true });
 		}
-		// if (gameChanged || newState.canChat !== oldState?.canChat) {
-		// 	startChatPolling();
-		// }
 	},
 	{ immediate: true }
 );
@@ -1531,7 +1522,7 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 1.25rem;
+	gap: 0.5rem;
 	max-width: 600px;
 	margin: 0 auto;
 	padding: 0.5rem;
@@ -1546,7 +1537,7 @@ onUnmounted(() => {
 	border-radius: 16px;
 	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
 	margin-top: 0.75rem;
-	margin-bottom: 0.75rem;
+	margin-bottom: 0.25rem;
 	width: 100%;
 	max-width: 480px;
 	padding: 0.25rem 0.5rem;
@@ -1596,7 +1587,7 @@ onUnmounted(() => {
 .timer-section.timer-below {
 	width: 100%;
 	max-width: 480px;
-	margin: 0.5rem auto;
+	margin: 0 auto;
 }
 
 .timer-section h3 {

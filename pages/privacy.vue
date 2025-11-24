@@ -128,7 +128,7 @@ const privacySections = computed(() => t.value.privacy.sections ?? []);
 
 .btn.primary {
 	background: #74d66d;
-	color: #fff;
+	color: #000000;
 	box-shadow: 0 10px 20px rgba(116, 214, 109, 0.25);
 }
 
