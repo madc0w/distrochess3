@@ -372,7 +372,7 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	margin: 0 auto;
 	user-select: none;
-	touch-action: none;
+	touch-action: manipulation;
 }
 
 .square {
@@ -413,7 +413,7 @@ function handleTouchEnd(event: TouchEvent, square: string) {
 	font-size: clamp(2rem, 8vw, 3.5rem);
 	line-height: 1;
 	cursor: grab;
-	touch-action: none;
+	touch-action: manipulation;
 	pointer-events: auto;
 	transition: transform 0.1s;
 }
