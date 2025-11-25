@@ -221,7 +221,7 @@ export const es = {
 		button: 'Chat de equipo',
 		title: 'Chat de equipo',
 		subtitle: 'Solo los compañeros de tu lado pueden leer estos mensajes.',
-		placeholder: 'Comparte tu plan o ánimos...',
+		placeholder: '¿Entonces cuál es el plan?',
 		send: 'Enviar',
 		sending: 'Enviando...',
 		loading: 'Cargando mensajes...',

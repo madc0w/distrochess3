@@ -378,7 +378,7 @@
 					v-if="isEmojiPickerOpen"
 					class="emoji-picker"
 					@emoji-click="handleEmojiSelect"
-				></emoji-picker>
+				/>
 			</form>
 		</div>
 	</div>
@@ -393,7 +393,7 @@ import { useAuth } from '~/composables/useAuth';
 import { useEscapeKey } from '~/composables/useEscapeKey';
 import { useI18n } from '~/composables/useI18n';
 import { translateServerError } from '~/composables/useServerErrors';
-import { maxMoveTimeMins } from '~/constants/game';
+import { maxMoveTimeMins, minMovesToEnableDrawOffers } from '~/constants/game';
 import { formatDate } from '~/utils/formatDate';
 
 definePageMeta({
@@ -667,10 +667,9 @@ const isAtEnd = computed(() => {
 	return historyIndex.value >= currentGame.value.history.length - 1;
 });
 
+// Allow draw offers only after more than inMovesToEnableDrawOffers moves
 const canOfferDraw = computed(() => {
-	if (!currentGame.value) return false;
-	// Allow draw offers only after more than 6 moves
-	return (currentGame.value.history?.length ?? 0) > 6;
+	return (currentGame.value?.history?.length ?? 0) > minMovesToEnableDrawOffers;
 });
 
 function goBack() {

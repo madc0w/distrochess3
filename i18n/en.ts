@@ -216,7 +216,7 @@ export const en = {
 		button: 'Team Chat',
 		title: 'Team Chat',
 		subtitle: 'Only teammates on your side can read these messages.',
-		placeholder: 'Share your plan or encouragement...',
+		placeholder: "So what's the plan?",
 		send: 'Send',
 		sending: 'Sending...',
 		loading: 'Loading messages...',

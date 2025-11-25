@@ -221,7 +221,7 @@ export const de = {
 		title: 'Team-Chat',
 		subtitle:
 			'Nur Teamkollegen auf Ihrer Seite können diese Nachrichten lesen.',
-		placeholder: 'Teilen Sie Ihren Plan oder Ihre Ermutigung...',
+		placeholder: 'Also, was ist der Plan?',
 		send: 'Senden',
 		sending: 'Wird gesendet...',
 		loading: 'Nachrichten werden geladen...',

@@ -2,3 +2,4 @@
 export const maxMoveTimeMins = 8;
 export const newGameProbability = 0.02;
 export const scoreFactor = 20;
+export const minMovesToEnableDrawOffers = 4;

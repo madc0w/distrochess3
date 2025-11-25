@@ -182,10 +182,10 @@ export const fr: Translations = {
 	lastMoveBy: 'Dernier coup par :',
 	score: 'Score',
 	teamChat: {
-		button: 'Chat d’équipe',
-		title: 'Chat d’équipe',
+		button: "Chat d'équipe",
+		title: "Chat d'équipe",
 		subtitle: 'Seuls vos coéquipiers de cette couleur voient ces messages.',
-		placeholder: 'Partagez votre plan ou vos idées...',
+		placeholder: 'Alors, quel est le plan ?',
 		send: 'Envoyer',
 		sending: 'Envoi...',
 		loading: 'Chargement des messages...',

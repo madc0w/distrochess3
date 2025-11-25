@@ -218,7 +218,7 @@ export const jp = {
 		title: 'チームチャット',
 		subtitle:
 			'あなたの側のチームメイトだけがこれらのメッセージを読むことができます。',
-		placeholder: '作戦や応援を共有...',
+		placeholder: 'で、作戦は？',
 		send: '送信',
 		sending: '送信中...',
 		loading: 'メッセージを読み込み中...',
