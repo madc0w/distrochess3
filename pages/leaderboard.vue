@@ -1,14 +1,17 @@
 <template>
 	<div class="container" v-cloak>
 		<div class="leaderboard-page">
-			<div class="nav-links">
-				<NuxtLink v-if="isAuthenticated" to="/game" class="btn-link">
-					{{ t.leaderboard.backToGame }}
-				</NuxtLink>
-				<NuxtLink v-else to="/" class="btn-link">
-					{{ t.leaderboard.backToHome }}
-				</NuxtLink>
-			</div>
+			<header class="leaderboard-topbar">
+				<NuxtLink to="/" class="logo">{{ t.distroChess }}</NuxtLink>
+				<nav class="top-links">
+					<NuxtLink v-if="isAuthenticated" to="/game" class="ghost-link">
+						{{ t.leaderboard.backToGame }}
+					</NuxtLink>
+					<NuxtLink v-else to="/" class="ghost-link">
+						{{ t.leaderboard.backToHome }}
+					</NuxtLink>
+				</nav>
+			</header>
 
 			<div class="page-header">
 				<h1>{{ t.leaderboard.title }}</h1>
@@ -177,8 +180,50 @@ onMounted(() => {
 }
 
 .leaderboard-page {
-	padding: 1rem 0;
+	padding: 0;
 	position: relative;
+}
+
+.leaderboard-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+.logo {
+	font-size: 1.15rem;
+	font-weight: 700;
+	text-decoration: none;
+	color: #111;
+}
+
+.top-links {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.ghost-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	color: #0f172a;
+	background: rgba(15, 23, 42, 0.06);
+	font-weight: 500;
+	padding: 0.65rem 1.35rem;
+	border-radius: 999px;
+	border: 1px solid rgba(15, 23, 42, 0.15);
+	transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.ghost-link:hover {
+	background: rgba(15, 23, 42, 0.1);
+	transform: translateY(-1px);
 }
 
 .page-header {
@@ -198,36 +243,6 @@ onMounted(() => {
 	margin: 0;
 	color: #666;
 	font-size: 1.1rem;
-}
-
-.nav-links {
-	position: absolute;
-	top: 0;
-	right: 0;
-	display: flex;
-	gap: 1rem;
-	flex-wrap: wrap;
-	z-index: 10;
-}
-
-.btn-link {
-	padding: 0.75rem 1.5rem;
-	border: 2px solid #74d66d;
-	color: white;
-	text-decoration: none;
-	font-size: 1.1rem;
-	font-weight: 600;
-	background: #74d66d;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	transition: all 0.2s;
-	border-radius: 4px;
-}
-
-.btn-link:hover {
-	background: #5fc158;
-	color: white;
-	box-shadow: 0 4px 8px rgba(116, 214, 109, 0.3);
-	transform: translateY(-1px);
 }
 
 .loading-state,
@@ -398,36 +413,71 @@ tbody tr:nth-child(3) .rank-badge {
 		padding: 1rem;
 	}
 
+	.leaderboard-topbar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.top-links {
+		justify-content: flex-start;
+	}
+
 	.page-header h1 {
-		font-size: 2rem;
+		font-size: 1.5rem;
 	}
 
 	.subtitle {
-		font-size: 1rem;
+		font-size: 0.9rem;
 	}
 
 	th,
 	td {
-		padding: 0.75rem 0.5rem;
+		padding: 0.5rem 0.25rem;
+		font-size: 0.75rem;
 	}
 
 	.rank-col {
-		width: 60px;
+		width: 50px;
 	}
 
 	.score-col {
-		width: 80px;
+		width: 60px;
+	}
+
+	.stat-col {
+		width: 50px;
 	}
 
 	.date-col {
-		width: 140px;
-		font-size: 0.85rem;
+		width: 100px;
+		font-size: 0.7rem;
+	}
+
+	.name-col {
+		font-size: 0.8rem;
 	}
 
 	.rank-badge {
-		width: 32px;
-		height: 32px;
-		font-size: 0.85rem;
+		width: 28px;
+		height: 28px;
+		font-size: 0.75rem;
+	}
+
+	tbody tr:nth-child(1) .rank-badge {
+		font-size: 1rem;
+	}
+
+	tbody tr:nth-child(2) .rank-badge {
+		font-size: 0.95rem;
+	}
+
+	tbody tr:nth-child(3) .rank-badge {
+		font-size: 0.9rem;
+	}
+
+	.you-tag {
+		font-size: 0.65rem;
+		padding: 0.1rem 0.4rem;
 	}
 }
 </style>
