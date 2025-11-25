@@ -225,7 +225,12 @@
 				<span class="win-icon" aria-hidden="true">🎉</span>
 			</div>
 			<p class="score-change">
-				{{ t.winScoreChange({ prevScore, newScore }) }}
+				{{
+					t.winScoreChange({
+						prevScore: prevScore ? Math.round(prevScore) : '?',
+						newScore: newScore ? Math.round(newScore) : '?',
+					})
+				}}
 			</p>
 			<button class="close-btn" @click="isShowWinModal = false">
 				{{ t.close }}
@@ -2047,6 +2052,26 @@ onUnmounted(() => {
 .parent-history-bar #game-id {
 	color: #333;
 	font-weight: 600;
+	display: inline-block;
+	animation: pulseGameId 0.5s ease-in-out 3;
+}
+
+@keyframes pulseGameId {
+	0% {
+		transform: scale(1);
+		color: #333;
+		font-weight: 600;
+	}
+	50% {
+		transform: scale(1.8);
+		color: #74d66d;
+		font-weight: 900;
+	}
+	100% {
+		transform: scale(1);
+		color: #333;
+		font-weight: 600;
+	}
 }
 
 .parent-history-bar .move-by {

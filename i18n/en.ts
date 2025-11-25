@@ -126,6 +126,11 @@ export const en = {
 					"I was bored, OK?<br/>This is now the third iteration of this idea. The last time was back in 2019, and I saw several hundred players sign up back then. Let's see if this duck can still fly in 2025.",
 			},
 			{
+				question: 'I haz the skillz. Can I help?',
+				answer:
+					"Absolutely! DistroChess is open source. Check the repo <a href='https://github.com/madc0w/distrochess3'>here</a>. All pull requests, issues, and suggestions are very welcome!",
+			},
+			{
 				question: 'Are ducks allowed to play? Can I play chess with ducks?',
 				answer:
 					"DistroChess welcomes all avian species, so long as they don't make too much trouble.",
