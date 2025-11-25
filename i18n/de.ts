@@ -185,6 +185,8 @@ export const de = {
 	winCongrats: 'Glückwunsch! Sie haben das Spiel gewonnen.',
 	winScoreChange:
 		'Aufgrund Ihrer Teilnahme an diesem Spiel ist Ihre Punktzahl von {prevScore} auf {newScore} gestiegen.',
+	noScoreChange:
+		'Dieses Spiel endete unentschieden. Alle Punktzahlen bleiben unverändert.',
 	gameDrawn: 'Spiel unentschieden!',
 	waitingForOpponent: 'Bitte warten Sie, bis ein Gegner einen Zug macht...',
 	timeRemaining: 'Verbleibende Zeit',

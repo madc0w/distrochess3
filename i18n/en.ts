@@ -186,6 +186,7 @@ export const en = {
 	winCongrats: "Congratulations! You've won the game.",
 	winScoreChange:
 		'Due to your participation in this game, your score has increased from {prevScore} to {newScore}.',
+	noScoreChange: 'This game ended in a draw. All scores remain unchanged.',
 	gameDrawn: 'Game drawn!',
 	waitingForOpponent: 'Please wait for an opponent to make a move...',
 	timeRemaining: 'Time remaining',

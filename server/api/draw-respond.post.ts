@@ -8,7 +8,7 @@ import { updateUserScores } from '../utils/scores';
 export default defineEventHandler(async (event) => {
 	const userId = verifyAuthToken(event);
 	const body = await readBody(event);
-	const { gameId, accept: isAcceptDraw } = body;
+	const { gameId, isAcceptDraw } = body;
 
 	if (!gameId || isAcceptDraw === undefined || !userId) {
 		throw createError({

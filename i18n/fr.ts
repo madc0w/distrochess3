@@ -65,7 +65,7 @@ export const fr: Translations = {
 		score: 'Score',
 		wins: 'Victoires',
 		losses: 'Défaites',
-		draws: 'Nulles',
+		draws: 'Parties nulles',
 		memberSince: 'Membre depuis',
 		you: 'Vous',
 		loading: 'Chargement du classement...',
@@ -108,7 +108,7 @@ export const fr: Translations = {
 			{
 				question: 'Comment les scores sont-ils calculés ?',
 				answer:
-					'Chaque joueur commence avec un score de 1000. Quand une partie se termine, les scores de tous les participants sont ajustés ainsi : en cas de nulle, rien ne change. En cas de victoire, chaque gagnant gagne un nombre de points proportionnel à son pourcentage de participation. Chaque perdant perd le même nombre de points, calculé selon son pourcentage de participation.',
+					'Chaque joueur commence avec un score de 1000. Quand une partie se termine, les scores de tous les participants sont ajustés ainsi : en cas de partie nulle, rien ne change. En cas de victoire, chaque gagnant gagne un nombre de points proportionnel à son pourcentage de participation. Chaque perdant perd le même nombre de points, calculé selon son pourcentage de participation.',
 			},
 			{
 				question:
@@ -152,18 +152,18 @@ export const fr: Translations = {
 	waitingForOpponent: "Veuillez attendre qu'un adversaire joue...",
 	timeRemaining: 'Temps restant',
 	pass: 'Passer',
-	offerDraw: 'Proposer nulle',
+	offerDraw: 'Proposer partie nulle',
 	drawOffer: {
-		title: 'Proposer nulle ?',
+		title: 'Proposer partie nulle ?',
 		message:
-			'Êtes-vous sûr de vouloir proposer la nulle ? Si le prochain adversaire accepte, cette partie sera nulle. Aucun point ne sera attribué.',
+			'Êtes-vous sûr de vouloir proposer une partie nulle ? Si le prochain adversaire accepte, cette partie sera nulle. Aucun point ne sera attribué.',
 		confirm: 'Oui, proposer la nulle',
 		cancel: 'Annuler',
 	},
 	drawOffered: {
-		title: 'Nulle proposée',
-		message: 'Votre adversaire a proposé la nulle.',
-		accept: 'Accepter la nulle',
+		title: 'Partie nulle proposé',
+		message: 'Votre adversaire a proposé une partie nulle.',
+		accept: 'Accepter',
 		decline: 'Continuer à jouer',
 	},
 	loadingGame: 'Chargement du jeu...',
@@ -174,6 +174,10 @@ export const fr: Translations = {
 	requestedGameNotAvailable:
 		"Vous n'avez pas accès à cette partie. Chargement de votre prochaine partie disponible.",
 	winCongrats: 'Félicitations ! Vous avez gagné la partie.',
+	winScoreChange:
+		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
+	noScoreChange:
+		"Cette partie s'est terminée par en nulle. Tous les scores restent inchangés.",
 	gameDrawn: 'Partie nulle !',
 	gameHistory: 'Historique de la partie',
 	exitHistory: "Quitter l'historique",
@@ -247,8 +251,6 @@ export const fr: Translations = {
 		},
 	},
 	close: 'Fermer',
-	winScoreChange:
-		'Grâce à votre participation à ce jeu, votre score est passé de {prevScore} à {newScore}.',
 	emails: {
 		welcome: {
 			greeting: 'Bonjour {name},',

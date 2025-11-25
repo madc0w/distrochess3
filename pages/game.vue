@@ -244,6 +244,9 @@
 	>
 		<div class="modal-content" @click.stop>
 			<h1 class="win-title">{{ t.gameDrawn }}</h1>
+			<p class="score-change">
+				{{ t.noScoreChange }}
+			</p>
 			<button class="close-btn" @click="isShowDrawModal = false">
 				{{ t.close }}
 			</button>
