@@ -4,7 +4,7 @@ require('dotenv').config({
 	path: require('path').join(__dirname, '..', '.env'),
 });
 
-const GAME_COUNT = 20;
+const GAME_COUNT = 5;
 
 async function initDatabase() {
 	const uri = process.env.MONGODB_URI;
@@ -49,6 +49,11 @@ async function initDatabase() {
 					},
 				],
 				createdDate: now,
+				lastMoveDate: null,
+				currentTurnUserId: null,
+				currentTurnStartDate: null,
+				result: null,
+				drawOfferUserId: null,
 			});
 		}
 

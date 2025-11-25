@@ -1,4 +1,4 @@
-run.bat
+**/run.bat
 node_modules
 package-lock.json
 .nuxt
