@@ -164,6 +164,7 @@ export const de = {
 		ERR_NAME_REQUIRED: 'Name ist erforderlich',
 		ERR_PASSWORD_TOO_SHORT: 'Passwort muss mindestens 6 Zeichen lang sein.',
 		ERR_EMAIL_REGISTERED: 'Diese E-Mail ist bereits registriert.',
+		ERR_NAME_REGISTERED: 'Dieser Benutzername ist bereits vergeben.',
 		ERR_ACCOUNT_CREATION_FAILED:
 			'Kontoerstellung fehlgeschlagen — bitte versuchen Sie es erneut.',
 		ERR_JWT_SECRET_MISSING: 'Serverfehler (fehlende Konfiguration)',

@@ -164,6 +164,7 @@ export const es = {
 		ERR_NAME_REQUIRED: 'El nombre es obligatorio',
 		ERR_PASSWORD_TOO_SHORT: 'La contraseña debe tener al menos 6 caracteres.',
 		ERR_EMAIL_REGISTERED: 'Ese correo electrónico ya está registrado.',
+		ERR_NAME_REGISTERED: 'Ese nombre de usuario ya está en uso.',
 		ERR_ACCOUNT_CREATION_FAILED:
 			'La creación de cuenta falló — por favor intenta de nuevo.',
 		ERR_JWT_SECRET_MISSING: 'Error del servidor (configuración faltante)',

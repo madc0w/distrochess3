@@ -168,6 +168,7 @@ export const en = {
 		ERR_NAME_REQUIRED: 'Name is required',
 		ERR_PASSWORD_TOO_SHORT: 'Password must be at least 6 characters.',
 		ERR_EMAIL_REGISTERED: 'That email is already registered.',
+		ERR_NAME_REGISTERED: 'That username is already taken.',
 		ERR_ACCOUNT_CREATION_FAILED: 'Account creation failed — please try again.',
 		ERR_JWT_SECRET_MISSING: 'Server error (missing configuration)',
 		ERR_PASSWORD_REQUIRED: 'Password is required.',

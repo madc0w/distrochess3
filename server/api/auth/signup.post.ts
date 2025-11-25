@@ -50,12 +50,19 @@ export default defineEventHandler(async (event) => {
 		const db = await getDb();
 		const users = db.collection<UserDoc>('users');
 
-		// Check for existing user
-		const existing = await users.findOne({ email: email.toLowerCase() });
-		if (existing) {
+		// Check for existing email
+		if (await users.findOne({ email: email.toLowerCase() })) {
 			throw createError({
 				statusCode: 409,
 				statusMessage: 'ERR_EMAIL_REGISTERED',
+			});
+		}
+
+		// Check for existing name
+		if (await users.findOne({ name: name.trim() })) {
+			throw createError({
+				statusCode: 409,
+				statusMessage: 'ERR_NAME_REGISTERED',
 			});
 		}
 

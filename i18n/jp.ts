@@ -163,6 +163,7 @@ export const jp = {
 		ERR_NAME_REQUIRED: '名前は必須です',
 		ERR_PASSWORD_TOO_SHORT: 'パスワードは6文字以上である必要があります。',
 		ERR_EMAIL_REGISTERED: 'そのメールアドレスはすでに登録されています。',
+		ERR_NAME_REGISTERED: 'そのユーザー名はすでに使用されています。',
 		ERR_ACCOUNT_CREATION_FAILED:
 			'アカウント作成に失敗しました — もう一度お試しください。',
 		ERR_JWT_SECRET_MISSING: 'サーバーエラー（設定が不足しています）',

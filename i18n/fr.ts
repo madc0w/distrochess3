@@ -279,6 +279,7 @@ export const fr: Translations = {
 		ERR_PASSWORD_TOO_SHORT:
 			'Le mot de passe doit contenir au moins 6 caractères',
 		ERR_EMAIL_REGISTERED: 'Cet email est déjà utilisé',
+		ERR_NAME_REGISTERED: "Ce nom d'utilisateur est déjà pris",
 		ERR_ACCOUNT_CREATION_FAILED:
 			"La création du compte a échoué — réessayez s'il vous plaît",
 		ERR_JWT_SECRET_MISSING: 'Erreur serveur (configuration manquante)',
