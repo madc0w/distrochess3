@@ -23,7 +23,10 @@
 						alt="DistroChess logo"
 						class="logo-image"
 					/>
-					<span>{{ t.distroChess }}</span>
+					<div class="title-container">
+						<span class="retro-title">{{ t.distroChess }}</span>
+						<div class="version-number">3.0</div>
+					</div>
 				</div>
 			</div>
 
@@ -429,6 +432,165 @@ if (process.client) {
 
 .logo:hover {
 	transform: scale(1.05);
+}
+
+.title-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.25rem;
+}
+
+.version-number {
+	font-size: 1.4rem;
+	color: rgba(255, 255, 255, 0.8);
+	font-weight: 800;
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	margin-left: auto;
+	padding-top: 0.8rem;
+}
+
+.retro-title {
+	/* font-family: 'Impact', 'Arial Black', sans-serif; */
+	/* font-size: 18rem; */
+	/* font-weight: 400; */
+	/* letter-spacing: 0.8em; */
+	text-transform: uppercase;
+	background: linear-gradient(
+		180deg,
+		#ffdd00 0%,
+		#ff8800 25%,
+		#ffdd00 50%,
+		#ff8800 75%,
+		#ffdd00 100%
+	);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	background-size: 100% 400%;
+	/* animation: retroGradient 3s linear infinite 0.5s infinite; */
+	text-shadow: 3px 3px 0px #ff8800, 6px 6px 0px #cc6600, 9px 9px 0px #000000;
+	filter: drop-shadow(0 0 10px #ff8800) drop-shadow(0 0 20px #ffdd00);
+	position: relative;
+	display: inline-block;
+	/* transform: scale(0.7, 2.6); */
+	transform-origin: center center;
+}
+
+.retro-title::before {
+	content: attr(data-text);
+	position: absolute;
+	left: 2px;
+	text-shadow: -2px 0 #0000ff;
+	top: 0;
+	color: #0000ff;
+	background: transparent;
+	overflow: hidden;
+	clip: rect(0, 900px, 0, 0);
+	animation: retroNoise 2s infinite linear alternate-reverse;
+}
+
+.retro-title::after {
+	content: attr(data-text);
+	position: absolute;
+	left: -2px;
+	text-shadow: 2px 0 #00ffff;
+	top: 0;
+	color: #00ffff;
+	background: transparent;
+	overflow: hidden;
+	clip: rect(0, 900px, 0, 0);
+	animation: retroNoise 3s infinite linear alternate-reverse;
+}
+
+@keyframes retroGradient {
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: 0% 100%;
+	}
+}
+
+/* 
+@keyframes retroGlitch {
+	0%,
+	95%,
+	100% {
+		transform: translate(0);
+	}
+	96% {
+		transform: translate(-1px, 0px);
+	}
+	98% {
+		transform: translate(1px, 0px);
+	}
+} */
+
+@keyframes retroNoise {
+	0% {
+		clip: rect(42px, 9999px, 44px, 0);
+	}
+	5% {
+		clip: rect(12px, 9999px, 59px, 0);
+	}
+	10% {
+		clip: rect(48px, 9999px, 29px, 0);
+	}
+	15% {
+		clip: rect(18px, 9999px, 83px, 0);
+	}
+	20% {
+		clip: rect(33px, 9999px, 27px, 0);
+	}
+	25% {
+		clip: rect(16px, 9999px, 50px, 0);
+	}
+	30% {
+		clip: rect(52px, 9999px, 38px, 0);
+	}
+	35% {
+		clip: rect(27px, 9999px, 71px, 0);
+	}
+	40% {
+		clip: rect(11px, 9999px, 46px, 0);
+	}
+	45% {
+		clip: rect(59px, 9999px, 23px, 0);
+	}
+	50% {
+		clip: rect(35px, 9999px, 68px, 0);
+	}
+	55% {
+		clip: rect(20px, 9999px, 54px, 0);
+	}
+	60% {
+		clip: rect(45px, 9999px, 32px, 0);
+	}
+	65% {
+		clip: rect(14px, 9999px, 77px, 0);
+	}
+	70% {
+		clip: rect(51px, 9999px, 25px, 0);
+	}
+	75% {
+		clip: rect(29px, 9999px, 62px, 0);
+	}
+	80% {
+		clip: rect(38px, 9999px, 41px, 0);
+	}
+	85% {
+		clip: rect(17px, 9999px, 55px, 0);
+	}
+	90% {
+		clip: rect(44px, 9999px, 36px, 0);
+	}
+	95% {
+		clip: rect(22px, 9999px, 64px, 0);
+	}
+	100% {
+		clip: rect(37px, 9999px, 49px, 0);
+	}
 }
 
 .logo-image {
@@ -891,6 +1053,15 @@ if (process.client) {
 	.logo {
 		font-size: 1.5rem;
 		gap: 0.75rem;
+	}
+
+	.retro-title {
+		font-size: 1.4rem;
+		letter-spacing: 0.2em;
+		text-shadow: 2px 2px 0px #ff8800, 4px 4px 0px #cc6600, 6px 6px 0px #000000;
+		display: inline-block;
+		transform: scale(1, 3.2);
+		top: -20px;
 	}
 
 	.logo-image {
