@@ -38,7 +38,7 @@ export const es = {
 	landing: {
 		eyebrow: 'Ajedrez distribuido, para humanos y patos',
 		headline: 'Una nueva partida en cada turno',
-		description: `<p>Distrochess es ajedrez distribuido. Esto significa que no juegas una sola partida contra una sola persona. En cambio, juegas muchas partidas contra muchos otros usuarios. Es un poco como una simultánea, pero en lugar de que muchas personas jueguen contra un solo oponente, hay varios jugadores en cada lado de la mesa.</p>
+		description: `<p>DistroChess es ajedrez distribuido. Esto significa que no juegas una sola partida contra una sola persona. En cambio, juegas muchas partidas contra muchos otros usuarios. Es un poco como una simultánea, pero en lugar de que muchas personas jueguen contra un solo oponente, hay varios jugadores en cada lado de la mesa.</p>
 		<p>Después de hacer un movimiento, esa partida se coloca de nuevo en la cola para que otro usuario tenga la oportunidad de responder. Mientras tanto, se te dará una partida aleatoria de la cola. Para evitar que los jugadores jueguen contra sí mismos, cada jugador siempre juega el mismo lado de una partida determinada.</p>
 		<p>Este proyecto es la reencarnación de una vieja idea, originalmente llamada Discochess allá por 2008, relanzada en 2019 y ahora nuevamente en 2025.</p>`,
 		featureTitle1: 'Cola de partidas',

@@ -38,7 +38,7 @@ export const en = {
 	landing: {
 		eyebrow: 'Distributed chess, for humans and ducks',
 		headline: 'A New Game at Every Turn',
-		description: `<p>Distrochess is distributed chess. This means that you don't play a single game against a single person. Instead you play many games against many other users. It's a bit like a simultaneous match, but instead of many people playing against a single opponent, there are several players on each side of the table.</p>
+		description: `<p>DistroChess is distributed chess. This means that you don't play a single game against a single person. Instead you play many games against many other users. It's a bit like a simultaneous match, but instead of many people playing against a single opponent, there are several players on each side of the table.</p>
 		<p>After you make a move, that game is placed back on the queue so that another user can have an opportunity to respond. Meanwhile, you will be given a random game off the queue. In order to avoid players playing against themselves, each player always plays the same side of a given game.</p>
 		<p>This project is the reincarnation of an old idea, originally named Discochess back around 2008,  relaunched in 2019, and now again in 2025.</p>`,
 		featureTitle1: 'Game queue',
@@ -278,11 +278,10 @@ export const en = {
 	emails: {
 		welcome: {
 			greeting: 'Hi {name},',
-			intro:
-				'Thanks for joining DistroChess — the fastest way to play distro-style games online.',
+			intro: 'Thanks for joining DistroChess!',
 			description:
-				'Start a match, invite friends, and keep an eye on your live rating from any device.',
-			ctaText: 'Jump back into DistroChess.com',
+				"DistroChess is distributed chess. This means that you don't play a single game against a single person. Instead you play many games against many other users. It's a bit like a simultaneous match, but instead of many people playing against a single opponent, there are several players on each side of the table.",
+			ctaText: 'Start playing now at DistroChess.com',
 			footer: 'See you on the board!',
 		},
 		passwordReset: {

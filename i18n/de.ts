@@ -38,7 +38,7 @@ export const de = {
 	landing: {
 		eyebrow: 'Verteiltes Schach, für Menschen und Enten',
 		headline: 'Ein neues Spiel bei jedem Zug',
-		description: `<p>Distrochess ist verteiltes Schach. Das bedeutet, dass Sie nicht ein einzelnes Spiel gegen eine einzelne Person spielen. Stattdessen spielen Sie viele Spiele gegen viele andere Benutzer. Es ist ein bisschen wie eine Simultanveranstaltung, aber anstatt dass viele Leute gegen einen einzelnen Gegner spielen, gibt es mehrere Spieler auf jeder Seite des Tisches.</p>
+		description: `<p>DistroChess ist verteiltes Schach. Das bedeutet, dass Sie nicht ein einzelnes Spiel gegen eine einzelne Person spielen. Stattdessen spielen Sie viele Spiele gegen viele andere Benutzer. Es ist ein bisschen wie eine Simultanveranstaltung, aber anstatt dass viele Leute gegen einen einzelnen Gegner spielen, gibt es mehrere Spieler auf jeder Seite des Tisches.</p>
 			<p>Nachdem Sie einen Zug gemacht haben, wird dieses Spiel wieder in die Warteschlange gestellt, damit ein anderer Benutzer die Möglichkeit hat zu antworten. In der Zwischenzeit erhalten Sie ein zufälliges Spiel aus der Warteschlange. Um zu vermeiden, dass Spieler gegen sich selbst spielen, spielt jeder Spieler immer auf derselben Seite eines bestimmten Spiels.</p>
 			<p>Dieses Projekt ist die Wiedergeburt einer alten Idee, ursprünglich um 2008 Discochess genannt, 2019 neu gestartet und jetzt wieder 2025.</p>`,
 		featureTitle1: 'Spiel-Warteschlange',

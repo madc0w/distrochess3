@@ -40,7 +40,7 @@ export const fr: Translations = {
 	landing: {
 		eyebrow: 'Échecs distribués, pour les humains et les canards',
 		headline: 'Un nouveau jeu à chaque tour',
-		description: `<p>Distrochess, c'est les échecs distribués. Cela signifie que vous ne jouez pas une seule partie contre une seule personne. Au lieu de cela, vous jouez plusieurs parties contre plusieurs autres utilisateurs. C'est un peu comme une simultanée, mais au lieu de plusieurs personnes jouant contre un seul adversaire, il y a plusieurs joueurs de chaque côté de la table.</p>
+		description: `<p>DistroChess, c'est les échecs distribués. Cela signifie que vous ne jouez pas une seule partie contre une seule personne. Au lieu de cela, vous jouez plusieurs parties contre plusieurs autres utilisateurs. C'est un peu comme une simultanée, mais au lieu de plusieurs personnes jouant contre un seul adversaire, il y a plusieurs joueurs de chaque côté de la table.</p>
 			<p>Après avoir effectué un coup, cette partie est remise dans la file d'attente afin qu'un autre utilisateur puisse avoir l'occasion de répondre. Pendant ce temps, vous recevrez une partie aléatoire de la file d'attente. Pour éviter que les joueurs ne jouent contre eux-mêmes, chaque joueur joue toujours du même côté pour une partie donnée.</p>
 			<p>Ce projet est la réincarnation d'une ancienne idée, initialement nommée Discochess vers 2008, relancée en 2019, et maintenant à nouveau en 2025.</p>`,
 		featureTitle1: 'File de parties',
