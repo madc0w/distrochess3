@@ -5,11 +5,13 @@
 			<div class="auth-card">
 				<div class="auth-header">
 					<p class="eyebrow">{{ t.distroChess }}</p>
-					<h1>{{ t.authPage.forgotPasswordTitle }}</h1>
-					<p class="subtitle">{{ t.authPage.forgotPasswordSubtitle }}</p>
+					<template v-if="!isSuccess">
+						<h1>{{ t.authPage.forgotPasswordTitle }}</h1>
+						<p class="subtitle">{{ t.authPage.forgotPasswordSubtitle }}</p>
+					</template>
 				</div>
 
-				<form v-if="!success" class="form" @submit.prevent="handleSubmit">
+				<form v-if="!isSuccess" class="form" @submit.prevent="handleSubmit">
 					<div class="form-group">
 						<label for="reset-email">{{ t.email }}</label>
 						<input
@@ -63,7 +65,7 @@ const { t } = useI18n();
 const email = ref('');
 const isLoading = ref(false);
 const error = ref('');
-const success = ref(false);
+const isSuccess = ref(false);
 
 watch(email, () => {
 	if (error.value) error.value = '';
@@ -79,7 +81,7 @@ async function handleSubmit() {
 			error.value = result.error || t.value.errors.ERR_GENERIC;
 			return;
 		}
-		success.value = true;
+		isSuccess.value = true;
 	} finally {
 		isLoading.value = false;
 	}
@@ -143,7 +145,7 @@ async function handleSubmit() {
 	text-transform: uppercase;
 	font-size: 0.75rem;
 	letter-spacing: 0.2em;
-	color: #74d66d;
+	color: #000;
 	margin-bottom: 0.5rem;
 }
 
