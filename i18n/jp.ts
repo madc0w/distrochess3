@@ -237,6 +237,13 @@ export const jp = {
 		notYourTurnMessage:
 			'他のプレイヤーが今手を指しました。次のゲームを読み込んでいます...',
 	},
+	profile: {
+		button: 'プロフィール',
+		score: 'スコア：',
+		wins: '勝利：',
+		losses: '敗北：',
+		draws: '引き分け：',
+	},
 	settings: {
 		title: 'ユーザー設定',
 		subtitle: 'プロフィールと設定を更新します。',

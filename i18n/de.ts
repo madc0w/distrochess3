@@ -244,6 +244,13 @@ export const de = {
 		notYourTurnMessage:
 			'Ein anderer Spieler hat gerade gezogen. Ihr nächstes Spiel wird geladen...',
 	},
+	profile: {
+		button: 'Profil',
+		score: 'Punktzahl:',
+		wins: 'Siege:',
+		losses: 'Niederlagen:',
+		draws: 'Unentschieden:',
+	},
 	settings: {
 		title: 'Benutzereinstellungen',
 		subtitle: 'Aktualisieren Sie Ihr Profil und Ihre Einstellungen.',

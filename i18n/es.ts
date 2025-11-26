@@ -240,6 +240,13 @@ export const es = {
 		notYourTurnMessage:
 			'Otro jugador acaba de mover. Cargando tu siguiente partida...',
 	},
+	profile: {
+		button: 'Perfil',
+		score: 'Puntuación:',
+		wins: 'Victorias:',
+		losses: 'Derrotas:',
+		draws: 'Empates:',
+	},
 	settings: {
 		title: 'Configuración de usuario',
 		subtitle: 'Actualiza tu perfil y preferencias.',

@@ -207,6 +207,13 @@ export const fr: Translations = {
 		notYourTurnMessage:
 			'Un autre joueur vient de jouer. Chargement de votre prochaine partie...',
 	},
+	profile: {
+		button: 'Profil',
+		score: 'Score :',
+		wins: 'Victoires :',
+		losses: 'Défaites :',
+		draws: 'Nulles :',
+	},
 	settings: {
 		title: 'Paramètres utilisateur',
 		subtitle: 'Mettez à jour votre profil et vos préférences.',

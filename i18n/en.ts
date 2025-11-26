@@ -239,6 +239,13 @@ export const en = {
 		notYourTurnTitle: 'Not your turn',
 		notYourTurnMessage: 'Another player just moved. Loading your next game...',
 	},
+	profile: {
+		button: 'Profile',
+		score: 'Score:',
+		wins: 'Wins:',
+		losses: 'Losses:',
+		draws: 'Draws:',
+	},
 	settings: {
 		title: 'User Settings',
 		subtitle: 'Update your profile and preferences.',

@@ -17,7 +17,7 @@
 						<button
 							class="btn-profile"
 							@click="toggleProfileMenu"
-							:aria-label="t.profile || 'Profile'"
+							:aria-label="t.profile.button"
 							ref="profileButton"
 						>
 							<svg
@@ -45,25 +45,25 @@
 									<strong>{{ displayUser?.name }}</strong>
 								</div>
 								<div class="profile-menu-item">
-									<span class="profile-label">Score:</span>
+									<span class="profile-label">{{ t.profile.score }}</span>
 									<span class="profile-value">{{
 										Math.round(displayUser?.score ?? 0)
 									}}</span>
 								</div>
 								<div class="profile-menu-item">
-									<span class="profile-label">Wins:</span>
+									<span class="profile-label">{{ t.profile.wins }}</span>
 									<span class="profile-value">{{
 										displayUser?.wins?.length ?? 0
 									}}</span>
 								</div>
 								<div class="profile-menu-item">
-									<span class="profile-label">Losses:</span>
+									<span class="profile-label">{{ t.profile.losses }}</span>
 									<span class="profile-value">{{
 										displayUser?.losses?.length ?? 0
 									}}</span>
 								</div>
 								<div class="profile-menu-item">
-									<span class="profile-label">Draws:</span>
+									<span class="profile-label">{{ t.profile.draws }}</span>
 									<span class="profile-value">{{
 										displayUser?.draws?.length ?? 0
 									}}</span>
@@ -460,7 +460,6 @@ const chatErrorMessage = ref('');
 const isChatLoading = ref(false);
 const isChatSending = ref(false);
 const chatUnreadCount = ref(0);
-const chatIntervalId = ref<ReturnType<typeof setInterval> | null>(null);
 const lastSeenChatTimestamp = ref<string | null>(null);
 const lastPersistedChatTimestamp = ref<string | null>(null);
 const pendingLastSeenUpload = ref<string | null>(null);
@@ -474,7 +473,7 @@ const moveErrorModalTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
 
 const isShowingProfileMenu = ref(false);
 const profileButton = ref<HTMLElement | null>(null);
-const profileMenuPosition = ref({});
+const profileMenuPosition = ref<Record<string, string>>({});
 const freshUserData = ref<any>(null);
 const isOfferDrawModalVisible = ref(false);
 const isPulsingDrawButtons = ref(false);
@@ -573,7 +572,7 @@ const toggleProfileMenu = () => {
 					position: 'fixed',
 					top: `${top}px`,
 					right: `${right}px`,
-					zIndex: 999999,
+					zIndex: '999999',
 				};
 			});
 		}
