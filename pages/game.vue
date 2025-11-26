@@ -76,6 +76,12 @@
 									<img src="/settings.svg" alt="" class="settings-icon-small" />
 									{{ t.settings.button }}
 								</button>
+								<button
+									class="profile-menu-settings btn-signout"
+									@click="handleSignout"
+								>
+									{{ t.signout }}
+								</button>
 							</div>
 						</Teleport>
 					</div>
@@ -89,9 +95,6 @@
 						<span v-if="chatUnreadCount > 0" class="chat-badge">
 							{{ chatUnreadCount }}
 						</span>
-					</button>
-					<button @click="handleSignout" class="btn-signout">
-						{{ t.signout }}
 					</button>
 				</div>
 			</div>
@@ -1492,15 +1495,9 @@ onUnmounted(() => {
 }
 
 .btn-signout {
-	padding: 0.5rem 1rem;
-	background: #f44336;
-	color: white;
-	border: 1px solid #f44336;
-	border-radius: 4px;
-	font-size: 0.9rem;
-	font-weight: 500;
-	cursor: pointer;
-	transition: all 0.2s ease;
+	background: #f44336 !important;
+	border-color: #f44336 !important;
+	color: #fff !important;
 }
 
 .btn-faq {
