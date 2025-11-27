@@ -118,6 +118,10 @@
 			</p>
 
 			<p class="privacy-link-wrapper animate-in delay-9">
+				<a href="mailto:support@distrochess.com" class="privacy-link">{{
+					t.contact.linkLabel.toUpperCase()
+				}}</a>
+				<span class="link-separator">•</span>
 				<NuxtLink to="/privacy" class="privacy-link">{{
 					t.privacy.linkLabel.toUpperCase()
 				}}</NuxtLink>
@@ -1046,6 +1050,11 @@ if (process.client) {
 .privacy-link:hover {
 	color: rgba(255, 255, 255, 1);
 	text-decoration: underline;
+}
+
+.link-separator {
+	color: rgba(255, 255, 255, 0.5);
+	margin: 0 0.75rem;
 }
 
 /* Mobile optimizations */

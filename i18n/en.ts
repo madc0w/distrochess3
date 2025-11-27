@@ -315,6 +315,9 @@ export const en = {
 		es: 'Spanish (Español)',
 		jp: 'Japanese (日本語)',
 	},
+	contact: {
+		linkLabel: 'Contact',
+	},
 	privacy: {
 		linkLabel: 'Privacy Policy',
 		pageTitle: 'Privacy Policy',
