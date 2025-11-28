@@ -311,6 +311,9 @@ export const fr: Translations = {
 		es: 'Espagnol (Español)',
 		jp: 'Japonais (日本語)',
 	},
+	contact: {
+		linkLabel: 'Contact',
+	},
 	privacy: {
 		linkLabel: 'Politique de confidentialité',
 		pageTitle: 'Politique de confidentialité',
