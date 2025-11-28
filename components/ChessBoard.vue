@@ -139,7 +139,7 @@ function getPieceColor(square: string): 'white' | 'black' | null {
 function isLightSquare(square: string): boolean {
 	const file = square.charCodeAt(0) - 97; // a=0, b=1, etc.
 	const rank = parseInt(square[1]) - 1;
-	return (file + rank) % 2 === 0;
+	return (file + rank) % 2 === 1;
 }
 
 function handleSquareClick(square: string) {
