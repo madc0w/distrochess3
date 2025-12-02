@@ -232,8 +232,8 @@ async function findRequestedGame(db: Db, requestedGameId: string) {
 
 	const filter: Filter<Game> =
 		orFilters.length === 1
-			? { ...orFilters[0], result: null }
-			: { result: null, $or: orFilters };
+			? { ...orFilters[0], result: null, currentTurnUserId: null }
+			: { result: null, currentTurnUserId: null, $or: orFilters };
 
 	return db.collection<Game>('games').findOne(filter);
 }
