@@ -5,6 +5,7 @@ export interface UserDoc {
 	name: string;
 	passwordHash: string;
 	createdDate: Date | null;
+	lastActiveDate?: Date | null;
 	score: number;
 	wins?: ObjectId[];
 	losses?: ObjectId[];

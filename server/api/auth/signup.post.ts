@@ -68,8 +68,10 @@ export default defineEventHandler(async (event) => {
 
 		// Hash password and create user
 		const passwordHash = hashPassword(password);
+		const now = new Date();
 		const doc: UserDoc = {
-			createdDate: new Date(),
+			createdDate: now,
+			lastActiveDate: now,
 			email: email.toLowerCase(),
 			name: name.trim(),
 			passwordHash,

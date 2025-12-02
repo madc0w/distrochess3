@@ -62,6 +62,12 @@ export default defineEventHandler(async (event) => {
 			});
 		}
 
+		// Update lastActiveDate
+		await users.updateOne(
+			{ _id: user._id },
+			{ $set: { lastActiveDate: new Date() } }
+		);
+
 		const _id = user._id.toString();
 		const token = generateToken(_id, user.email, user.name);
 

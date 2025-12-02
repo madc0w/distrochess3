@@ -18,6 +18,11 @@ export default defineEventHandler(async (event) => {
 
 		const db = await getDb();
 
+		// Update lastActiveDate for the user
+		await db
+			.collection('users')
+			.updateOne({ _id: userId }, { $set: { lastActiveDate: new Date() } });
+
 		// Reset turns for games where the current turn has exceeded the time limit
 		const maxMoveTimeMs = maxMoveTimeMins * 60 * 1000;
 		const cutoffDate = new Date(Date.now() - maxMoveTimeMs);
