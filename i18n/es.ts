@@ -318,6 +318,9 @@ export const es = {
 		es: 'Español',
 		jp: 'Japonés (日本語)',
 	},
+	contact: {
+		linkLabel: 'Contacto',
+	},
 	privacy: {
 		linkLabel: 'Política de privacidad',
 		pageTitle: 'Política de privacidad',

@@ -321,6 +321,9 @@ export const de = {
 		es: 'Spanisch (Español)',
 		jp: 'Japanisch (日本語)',
 	},
+	contact: {
+		linkLabel: 'Kontakt',
+	},
 	privacy: {
 		linkLabel: 'Datenschutzerklärung',
 		pageTitle: 'Datenschutzerklärung',

@@ -314,6 +314,9 @@ export const jp = {
 		es: 'スペイン語 (Español)',
 		jp: '日本語',
 	},
+	contact: {
+		linkLabel: 'お問い合わせ',
+	},
 	privacy: {
 		linkLabel: 'プライバシーポリシー',
 		pageTitle: 'プライバシーポリシー',
