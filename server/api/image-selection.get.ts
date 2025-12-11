@@ -31,15 +31,15 @@ export default defineEventHandler(async (event) => {
 			.toArray();
 
 		// Create a map with all requested publicIds, defaulting to 0 for those not found
-		const countsMap: Record<string, number> = {};
+		const counts: Record<string, number> = {};
 		for (const id of publicIdArray) {
-			countsMap[id] = 0;
+			counts[id] = 0;
 		}
 		for (const result of results) {
-			countsMap[result.publicId] = result.count;
+			counts[result.publicId] = result.count;
 		}
 
-		return { counts: countsMap };
+		return { counts };
 	} catch (error: any) {
 		console.error('Error fetching image selection counts:', error);
 		throw createError({
