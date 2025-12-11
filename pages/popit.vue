@@ -19,7 +19,7 @@
 			<div class="score-section">
 				<div class="score-item">
 					<span class="score-label">{{ t.popit.averageScore }}:</span>
-					<span class="score-value">{{ averageScore.toFixed(2) }}</span>
+					<span class="score-value">{{ Math.round(100 * averageScore) }}</span>
 				</div>
 				<div class="score-item">
 					<span class="score-label">{{ t.popit.trials }}:</span>
