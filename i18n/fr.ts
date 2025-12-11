@@ -353,8 +353,8 @@ export const fr: Translations = {
 		],
 	},
 	popit: {
-		title: 'Pop It',
-		welcome: 'Bienvenue sur Pop It !',
+		title: 'PopIt',
+		welcome: 'Bienvenue sur PopIt !',
 		instructions:
 			"Choisissez l'image que vous pensez que la plupart des gens ont choisie !",
 		backToGame: 'Retour au jeu',
@@ -366,7 +366,7 @@ export const fr: Translations = {
 		selections: 'sélections',
 		youWon: "Vous avez choisi l'image la plus populaire !",
 		youSelected: "Vous avez choisi l'image classée",
-		averageScore: 'Score moyen',
+		averageScore: 'Score',
 		trials: 'Parties jouées',
 	},
 };

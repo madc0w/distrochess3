@@ -357,8 +357,8 @@ export const en = {
 		],
 	},
 	popit: {
-		title: 'Pop It',
-		welcome: 'Welcome to Pop It!',
+		title: 'PopIt',
+		welcome: 'Welcome to PopIt!',
 		instructions: 'Pick the image you think most people picked!',
 		backToGame: 'Back to Game',
 		randomImages: 'Random Images',
@@ -369,8 +369,8 @@ export const en = {
 		selections: 'selections',
 		youWon: 'You picked the most popular image!',
 		youSelected: 'You picked image ranked',
-		averageScore: 'Average Score',
-		trials: 'Games Played',
+		averageScore: 'Score',
+		trials: 'Rounds Played',
 	},
 };
 

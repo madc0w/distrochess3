@@ -360,8 +360,8 @@ export const es = {
 		],
 	},
 	popit: {
-		title: 'Pop It',
-		welcome: '¡Bienvenido a Pop It!',
+		title: 'PopIt',
+		welcome: '¡Bienvenido a PopIt!',
 		instructions: '¡Elige la imagen que crees que la mayoría eligió!',
 		backToGame: 'Volver al juego',
 		randomImages: 'Imágenes aleatorias',
@@ -372,8 +372,8 @@ export const es = {
 		selections: 'selecciones',
 		youWon: '¡Elegiste la imagen más popular!',
 		youSelected: 'Elegiste la imagen en el puesto',
-		averageScore: 'Puntuación media',
-		trials: 'Juegos jugados',
+		averageScore: 'Puntuación',
+		trials: 'Partidas jugadas',
 	},
 };
 

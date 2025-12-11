@@ -61,6 +61,7 @@
 						@click="selectImage(image.publicId)"
 					>
 						<img :src="image.url" :alt="image.publicId" loading="lazy" />
+						<div class="image-name">{{ formatImageName(image.publicId) }}</div>
 						<div v-if="hasSelected" class="selection-count">
 							<span class="count-number">{{
 								selectionCounts[image.publicId] || 0
@@ -144,6 +145,16 @@ const getWinningImageId = () => {
 
 const isWinningImage = (publicId: string) => {
 	return publicId === getWinningImageId();
+};
+
+// Format image name: strip trailing number and replace underscores with spaces
+const formatImageName = (publicId: string): string => {
+	// Get just the filename part (after last /)
+	const filename = publicId.split('/').pop() || publicId;
+	// Remove trailing underscore and number (e.g., "_02" or "_123")
+	const withoutNumber = filename.replace(/_\d+$/, '');
+	// Replace underscores with spaces
+	return withoutNumber.replace(/_/g, ' ');
 };
 
 // Calculate rank of selected image (1 = most selected)
@@ -424,6 +435,14 @@ onMounted(() => {
 	height: 200px;
 	object-fit: cover;
 	display: block;
+}
+
+.image-name {
+	font-size: 0.75rem;
+	color: #666;
+	padding: 0.25rem 0.5rem;
+	text-align: center;
+	background: #f5f5f5;
 }
 
 .selection-count {
