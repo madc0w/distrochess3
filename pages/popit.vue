@@ -28,7 +28,8 @@
 			</div>
 
 			<div class="images-section">
-				<button @click="fetchImages" class="refresh-btn" :disabled="loading">
+				<!-- 
+                <button @click="fetchImages" class="refresh-btn" :disabled="loading">
 					{{
 						loading
 							? t.popit.loading
@@ -36,7 +37,7 @@
 							? t.popit.playAgain
 							: t.popit.refreshImages
 					}}
-				</button>
+				</button> -->
 
 				<div v-if="error" class="error-message">
 					{{ error }}
