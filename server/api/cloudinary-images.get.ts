@@ -16,14 +16,28 @@ export default defineEventHandler(async (event) => {
 
 	try {
 		// Select random images from local metadata (instant, no API calls)
+		// Avoid selecting images with the same base name (e.g., pike_01 and pike_02)
 		const selectedImages: typeof images = [];
 		const usedIndices = new Set<number>();
+		const usedBaseNames = new Set<string>();
+
+		// Extract base name from filename (e.g., "pike_01.jpg" -> "pike")
+		const getBaseName = (filename: string): string => {
+			const nameWithoutExt = filename.replace(/\.[^.]+$/, '');
+			// Match pattern: base name followed by underscore and digits
+			const match = nameWithoutExt.match(/^(.+?)_\d+$/);
+			return match ? match[1] : nameWithoutExt;
+		};
 
 		while (selectedImages.length < count && usedIndices.size < images.length) {
 			const randomIndex = Math.floor(Math.random() * images.length);
 			if (!usedIndices.has(randomIndex)) {
 				usedIndices.add(randomIndex);
-				selectedImages.push(images[randomIndex]);
+				const baseName = getBaseName(images[randomIndex].filename);
+				if (!usedBaseNames.has(baseName)) {
+					usedBaseNames.add(baseName);
+					selectedImages.push(images[randomIndex]);
+				}
 			}
 		}
 
