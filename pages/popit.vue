@@ -523,7 +523,28 @@ onMounted(() => {
 	}
 
 	.content {
-		padding: 1.5rem;
+		padding: 1rem;
+	}
+
+	.image-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.75rem;
+	}
+
+	.image-card img {
+		height: 120px;
+	}
+
+	.selection-count {
+		padding: 0.5rem;
+	}
+
+	.count-number {
+		font-size: 1.1rem;
+	}
+
+	.count-label {
+		font-size: 0.7rem;
 	}
 }
 </style>
