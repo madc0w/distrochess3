@@ -432,9 +432,10 @@ onMounted(() => {
 
 .image-card img {
 	width: 100%;
-	height: 200px;
-	object-fit: cover;
+	aspect-ratio: 1 / 1;
+	object-fit: contain;
 	display: block;
+	background: #f0f0f0;
 }
 
 .image-name {
@@ -548,10 +549,6 @@ onMounted(() => {
 	.image-grid {
 		grid-template-columns: repeat(2, 1fr);
 		gap: 0.75rem;
-	}
-
-	.image-card img {
-		height: 120px;
 	}
 
 	.selection-count {
