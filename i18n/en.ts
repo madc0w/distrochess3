@@ -356,6 +356,22 @@ export const en = {
 			},
 		],
 	},
+	popit: {
+		title: 'Pop It',
+		welcome: 'Welcome to Pop It!',
+		instructions: 'Pick the image you think most people picked!',
+		backToGame: 'Back to Game',
+		randomImages: 'Random Images',
+		refreshImages: 'New Game',
+		playAgain: 'Play Again',
+		loading: 'Loading...',
+		loadingImages: 'Loading images...',
+		selections: 'selections',
+		youWon: 'You picked the most popular image!',
+		youSelected: 'You picked image ranked',
+		averageScore: 'Average Score',
+		trials: 'Games Played',
+	},
 };
 
 export type Translations = typeof en;

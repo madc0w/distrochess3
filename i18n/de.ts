@@ -362,6 +362,23 @@ export const de = {
 			},
 		],
 	},
+	popit: {
+		title: 'Pop It',
+		welcome: 'Willkommen bei Pop It!',
+		instructions:
+			'Wähle das Bild, das deiner Meinung nach am häufigsten gewählt wurde!',
+		backToGame: 'Zurück zum Spiel',
+		randomImages: 'Zufällige Bilder',
+		refreshImages: 'Neues Spiel',
+		playAgain: 'Nochmal spielen',
+		loading: 'Laden...',
+		loadingImages: 'Bilder werden geladen...',
+		selections: 'Auswahlen',
+		youWon: 'Du hast das beliebteste Bild gewählt!',
+		youSelected: 'Du hast Bild auf Rang gewählt',
+		averageScore: 'Durchschnittspunkte',
+		trials: 'Gespielte Spiele',
+	},
 };
 
 export type Translations = typeof de;

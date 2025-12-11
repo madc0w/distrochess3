@@ -355,6 +355,22 @@ export const jp = {
 			},
 		],
 	},
+	popit: {
+		title: 'ポップイット',
+		welcome: 'ポップイットへようこそ！',
+		instructions: '一番多く選ばれたと思う画像を選んでください！',
+		backToGame: 'ゲームに戻る',
+		randomImages: 'ランダム画像',
+		refreshImages: '新しいゲーム',
+		playAgain: 'もう一度遊ぶ',
+		loading: '読み込み中...',
+		loadingImages: '画像を読み込んでいます...',
+		selections: '選択数',
+		youWon: '一番人気の画像を選びました！',
+		youSelected: '選んだ画像の順位',
+		averageScore: '平均スコア',
+		trials: 'プレイ回数',
+	},
 };
 
 export type Translations = typeof jp;
