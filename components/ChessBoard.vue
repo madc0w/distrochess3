@@ -104,7 +104,10 @@ watch(
 
 // Generate board squares (a1-h8)
 const squares = computed(() => {
-	const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+	const files =
+		props.playerColor === 'white'
+			? ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+			: ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 	const ranks =
 		props.playerColor === 'white'
 			? [8, 7, 6, 5, 4, 3, 2, 1]
