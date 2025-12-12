@@ -22,12 +22,12 @@ export default defineEventHandler(async (event) => {
 		const usedBaseNames = new Set<string>();
 
 		// Extract base name from filename (e.g., "pike_01.jpg" -> "pike")
-		const getBaseName = (filename: string): string => {
+		function getBaseName(filename: string): string {
 			const nameWithoutExt = filename.replace(/\.[^.]+$/, '');
 			// Match pattern: base name followed by underscore and digits
-			const match = nameWithoutExt.match(/^(.+?)_\d+$/);
+			const match = nameWithoutExt.match(/^(.+?)(_\d+)+$/);
 			return match ? match[1] : nameWithoutExt;
-		};
+		}
 
 		while (selectedImages.length < count && usedIndices.size < images.length) {
 			const randomIndex = Math.floor(Math.random() * images.length);
