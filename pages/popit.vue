@@ -16,7 +16,7 @@
 				</button>
 				<Teleport to="body">
 					<div
-						v-if="showLanguageMenu"
+						v-if="isShowLanguageMenu"
 						class="language-menu"
 						:style="menuPosition"
 					>
@@ -70,7 +70,7 @@
 					{{ error }}
 				</div>
 
-				<div v-if="loading" class="loading">
+				<div v-if="isLoading" class="loading">
 					{{ t.popit.loadingImages }}
 				</div>
 
@@ -124,14 +124,14 @@ const languageOptions = computed(() =>
 	}))
 );
 
-const showLanguageMenu = ref(false);
+const isShowLanguageMenu = ref(false);
 const langButton = ref<HTMLElement | null>(null);
 const menuPosition = ref({});
 
 const toggleLanguageMenu = () => {
-	showLanguageMenu.value = !showLanguageMenu.value;
+	isShowLanguageMenu.value = !isShowLanguageMenu.value;
 
-	if (showLanguageMenu.value && langButton.value) {
+	if (isShowLanguageMenu.value && langButton.value) {
 		nextTick(() => {
 			const rect = langButton.value!.getBoundingClientRect();
 			menuPosition.value = {
@@ -146,13 +146,13 @@ const toggleLanguageMenu = () => {
 
 const selectLanguage = (lang: string) => {
 	setLocale(lang, true);
-	showLanguageMenu.value = false;
+	isShowLanguageMenu.value = false;
 };
 
 const handleClickOutside = (event: MouseEvent) => {
 	const target = event.target as HTMLElement;
 	if (!target.closest('.language-dropdown')) {
-		showLanguageMenu.value = false;
+		isShowLanguageMenu.value = false;
 	}
 };
 
@@ -168,7 +168,7 @@ const STORAGE_KEY_SCORE = 'popit_total_score';
 const STORAGE_KEY_TRIALS = 'popit_num_trials';
 
 const images = ref<CloudinaryImage[]>([]);
-const loading = ref(false);
+const isLoading = ref(false);
 const error = ref<string | null>(null);
 const selectedImageId = ref<string | null>(null);
 const selectionCounts = ref<Record<string, number>>({});
@@ -185,25 +185,25 @@ const averageScore = computed(() => {
 });
 
 // Load scores from localStorage on mount
-const loadScores = () => {
+function loadScores() {
 	if (typeof window !== 'undefined') {
 		const storedScore = localStorage.getItem(STORAGE_KEY_SCORE);
 		const storedTrials = localStorage.getItem(STORAGE_KEY_TRIALS);
 		totalScore.value = storedScore ? parseInt(storedScore, 10) : 0;
 		numTrials.value = storedTrials ? parseInt(storedTrials, 10) : 0;
 	}
-};
+}
 
 // Save scores to localStorage
-const saveScores = () => {
+function saveScores() {
 	if (typeof window !== 'undefined') {
 		localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
 		localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
 	}
-};
+}
 
 // Get the winning image (most selected)
-const getWinningImageId = () => {
+function getWinningImageId() {
 	let maxCount = -1;
 	let winningId = '';
 	for (const [id, count] of Object.entries(selectionCounts.value)) {
@@ -213,39 +213,39 @@ const getWinningImageId = () => {
 		}
 	}
 	return winningId;
-};
+}
 
-const isWinningImage = (publicId: string) => {
+function isWinningImage(publicId: string) {
 	return publicId === getWinningImageId();
-};
+}
 
 // Format image name: strip trailing number and replace underscores with spaces
-const formatImageName = (publicId: string): string => {
+function formatImageName(publicId: string): string {
 	// Get just the filename part (after last /)
 	const filename = publicId.split('/').pop() || publicId;
 	// Remove trailing underscore and number (e.g., "_02" or "_123")
 	const withoutNumber = filename.replace(/_\d+$/, '');
 	// Replace underscores with spaces
 	return withoutNumber.replace(/_/g, ' ');
-};
+}
 
 // Calculate rank of selected image (1 = most selected)
-const calculateRank = (publicId: string): number => {
+function calculateRank(publicId: string): number {
 	const counts = Object.entries(selectionCounts.value)
 		.map(([id, count]) => ({ id, count }))
 		.sort((a, b) => b.count - a.count);
 
 	const rank = counts.findIndex((item) => item.id === publicId) + 1;
 	return rank;
-};
+}
 
 // Calculate points based on rank
-const calculatePoints = (rank: number): number => {
+function calculatePoints(rank: number): number {
 	const n = images.value.length;
 	return Math.max(0, n - rank + 1);
-};
+}
 
-const showConfetti = () => {
+function showConfetti() {
 	if (typeof window !== 'undefined') {
 		import('canvas-confetti').then((mod) => {
 			mod.default({
@@ -255,10 +255,10 @@ const showConfetti = () => {
 			});
 		});
 	}
-};
+}
 
-const selectImage = async (publicId: string) => {
-	if (hasSelected.value || loading.value) return;
+async function selectImage(publicId: string) {
+	if (hasSelected.value || isLoading.value) return;
 
 	selectedImageId.value = publicId;
 
@@ -300,10 +300,10 @@ const selectImage = async (publicId: string) => {
 		error.value = err.message || 'Failed to record selection';
 		console.error('Error selecting image:', err);
 	}
-};
+}
 
-const fetchImages = async () => {
-	loading.value = true;
+async function fetchImages() {
+	isLoading.value = true;
 	error.value = null;
 	hasSelected.value = false;
 	selectedImageId.value = null;
@@ -319,9 +319,9 @@ const fetchImages = async () => {
 		error.value = err.message || 'Failed to load images';
 		console.error('Error fetching images:', err);
 	} finally {
-		loading.value = false;
+		isLoading.value = false;
 	}
-};
+}
 
 // Fetch images on mount
 onMounted(() => {
