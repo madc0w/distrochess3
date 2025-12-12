@@ -130,7 +130,7 @@ const isShowLanguageMenu = ref(false);
 const langButton = ref<HTMLElement | null>(null);
 const menuPosition = ref({});
 
-const toggleLanguageMenu = () => {
+function toggleLanguageMenu() {
 	isShowLanguageMenu.value = !isShowLanguageMenu.value;
 
 	if (isShowLanguageMenu.value && langButton.value) {
@@ -144,19 +144,19 @@ const toggleLanguageMenu = () => {
 			};
 		});
 	}
-};
+}
 
-const selectLanguage = (lang: string) => {
+function selectLanguage(lang: string) {
 	setLocale(lang, true);
 	isShowLanguageMenu.value = false;
-};
+}
 
-const handleClickOutside = (event: MouseEvent) => {
+function handleClickOutside(event: MouseEvent) {
 	const target = event.target as HTMLElement;
 	if (!target.closest('.language-dropdown')) {
 		isShowLanguageMenu.value = false;
 	}
-};
+}
 
 interface CloudinaryImage {
 	url: string;
