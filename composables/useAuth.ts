@@ -33,7 +33,7 @@ export function useAuth() {
 			}
 		}
 		if (auth.value?.user?.preferredLocale) {
-			setLocale(auth.value.user.preferredLocale);
+			setLocale(auth.value.user.preferredLocale, true);
 		}
 	});
 
@@ -44,7 +44,7 @@ export function useAuth() {
 			if (val) localStorage.setItem('auth', JSON.stringify(val));
 			else localStorage.removeItem('auth');
 			if (val?.user?.preferredLocale) {
-				setLocale(val.user.preferredLocale);
+				setLocale(val.user.preferredLocale, true);
 			}
 		},
 		{ deep: true }
@@ -61,9 +61,9 @@ export function useAuth() {
 			});
 			auth.value = response;
 			if (response.user?.preferredLocale) {
-				setLocale(response.user.preferredLocale);
+				setLocale(response.user.preferredLocale, true);
 			} else {
-				setLocale(preferredLocale);
+				setLocale(preferredLocale, true);
 			}
 			return { success: true };
 		} catch (error: any) {
@@ -83,7 +83,7 @@ export function useAuth() {
 			});
 			auth.value = response;
 			if (response.user?.preferredLocale) {
-				setLocale(response.user.preferredLocale);
+				setLocale(response.user.preferredLocale, true);
 			}
 			return { success: true };
 		} catch (error: any) {

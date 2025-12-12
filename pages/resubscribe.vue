@@ -95,7 +95,7 @@ async function syncPreferredLocale() {
 			payload.preferredLocale &&
 			typeof payload.preferredLocale === 'string'
 		) {
-			setLocale(payload.preferredLocale);
+			setLocale(payload.preferredLocale, true);
 		}
 	} catch (error) {
 		console.error('Unable to sync preferred locale', error);

@@ -6,6 +6,7 @@ type TranslationMap = Record<string, any>;
 
 const DEFAULT_LOCALE = 'en';
 const STORAGE_KEY = 'preferredLocale';
+const EXPLICIT_CHOICE_KEY = 'localeExplicitlySet';
 const SUPPORTED_LOCALES = Object.keys(en.languages);
 
 function interpolate(str: string, vars: Record<string, any>): string {
@@ -47,11 +48,16 @@ function normalizeLocale(locale?: string | null): string {
 function detectInitialLocale(): string {
 	if (process.client) {
 		try {
-			const stored = localStorage.getItem(STORAGE_KEY);
-			if (stored) return normalizeLocale(stored);
+			// Only use stored locale if user explicitly set it
+			const explicitlySet = localStorage.getItem(EXPLICIT_CHOICE_KEY);
+			if (explicitlySet === 'true') {
+				const stored = localStorage.getItem(STORAGE_KEY);
+				if (stored) return normalizeLocale(stored);
+			}
 		} catch (_err) {
 			/* ignore */
 		}
+		// Always respect browser language if no explicit user choice
 		if (navigator?.language) return normalizeLocale(navigator.language);
 	}
 	return DEFAULT_LOCALE;
@@ -63,8 +69,16 @@ export function useI18n() {
 		wrapTranslations(getTranslations(locale.value) as TranslationMap)
 	);
 
-	function setLocale(next: string) {
+	function setLocale(next: string, explicit: boolean = false) {
 		locale.value = normalizeLocale(next);
+		if (explicit && process.client) {
+			try {
+				localStorage.setItem(EXPLICIT_CHOICE_KEY, 'true');
+				localStorage.setItem(STORAGE_KEY, locale.value);
+			} catch (_err) {
+				/* ignore */
+			}
+		}
 	}
 
 	const hasSyncedLocale = useState<boolean>('locale-sync', () => false);
@@ -73,11 +87,6 @@ export function useI18n() {
 			locale,
 			(val) => {
 				const normalized = normalizeLocale(val);
-				try {
-					localStorage.setItem(STORAGE_KEY, normalized);
-				} catch (_err) {
-					/* ignore */
-				}
 				if (document?.documentElement) {
 					document.documentElement.setAttribute('lang', normalized);
 				}

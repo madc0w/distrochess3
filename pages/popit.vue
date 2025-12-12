@@ -5,6 +5,33 @@
 				<img src="/PopIt Logo small.png" alt="PopIt" class="page-logo" />
 				<span class="page-title-text">{{ t.popit.title }}</span>
 			</h1>
+			<div class="language-dropdown">
+				<button
+					class="btn-lang"
+					@click="toggleLanguageMenu"
+					:aria-label="t.landing?.languageLabel || 'Language'"
+					ref="langButton"
+				>
+					{{ locale.toUpperCase() }}
+				</button>
+				<Teleport to="body">
+					<div
+						v-if="showLanguageMenu"
+						class="language-menu"
+						:style="menuPosition"
+					>
+						<button
+							v-for="option in languageOptions"
+							:key="option.value"
+							class="language-option"
+							:class="{ active: locale === option.value }"
+							@click="selectLanguage(option.value)"
+						>
+							{{ option.label }}
+						</button>
+					</div>
+				</Teleport>
+			</div>
 		</div>
 
 		<div class="content">
@@ -76,13 +103,58 @@
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from '~/composables/useI18n';
+import { en } from '~/i18n';
 
-const { t } = useI18n();
+const { t, locale, setLocale } = useI18n();
 
 definePageMeta({
 	ssr: false,
 });
+
+// Language dropdown
+type LocaleKey = keyof typeof en.languages;
+const supportedLocales = Object.keys(en.languages) as LocaleKey[];
+
+const languageOptions = computed(() =>
+	supportedLocales.map((code) => ({
+		value: code,
+		label: t.value.languages?.[code] ?? en.languages[code] ?? code,
+	}))
+);
+
+const showLanguageMenu = ref(false);
+const langButton = ref<HTMLElement | null>(null);
+const menuPosition = ref({});
+
+const toggleLanguageMenu = () => {
+	showLanguageMenu.value = !showLanguageMenu.value;
+
+	if (showLanguageMenu.value && langButton.value) {
+		nextTick(() => {
+			const rect = langButton.value!.getBoundingClientRect();
+			menuPosition.value = {
+				position: 'fixed',
+				top: `${rect.bottom + 8}px`,
+				right: `${window.innerWidth - rect.right}px`,
+				zIndex: 999999,
+			};
+		});
+	}
+};
+
+const selectLanguage = (lang: string) => {
+	setLocale(lang, true);
+	showLanguageMenu.value = false;
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+	const target = event.target as HTMLElement;
+	if (!target.closest('.language-dropdown')) {
+		showLanguageMenu.value = false;
+	}
+};
 
 interface CloudinaryImage {
 	url: string;
@@ -255,6 +327,11 @@ const fetchImages = async () => {
 onMounted(() => {
 	loadScores();
 	fetchImages();
+	document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+	document.removeEventListener('click', handleClickOutside);
 });
 </script>
 
@@ -562,5 +639,90 @@ onMounted(() => {
 	.count-label {
 		font-size: 0.7rem;
 	}
+}
+
+/* Language dropdown styles */
+.language-dropdown {
+	position: relative;
+	z-index: 100000;
+}
+
+.btn-lang {
+	padding: 0.45rem 0.75rem;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	color: #333;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(10px);
+	transition: all 0.2s ease;
+	cursor: pointer;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.btn-lang::before {
+	content: '';
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3Cpath d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.btn-lang:hover {
+	background: rgba(0, 0, 0, 0.1);
+	transform: scale(1.05);
+}
+
+.language-menu {
+	background: rgba(255, 255, 255, 0.98);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+	min-width: 140px;
+	animation: slideDownMenu 0.2s ease-out;
+	pointer-events: auto;
+}
+
+@keyframes slideDownMenu {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.language-option {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: none;
+	background: transparent;
+	color: #0f1115;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.language-option:hover {
+	background: rgba(116, 214, 109, 0.15);
+}
+
+.language-option.active {
+	background: rgba(116, 214, 109, 0.25);
+	font-weight: 600;
 }
 </style>

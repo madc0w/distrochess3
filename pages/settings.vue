@@ -269,7 +269,7 @@ async function loadProfile() {
 		form.email = user.value.email;
 		form.preferredLocale = user.value.preferredLocale || 'en';
 		form.duckOpinion = user.value.duckOpinion;
-		setLocale(form.preferredLocale);
+		setLocale(form.preferredLocale, true);
 	} catch (err: any) {
 		error.value =
 			translateServerError(err, t.value) || 'Failed to load settings.';
@@ -307,7 +307,7 @@ async function handleSave() {
 		form.email = user.value.email;
 		form.preferredLocale = user.value.preferredLocale || 'en';
 		form.duckOpinion = user.value.duckOpinion;
-		setLocale(form.preferredLocale);
+		setLocale(form.preferredLocale, true);
 		success.value = t.value.settings.updateSuccess;
 		if (authState.value) {
 			authState.value = {

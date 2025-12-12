@@ -179,7 +179,7 @@ const toggleLanguageMenu = () => {
 };
 
 const selectLanguage = (lang: string) => {
-	setLocale(lang);
+	setLocale(lang, true);
 	showLanguageMenu.value = false;
 };
 
