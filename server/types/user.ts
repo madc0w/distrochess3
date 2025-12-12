@@ -15,6 +15,8 @@ export interface UserDoc {
 	resetPasswordToken?: string | null;
 	resetPasswordExpires?: Date | null;
 	duckOpinion?: 'favor' | 'opposed';
+	popitScore?: number;
+	popitTrials?: number;
 }
 
 export interface PublicUser extends Omit<UserDoc, 'passwordHash'> {

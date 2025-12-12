@@ -104,10 +104,12 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { useAuth } from '~/composables/useAuth';
 import { useI18n } from '~/composables/useI18n';
 import { en } from '~/i18n';
 
 const { t, locale, setLocale } = useI18n();
+const { isAuthenticated, getAuthHeader } = useAuth();
 
 definePageMeta({
 	ssr: false,
@@ -185,21 +187,63 @@ const averageScore = computed(() => {
 	return totalScore.value / numTrials.value;
 });
 
-// Load scores from localStorage on mount
-function loadScores() {
-	if (typeof window !== 'undefined') {
-		const storedScore = localStorage.getItem(STORAGE_KEY_SCORE);
-		const storedTrials = localStorage.getItem(STORAGE_KEY_TRIALS);
-		totalScore.value = storedScore ? parseInt(storedScore, 10) : 0;
-		numTrials.value = storedTrials ? parseInt(storedTrials, 10) : 0;
+// Load scores from server (if authenticated) or localStorage
+async function loadScores() {
+	if (typeof window === 'undefined') return;
+
+	// First load from localStorage for immediate display
+	const storedScore = localStorage.getItem(STORAGE_KEY_SCORE);
+	const storedTrials = localStorage.getItem(STORAGE_KEY_TRIALS);
+	totalScore.value = storedScore ? parseInt(storedScore, 10) : 0;
+	numTrials.value = storedTrials ? parseInt(storedTrials, 10) : 0;
+
+	// If authenticated, fetch from server and use that as source of truth
+	if (isAuthenticated.value) {
+		try {
+			const headers = getAuthHeader();
+			if (headers) {
+				const userData = await $fetch<{
+					popitScore: number;
+					popitTrials: number;
+				}>('/api/user', { headers });
+				totalScore.value = userData.popitScore ?? 0;
+				numTrials.value = userData.popitTrials ?? 0;
+				// Sync localStorage with server values
+				localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
+				localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
+			}
+		} catch (err) {
+			console.error('Failed to fetch user popit scores:', err);
+			// Fall back to localStorage values already loaded
+		}
 	}
 }
 
-// Save scores to localStorage
-function saveScores() {
-	if (typeof window !== 'undefined') {
-		localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
-		localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
+// Save scores to server (if authenticated) and localStorage
+async function saveScores() {
+	if (typeof window === 'undefined') return;
+
+	// Always save to localStorage
+	localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
+	localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
+
+	// If authenticated, also persist to server
+	if (isAuthenticated.value) {
+		try {
+			const headers = getAuthHeader();
+			if (headers) {
+				await $fetch('/api/popit-score', {
+					method: 'POST',
+					headers,
+					body: {
+						popitScore: totalScore.value,
+						popitTrials: numTrials.value,
+					},
+				});
+			}
+		} catch (err) {
+			console.error('Failed to save popit scores to server:', err);
+		}
 	}
 }
 
