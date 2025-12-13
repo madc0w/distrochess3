@@ -1,0 +1,1 @@
+{"version":3,"file":"BiKj_LO7.js","sources":["../../../virtual:public?%2Flogo-small.jpg"],"sourcesContent":["import { publicAssetsURL } from '#internal/nuxt/paths';export default publicAssetsURL(\"/logo-small.jpg\")"],"names":["_imports_0","publicAssetsURL"],"mappings":"kCAAuD,MAAAA,EAAeC,EAAgB,iBAAiB"}

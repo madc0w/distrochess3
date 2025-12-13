@@ -2,6 +2,47 @@
 export default defineNuxtConfig({
 	compatibilityDate: '2025-11-17',
 	ssr: false,
+	modules: ['@vite-pwa/nuxt'],
+	pwa: {
+		registerType: 'autoUpdate',
+		manifest: {
+			name: 'Distrochess',
+			short_name: 'Distrochess',
+			description: 'Play chess with the world - one move at a time',
+			theme_color: '#1a1a2e',
+			background_color: '#1a1a2e',
+			display: 'standalone',
+			orientation: 'portrait',
+			scope: '/',
+			start_url: '/',
+			icons: [
+				{
+					src: '/pwa-192x192.png',
+					sizes: '192x192',
+					type: 'image/png',
+				},
+				{
+					src: '/pwa-512x512.png',
+					sizes: '512x512',
+					type: 'image/png',
+				},
+				{
+					src: '/pwa-512x512.png',
+					sizes: '512x512',
+					type: 'image/png',
+					purpose: 'maskable',
+				},
+			],
+		},
+		workbox: {
+			navigateFallback: '/',
+			globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico}'],
+		},
+		devOptions: {
+			enabled: true,
+			type: 'module',
+		},
+	},
 	runtimeConfig: {
 		mongodbUri: process.env.MONGODB_URI,
 		mongodbDb: process.env.MONGODB_DB,
