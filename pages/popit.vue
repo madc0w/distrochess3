@@ -850,10 +850,11 @@ onUnmounted(() => {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0.6);
+	background: transparent;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
+	pointer-events: none;
 	z-index: 1000000;
 	animation: fadeIn 0.2s ease-out;
 }
@@ -869,19 +870,21 @@ onUnmounted(() => {
 
 .result-modal {
 	background: white;
-	border-radius: 16px;
-	padding: 2rem;
-	min-width: 300px;
+	border-radius: 12px;
+	padding: 1rem 1.5rem;
+	min-width: 250px;
 	max-width: 90%;
 	text-align: center;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-	animation: slideUp 0.3s ease-out;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+	margin-top: 120px;
+	pointer-events: auto;
+	animation: slideDown 0.3s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes slideDown {
 	from {
 		opacity: 0;
-		transform: translateY(20px);
+		transform: translateY(-20px);
 	}
 	to {
 		opacity: 1;
@@ -890,22 +893,22 @@ onUnmounted(() => {
 }
 
 .modal-message {
-	font-size: 1.5rem;
+	font-size: 1.25rem;
 	font-weight: 600;
 	color: #333;
-	margin-bottom: 1.5rem;
+	margin-bottom: 0.75rem;
 }
 
 .modal-message.winner {
 	color: #5cb85c;
-	font-size: 1.75rem;
+	font-size: 1.35rem;
 }
 
 .modal-countdown {
 	height: 4px;
 	background: #e0e0e0;
 	border-radius: 2px;
-	margin-bottom: 1.5rem;
+	margin-bottom: 0.75rem;
 	overflow: hidden;
 }
 
@@ -917,7 +920,7 @@ onUnmounted(() => {
 }
 
 .modal-ok-btn {
-	padding: 0.75rem 2rem;
+	padding: 0.5rem 1.5rem;
 	background: #5cb85c;
 	color: white;
 	border: none;
