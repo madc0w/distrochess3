@@ -362,7 +362,7 @@ export const es = {
 	popit: {
 		title: 'PopIt',
 		welcome: '¡Bienvenido a PopIt!',
-		instructions: '¡Elige la imagen que crees que la mayoría eligió!',
+		instructions: 'Elige la imagen más popular.',
 		backToGame: 'Volver al juego',
 		randomImages: 'Imágenes aleatorias',
 		refreshImages: 'Nuevo juego',

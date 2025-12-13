@@ -36,12 +36,6 @@
 
 		<div class="content">
 			<p v-if="!hasSelected">{{ t.popit.instructions }}</p>
-			<p v-else-if="selectedRank === 1" class="result-message winner">
-				🎉 {{ t.popit.youWon }}
-			</p>
-			<p v-else class="result-message">
-				{{ t.popit.youSelected }} #{{ selectedRank }}
-			</p>
 
 			<div class="score-section">
 				<div class="score-item">
@@ -99,6 +93,31 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Result Modal -->
+		<Teleport to="body">
+			<div
+				v-if="showResultModal"
+				class="modal-overlay"
+				@click.self="dismissModal"
+			>
+				<div class="result-modal">
+					<div v-if="selectedRank === 1" class="modal-message winner">
+						🎉 {{ t.popit.youWon }}
+					</div>
+					<div v-else class="modal-message">
+						{{ t.popit.youSelected }} #{{ selectedRank }}
+					</div>
+					<div class="modal-countdown">
+						<div
+							class="countdown-bar"
+							:style="{ width: countdownProgress + '%' }"
+						></div>
+					</div>
+					<button class="modal-ok-btn" @click="dismissModal">OK</button>
+				</div>
+			</div>
+		</Teleport>
 	</div>
 </template>
 
@@ -177,6 +196,12 @@ const selectedImageId = ref<string | null>(null);
 const selectionCounts = ref<Record<string, number>>({});
 const hasSelected = ref(false);
 const selectedRank = ref(0);
+
+// Modal state
+const showResultModal = ref(false);
+const countdownProgress = ref(100);
+let modalTimeoutId: ReturnType<typeof setTimeout> | null = null;
+let countdownIntervalId: ReturnType<typeof setInterval> | null = null;
 
 // Score tracking
 const totalScore = ref(0);
@@ -302,6 +327,45 @@ function showConfetti() {
 	}
 }
 
+function dismissModal() {
+	// Clear any existing timers
+	if (modalTimeoutId) {
+		clearTimeout(modalTimeoutId);
+		modalTimeoutId = null;
+	}
+	if (countdownIntervalId) {
+		clearInterval(countdownIntervalId);
+		countdownIntervalId = null;
+	}
+
+	showResultModal.value = false;
+	countdownProgress.value = 100;
+	fetchImages();
+}
+
+function showModal() {
+	showResultModal.value = true;
+	countdownProgress.value = 100;
+
+	const MODAL_DURATION = 4000;
+	const UPDATE_INTERVAL = 50;
+	const steps = MODAL_DURATION / UPDATE_INTERVAL;
+	const decrementPerStep = 100 / steps;
+
+	// Start countdown animation
+	countdownIntervalId = setInterval(() => {
+		countdownProgress.value = Math.max(
+			0,
+			countdownProgress.value - decrementPerStep
+		);
+	}, UPDATE_INTERVAL);
+
+	// Auto-dismiss after 4 seconds
+	modalTimeoutId = setTimeout(() => {
+		dismissModal();
+	}, MODAL_DURATION);
+}
+
 async function selectImage(publicId: string) {
 	if (hasSelected.value || isLoading.value) return;
 
@@ -337,10 +401,8 @@ async function selectImage(publicId: string) {
 			showConfetti();
 		}
 
-		// Auto-reload after 2 seconds
-		setTimeout(() => {
-			fetchImages();
-		}, 2000);
+		// Show result modal
+		showModal();
 	} catch (err: any) {
 		error.value = err.message || 'Failed to record selection';
 		console.error('Error selecting image:', err);
@@ -377,6 +439,12 @@ onMounted(() => {
 
 onUnmounted(() => {
 	document.removeEventListener('click', handleClickOutside);
+	if (modalTimeoutId) {
+		clearTimeout(modalTimeoutId);
+	}
+	if (countdownIntervalId) {
+		clearInterval(countdownIntervalId);
+	}
 });
 </script>
 
@@ -406,9 +474,9 @@ onUnmounted(() => {
 	align-items: center;
 	margin-bottom: 1.25rem;
 	padding-bottom: 0.5rem;
-	border-bottom: 2px solid #eee;
 	flex-wrap: wrap;
 	gap: 1rem;
+	position: relative;
 }
 
 .page-header h1 {
@@ -417,6 +485,7 @@ onUnmounted(() => {
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
+	font-size: 2.5rem;
 }
 
 .page-logo {
@@ -426,9 +495,13 @@ onUnmounted(() => {
 }
 
 .page-title-text {
-	font-size: 1.75rem;
+	font-size: inherit;
 	font-weight: 600;
-	color: inherit;
+	color: #f0ad4e;
+	font-family: 'Courier New', Courier, monospace;
+	letter-spacing: 8px;
+	-webkit-text-stroke: 4px black;
+	paint-order: stroke fill;
 }
 
 .btn-back {
@@ -647,10 +720,7 @@ onUnmounted(() => {
 		flex-basis: 100%;
 		justify-content: center;
 		text-align: center;
-	}
-
-	.page-title-text {
-		font-size: 1.25rem;
+		font-size: 2rem;
 	}
 
 	.page-logo {
@@ -688,7 +758,9 @@ onUnmounted(() => {
 
 /* Language dropdown styles */
 .language-dropdown {
-	position: relative;
+	position: absolute;
+	right: 0;
+	top: 0;
 	z-index: 100000;
 }
 
@@ -769,5 +841,98 @@ onUnmounted(() => {
 .language-option.active {
 	background: rgba(116, 214, 109, 0.25);
 	font-weight: 600;
+}
+
+/* Result Modal styles */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000000;
+	animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.result-modal {
+	background: white;
+	border-radius: 16px;
+	padding: 2rem;
+	min-width: 300px;
+	max-width: 90%;
+	text-align: center;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.modal-message {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 1.5rem;
+}
+
+.modal-message.winner {
+	color: #5cb85c;
+	font-size: 1.75rem;
+}
+
+.modal-countdown {
+	height: 4px;
+	background: #e0e0e0;
+	border-radius: 2px;
+	margin-bottom: 1.5rem;
+	overflow: hidden;
+}
+
+.countdown-bar {
+	height: 100%;
+	background: #5cb85c;
+	border-radius: 2px;
+	transition: width 0.05s linear;
+}
+
+.modal-ok-btn {
+	padding: 0.75rem 2rem;
+	background: #5cb85c;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.modal-ok-btn:hover {
+	background: #4a9d4a;
+}
+
+.modal-ok-btn:active {
+	transform: scale(0.98);
 }
 </style>

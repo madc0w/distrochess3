@@ -358,7 +358,7 @@ export const jp = {
 	popit: {
 		title: 'ポップイット',
 		welcome: 'ポップイットへようこそ！',
-		instructions: '一番多く選ばれたと思う画像を選んでください！',
+		instructions: '一番人気の画像を選んでください。',
 		backToGame: 'ゲームに戻る',
 		randomImages: 'ランダム画像',
 		refreshImages: '新しいゲーム',

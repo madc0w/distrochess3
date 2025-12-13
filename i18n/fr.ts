@@ -355,8 +355,7 @@ export const fr: Translations = {
 	popit: {
 		title: 'PopIt',
 		welcome: 'Bienvenue sur PopIt !',
-		instructions:
-			"Choisissez l'image que vous pensez que la plupart des gens ont choisie !",
+		instructions: "Choisissez l'image la plus populaire.",
 		backToGame: 'Retour au jeu',
 		randomImages: 'Images aléatoires',
 		refreshImages: 'Nouveau jeu',

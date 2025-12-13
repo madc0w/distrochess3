@@ -365,8 +365,7 @@ export const de = {
 	popit: {
 		title: 'PopIt',
 		welcome: 'Willkommen bei PopIt!',
-		instructions:
-			'Wähle das Bild, das deiner Meinung nach am häufigsten gewählt wurde!',
+		instructions: 'Wähle das beliebteste Bild.',
 		backToGame: 'Zurück zum Spiel',
 		randomImages: 'Zufällige Bilder',
 		refreshImages: 'Neues Spiel',

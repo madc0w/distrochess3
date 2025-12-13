@@ -359,7 +359,7 @@ export const en = {
 	popit: {
 		title: 'PopIt',
 		welcome: 'Welcome to PopIt!',
-		instructions: 'Pick the image you think most people picked!',
+		instructions: 'Pick the most popular image.',
 		backToGame: 'Back to Game',
 		randomImages: 'Random Images',
 		refreshImages: 'New Game',
