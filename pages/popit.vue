@@ -40,7 +40,12 @@
 			<div class="score-section">
 				<div class="score-item">
 					<span class="score-label">{{ t.popit.averageScore }}:</span>
-					<span class="score-value">{{ Math.round(100 * averageScore) }}</span>
+					<div class="score-value-row">
+						<span class="score-value">{{
+							Math.round(100 * averageScore)
+						}}</span>
+						<span class="score-label-small"> / 400</span>
+					</div>
 				</div>
 				<div class="score-item">
 					<span class="score-label">{{ t.popit.trials }}:</span>
@@ -82,7 +87,7 @@
 						@click="selectImage(image.publicId)"
 					>
 						<img :src="image.url" :alt="image.publicId" loading="lazy" />
-						<div class="image-name">{{ formatImageName(image.query) }}</div>
+						<div class="image-name">{{ image.query }}</div>
 						<div v-if="hasSelected" class="selection-count">
 							<span class="count-number">{{
 								selectionCounts[image.publicId] || 0
@@ -287,16 +292,6 @@ function getWinningImageId() {
 
 function isWinningImage(publicId: string) {
 	return publicId === getWinningImageId();
-}
-
-// Format image name: strip trailing number and replace underscores with spaces
-function formatImageName(publicId: string): string {
-	// Get just the filename part (after last /)
-	const filename = publicId.split('/').pop() || publicId;
-	// Remove trailing underscore and number (e.g., "_02" or "_123")
-	const withoutNumber = filename.replace(/(_\d+)+$/, '');
-	// Replace underscores with spaces
-	return withoutNumber.replace(/_/g, ' ');
 }
 
 // Calculate rank of selected image (1 = most selected)
@@ -703,6 +698,18 @@ onUnmounted(() => {
 .score-label {
 	font-size: 0.9rem;
 	color: #666;
+}
+
+.score-label-small {
+	margin-left: 8px;
+	font-size: 0.9rem;
+	color: #666;
+}
+
+.score-value-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
 }
 
 .score-value {
