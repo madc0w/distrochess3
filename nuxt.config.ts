@@ -90,7 +90,19 @@ export default defineNuxtConfig({
 	},
 	app: {
 		head: {
-			link: [{ rel: 'icon', type: 'image/png', href: '/logo-small.jpg' }],
+			link: [
+				{ rel: 'icon', type: 'image/png', href: '/logo-small.jpg' },
+				{ rel: 'manifest', href: '/manifest.webmanifest' },
+				{ rel: 'apple-touch-icon', href: '/pwa-192x192.png' },
+			],
+			meta: [
+				{ name: 'theme-color', content: '#1a1a2e' },
+				{ name: 'apple-mobile-web-app-capable', content: 'yes' },
+				{
+					name: 'apple-mobile-web-app-status-bar-style',
+					content: 'black-translucent',
+				},
+			],
 		},
 	},
 });
