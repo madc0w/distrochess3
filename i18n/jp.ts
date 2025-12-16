@@ -355,9 +355,9 @@ export const jp = {
 			},
 		],
 	},
-	popit: {
-		title: 'ポップイット',
-		welcome: 'ポップイットへようこそ！',
+	PicaPic: {
+		title: 'ピカピク',
+		welcome: 'ピカピクへようこそ！',
 		instructions: '一番人気の画像を選んでください。',
 		backToGame: 'ゲームに戻る',
 		randomImages: 'ランダム画像',

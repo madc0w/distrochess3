@@ -352,9 +352,9 @@ export const fr: Translations = {
 			},
 		],
 	},
-	popit: {
-		title: 'PopIt',
-		welcome: 'Bienvenue sur PopIt !',
+	picapic: {
+		title: 'PicaPic',
+		welcome: 'Bienvenue sur PicaPic !',
 		instructions: "Choisissez l'image la plus populaire.",
 		backToGame: 'Retour au jeu',
 		randomImages: 'Images aléatoires',

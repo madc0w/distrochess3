@@ -359,9 +359,9 @@ export const es = {
 			},
 		],
 	},
-	popit: {
-		title: 'PopIt',
-		welcome: '¡Bienvenido a PopIt!',
+	picapic: {
+		title: 'PicaPic',
+		welcome: '¡Bienvenido a PicaPic!',
 		instructions: 'Elige la imagen más popular.',
 		backToGame: 'Volver al juego',
 		randomImages: 'Imágenes aleatorias',

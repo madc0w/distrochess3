@@ -362,9 +362,9 @@ export const de = {
 			},
 		],
 	},
-	popit: {
-		title: 'PopIt',
-		welcome: 'Willkommen bei PopIt!',
+	picapic: {
+		title: 'PicaPic',
+		welcome: 'Willkommen bei PicaPic!',
 		instructions: 'Wähle das beliebteste Bild.',
 		backToGame: 'Zurück zum Spiel',
 		randomImages: 'Zufällige Bilder',

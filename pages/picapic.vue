@@ -2,8 +2,8 @@
 	<div class="container">
 		<div class="page-header">
 			<h1>
-				<img src="/PopIt Logo small.png" alt="PopIt" class="page-logo" />
-				<span class="page-title-text">{{ t.popit.title }}</span>
+				<img src="/PicaPic Logo small.png" alt="PicaPic" class="page-logo" />
+				<span class="page-title-text">{{ t.picapic.title }}</span>
 			</h1>
 			<div class="language-dropdown">
 				<button
@@ -35,11 +35,11 @@
 		</div>
 
 		<div class="content">
-			<p v-if="!hasSelected">{{ t.popit.instructions }}</p>
+			<p v-if="!hasSelected">{{ t.picapic.instructions }}</p>
 
 			<div class="score-section">
 				<div class="score-item">
-					<span class="score-label">{{ t.popit.averageScore }}:</span>
+					<span class="score-label">{{ t.picapic.averageScore }}:</span>
 					<div class="score-value-row">
 						<span class="score-value">{{
 							Math.round(100 * averageScore)
@@ -48,29 +48,18 @@
 					</div>
 				</div>
 				<div class="score-item">
-					<span class="score-label">{{ t.popit.trials }}:</span>
+					<span class="score-label">{{ t.picapic.trials }}:</span>
 					<span class="score-value">{{ numTrials }}</span>
 				</div>
 			</div>
 
 			<div class="images-section">
-				<!-- 
-                <button @click="fetchImages" class="refresh-btn" :disabled="loading">
-					{{
-						loading
-							? t.popit.loading
-							: hasSelected
-							? t.popit.playAgain
-							: t.popit.refreshImages
-					}}
-				</button> -->
-
 				<div v-if="error" class="error-message">
 					{{ error }}
 				</div>
 
 				<div v-if="isLoading" class="loading">
-					{{ t.popit.loadingImages }}
+					{{ t.picapic.loadingImages }}
 				</div>
 
 				<div v-else class="image-grid">
@@ -92,7 +81,7 @@
 							<span class="count-number">{{
 								selectionCounts[image.publicId] || 0
 							}}</span>
-							<span class="count-label">{{ t.popit.selections }}</span>
+							<span class="count-label">{{ t.picapic.selections }}</span>
 						</div>
 					</div>
 				</div>
@@ -108,10 +97,10 @@
 			>
 				<div class="result-modal">
 					<div v-if="selectedRank === 1" class="modal-message winner">
-						🎉 {{ t.popit.youWon }}
+						🎉 {{ t.picapic.youWon }}
 					</div>
 					<div v-else class="modal-message">
-						{{ t.popit.youSelected }} #{{ selectedRank }}
+						{{ t.picapic.youSelected }} #{{ selectedRank }}
 					</div>
 					<div class="modal-countdown">
 						<div
@@ -243,7 +232,7 @@ async function loadScores() {
 				localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
 			}
 		} catch (err) {
-			console.error('Failed to fetch user popit scores:', err);
+			console.error('Failed to fetch user scores:', err);
 			// Fall back to localStorage values already loaded
 		}
 	}
@@ -262,7 +251,7 @@ async function saveScores() {
 		try {
 			const headers = getAuthHeader();
 			if (headers) {
-				await $fetch('/api/popit-score', {
+				await $fetch('/api/picapic-score', {
 					method: 'POST',
 					headers,
 					body: {
@@ -272,7 +261,7 @@ async function saveScores() {
 				});
 			}
 		} catch (err) {
-			console.error('Failed to save popit scores to server:', err);
+			console.error('Failed to save scores to server:', err);
 		}
 	}
 }
@@ -484,18 +473,17 @@ onUnmounted(() => {
 }
 
 .page-logo {
-	height: 48px;
+	height: 80px;
 	width: auto;
-	border-radius: 8px;
 }
 
 .page-title-text {
 	font-size: inherit;
 	font-weight: 600;
-	color: #f0ad4e;
-	font-family: 'Courier New', Courier, monospace;
-	letter-spacing: 8px;
-	-webkit-text-stroke: 4px black;
+	/* color: #f0ad4e; */
+	/* font-family: 'Courier New', Courier, monospace; */
+	letter-spacing: 4px;
+	-webkit-text-stroke: 6px #4a9d4a;
 	paint-order: stroke fill;
 }
 
