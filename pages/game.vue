@@ -1468,18 +1468,18 @@ onUnmounted(() => {
 }
 
 .game-container {
-	padding: 0.2rem 0;
+	padding: 0 0;
 }
 
 .game-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 0.5rem;
-	padding-bottom: 0.25rem;
+	margin-bottom: 0.2rem;
+	padding-bottom: 0.4rem;
 	border-bottom: 2px solid #eee;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: 0.1rem;
 }
 
 .game-header h1 {
@@ -1499,7 +1499,25 @@ onUnmounted(() => {
 .game-title-text {
 	font-size: 1.75rem;
 	font-weight: 600;
-	color: inherit;
+	text-transform: uppercase;
+	background: linear-gradient(
+		180deg,
+		#ffdd00 0%,
+		#ff8800 25%,
+		#ffdd00 50%,
+		#ff8800 75%,
+		#ffdd00 100%
+	);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	background-size: 100% 400%;
+	filter: drop-shadow(1px 1px 0 #000) drop-shadow(-1px -1px 0 #000)
+		drop-shadow(1px -1px 0 #000) drop-shadow(-1px 1px 0 #000)
+		drop-shadow(0 0 3px #ff8800) drop-shadow(0 0 6px #ffdd00);
+	display: inline-block;
+	transform: scaleY(1.4);
+	transform-origin: center;
 }
 
 .user-info {
@@ -1749,10 +1767,10 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0rem;
 	max-width: 600px;
 	margin: 0 auto;
-	padding: 0.5rem;
+	padding: 0rem;
 }
 
 @media (max-width: 600px) {
@@ -1784,7 +1802,7 @@ onUnmounted(() => {
 
 .timer-section {
 	background: #f9f9f9;
-	padding: 1.25rem;
+	padding: 0.75rem 1.25rem 1.25rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
