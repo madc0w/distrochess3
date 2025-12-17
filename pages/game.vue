@@ -69,6 +69,15 @@
 									}}</span>
 								</div>
 								<div class="profile-menu-divider"></div>
+								<a
+									v-if="!isStandaloneApp"
+									href="/distrochess.apk"
+									download
+									class="profile-menu-settings android-download-btn"
+								>
+									<span class="android-icon">📱</span>
+									{{ t.landing.androidDownload }}
+								</a>
 								<button
 									class="profile-menu-settings"
 									@click="navigateToSettings"
@@ -512,6 +521,18 @@ const canUseTeamChat = computed(() => {
 });
 
 const displayUser = computed(() => freshUserData.value || user.value);
+
+// Detect if the user is running the app in standalone mode (PWA/TWA)
+const isStandaloneApp = computed(() => {
+	if (!process.client) return false;
+	// Check for standalone display mode (PWA/TWA)
+	const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+	// Check for TWA-specific indicators
+	const isTWA = document.referrer.includes('android-app://');
+	// Check navigator.standalone for iOS
+	const isIOSStandalone = (navigator as any).standalone === true;
+	return isStandalone || isTWA || isIOSStandalone;
+});
 
 async function fetchFreshUserData() {
 	const headers = getAuthHeader();
@@ -1555,6 +1576,7 @@ onUnmounted(() => {
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 	overflow: hidden;
 	min-width: 220px;
+	width: 220px;
 	max-width: calc(100vw - 16px);
 	max-height: calc(100vh - 16px);
 	animation: slideDownMenu 0.2s ease-out;
@@ -1632,6 +1654,10 @@ onUnmounted(() => {
 	background: #4a9d4a;
 	border-color: #4a9d4a;
 	transform: translateY(-1px);
+}
+
+.android-download-btn .android-icon {
+	font-size: 1rem;
 }
 
 .settings-icon-small {

@@ -53,6 +53,7 @@ export const en = {
 		communityTag: 'Built by ducks',
 		ctaHint: 'Start playing now!',
 		languageLabel: 'Language',
+		androidDownload: 'Get the Android App',
 	},
 	leaderboard: {
 		linkLabel: 'Leaderboard',

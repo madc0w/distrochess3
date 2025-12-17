@@ -55,6 +55,7 @@ export const fr: Translations = {
 		communityTag: 'Construit par des canards',
 		ctaHint: 'Commencez à jouer maintenant !',
 		languageLabel: 'Langue',
+		androidDownload: "Télécharger l'application Android",
 	},
 	leaderboard: {
 		linkLabel: 'Classement',

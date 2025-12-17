@@ -53,6 +53,7 @@ export const de = {
 		communityTag: 'Von Enten gebaut',
 		ctaHint: 'Jetzt spielen!',
 		languageLabel: 'Sprache',
+		androidDownload: 'Android-App herunterladen',
 	},
 	leaderboard: {
 		linkLabel: 'Rangliste',

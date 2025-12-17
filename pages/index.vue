@@ -64,6 +64,15 @@
 					</div>
 				</div>
 				<div class="top-actions">
+					<a
+						v-if="!isStandaloneApp"
+						href="/distrochess.apk"
+						download
+						class="android-download-link-topbar"
+					>
+						<span class="android-icon">📱</span>
+						{{ t.landing.androidDownload }}
+					</a>
 					<div class="top-buttons">
 						<NuxtLink to="/signup" class="btn primary glow">{{
 							t.signup
@@ -195,6 +204,18 @@ const requestedGameId = computed(() => {
 		? route.query.gameId[0]
 		: route.query.gameId;
 	return typeof raw === 'string' && raw.length ? raw : undefined;
+});
+
+// Detect if the user is running the app in standalone mode (PWA/TWA)
+const isStandaloneApp = computed(() => {
+	if (!process.client) return false;
+	// Check for standalone display mode (PWA/TWA)
+	const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+	// Check for TWA-specific indicators
+	const isTWA = document.referrer.includes('android-app://');
+	// Check navigator.standalone for iOS
+	const isIOSStandalone = (navigator as any).standalone === true;
+	return isStandalone || isTWA || isIOSStandalone;
 });
 
 if (process.client) {
@@ -1057,6 +1078,32 @@ if (process.client) {
 	margin: 0 0.75rem;
 }
 
+.android-download-link-topbar {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	background: linear-gradient(135deg, #74d66d 0%, #5ec854 100%);
+	color: #000000;
+	padding: 0.5rem 1rem;
+	border-radius: 1.5rem;
+	text-decoration: none;
+	font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+	transition: all 0.3s ease;
+	white-space: nowrap;
+}
+
+.android-download-link-topbar:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.android-download-link-topbar .android-icon {
+	font-size: 1rem;
+}
+
 /* Mobile optimizations */
 @media (max-width: 600px) {
 	.logo {
@@ -1093,6 +1140,11 @@ if (process.client) {
 		flex-direction: column;
 		align-items: stretch;
 		width: 100%;
+	}
+
+	.android-download-link-topbar {
+		justify-content: center;
+		padding: 0.6rem 1rem;
 	}
 
 	.btn {

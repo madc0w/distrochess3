@@ -53,6 +53,7 @@ export const es = {
 		communityTag: 'Construido por patos',
 		ctaHint: '¡Empieza a jugar ahora!',
 		languageLabel: 'Idioma',
+		androidDownload: 'Descargar App para Android',
 	},
 	leaderboard: {
 		linkLabel: 'Tabla de posiciones',

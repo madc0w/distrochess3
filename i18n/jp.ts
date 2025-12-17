@@ -53,6 +53,7 @@ export const jp = {
 		communityTag: 'アヒルが作りました',
 		ctaHint: '今すぐプレイを開始！',
 		languageLabel: '言語',
+		androidDownload: 'Androidアプリをダウンロード',
 	},
 	leaderboard: {
 		linkLabel: 'リーダーボード',
