@@ -1468,18 +1468,18 @@ onUnmounted(() => {
 }
 
 .game-container {
-	padding: 1.25rem 0;
+	padding: 0.2rem 0;
 }
 
 .game-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 1.25rem;
-	padding-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
+	padding-bottom: 0.25rem;
 	border-bottom: 2px solid #eee;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: 0.5rem;
 }
 
 .game-header h1 {
