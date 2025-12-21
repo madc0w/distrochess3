@@ -373,8 +373,10 @@ export const es = {
 		selections: 'selecciones',
 		youWon: '¡Elegiste la imagen más popular!',
 		youSelected: 'Elegiste la imagen en el puesto',
-		averageScore: 'Puntuación',
+		score: 'Puntuación',
 		trials: 'Partidas jugadas',
+		points: 'puntos',
+		point: 'punto',
 	},
 };
 

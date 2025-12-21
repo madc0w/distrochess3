@@ -369,8 +369,10 @@ export const jp = {
 		selections: '選択数',
 		youWon: '一番人気の画像を選びました！',
 		youSelected: '選んだ画像の順位',
-		averageScore: 'スコア',
+		score: 'スコア',
 		trials: 'ラウンド数',
+		points: 'ポイント',
+		point: 'ポイント',
 	},
 };
 

@@ -366,7 +366,9 @@ export const fr: Translations = {
 		selections: 'sélections',
 		youWon: "Vous avez choisi l'image la plus populaire !",
 		youSelected: "Vous avez choisi l'image classée",
-		averageScore: 'Score',
+		score: 'Score',
 		trials: 'Parties jouées',
+		points: 'points',
+		point: 'point',
 	},
 };

@@ -376,8 +376,10 @@ export const de = {
 		selections: 'Auswahlen',
 		youWon: 'Du hast das beliebteste Bild gewählt!',
 		youSelected: 'Du hast Bild auf Rang gewählt',
-		averageScore: 'Punktzahl',
+		score: 'Punktzahl',
 		trials: 'Gespielte Runden',
+		points: 'Punkte',
+		point: 'Punkt',
 	},
 };
 

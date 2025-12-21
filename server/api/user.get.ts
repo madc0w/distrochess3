@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
 				duckOpinion: 1,
 				popitScore: 1,
 				popitTrials: 1,
+				picapicScore: 1,
+				picapicTrials: 1,
 			},
 		}
 	);
@@ -43,7 +45,9 @@ export default defineEventHandler(async (event) => {
 		preferredLocale: user.preferredLocale,
 		createdDate: user.createdDate?.toISOString() ?? null,
 		duckOpinion: user.duckOpinion,
-		popitScore: user.popitScore ?? 0,
+		popitScore: user.popitScore ?? 400,
 		popitTrials: user.popitTrials ?? 0,
+		picapicScore: user.picapicScore ?? 400,
+		picapicTrials: user.picapicTrials ?? 0,
 	};
 });

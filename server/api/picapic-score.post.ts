@@ -6,16 +6,16 @@ import { getDb } from '../utils/mongo';
 export default defineEventHandler(async (event) => {
 	const userId = verifyAuthToken(event);
 	const body = await readBody(event);
-	const { popitScore, popitTrials } = body || {};
+	const { picapicScore, picapicTrials } = body || {};
 
-	if (typeof popitScore !== 'number' || typeof popitTrials !== 'number') {
+	if (typeof picapicScore !== 'number' || typeof picapicTrials !== 'number') {
 		throw createError({
 			statusCode: 400,
 			statusMessage: 'ERR_INVALID_DATA',
 		});
 	}
 
-	if (popitScore < 0 || popitTrials < 0) {
+	if (picapicScore < 0 || picapicTrials < 0) {
 		throw createError({
 			statusCode: 400,
 			statusMessage: 'ERR_INVALID_DATA',
@@ -29,8 +29,8 @@ export default defineEventHandler(async (event) => {
 		{ _id: userId },
 		{
 			$set: {
-				popitScore,
-				popitTrials,
+				picapicScore,
+				picapicTrials,
 			},
 		}
 	);
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
 	return {
 		success: true,
-		popitScore,
-		popitTrials,
+		picapicScore,
+		picapicTrials,
 	};
 });

@@ -370,8 +370,10 @@ export const en = {
 		selections: 'selections',
 		youWon: 'You picked the most popular pic!',
 		youSelected: 'You picked pic ranked',
-		averageScore: 'Score',
+		score: 'Score',
 		trials: 'Rounds Played',
+		points: 'points',
+		point: 'point',
 	},
 };
 

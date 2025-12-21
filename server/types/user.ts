@@ -17,6 +17,8 @@ export interface UserDoc {
 	duckOpinion?: 'favor' | 'opposed';
 	popitScore?: number;
 	popitTrials?: number;
+	picapicScore?: number;
+	picapicTrials?: number;
 }
 
 export interface PublicUser extends Omit<UserDoc, 'passwordHash'> {

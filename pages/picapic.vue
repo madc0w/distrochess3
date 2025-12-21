@@ -39,13 +39,8 @@
 
 			<div class="score-section">
 				<div class="score-item">
-					<span class="score-label">{{ t.picapic.averageScore }}:</span>
-					<div class="score-value-row">
-						<span class="score-value">{{
-							Math.round(100 * averageScore)
-						}}</span>
-						<span class="score-label-small"> / 400</span>
-					</div>
+					<span class="score-label">{{ t.picapic.score }}:</span>
+					<span class="score-value">{{ score }}</span>
 				</div>
 				<div class="score-item">
 					<span class="score-label">{{ t.picapic.trials }}:</span>
@@ -91,7 +86,7 @@
 		<!-- Result Modal -->
 		<Teleport to="body">
 			<div
-				v-if="showResultModal"
+				v-if="isShowingResultModal"
 				class="modal-overlay"
 				@click.self="dismissModal"
 			>
@@ -101,6 +96,27 @@
 					</div>
 					<div v-else class="modal-message">
 						{{ t.picapic.youSelected }} #{{ selectedRank }}
+					</div>
+					<div
+						class="points-message"
+						:class="{ positive: pointsEarned > 0, negative: pointsEarned < 0 }"
+					>
+						<span v-if="pointsEarned > 0"
+							>+{{ pointsEarned }}
+							{{
+								Math.abs(pointsEarned) === 1
+									? t.picapic.point
+									: t.picapic.points
+							}}</span
+						>
+						<span v-else-if="pointsEarned < 0"
+							>{{ pointsEarned }}
+							{{
+								Math.abs(pointsEarned) === 1
+									? t.picapic.point
+									: t.picapic.points
+							}}</span
+						>
 					</div>
 					<div class="modal-countdown">
 						<div
@@ -180,8 +196,8 @@ interface CloudinaryImage {
 	format: string;
 }
 
-const STORAGE_KEY_SCORE = 'popit_total_score';
-const STORAGE_KEY_TRIALS = 'popit_num_trials';
+const STORAGE_KEY_SCORE = 'picapic_score';
+const STORAGE_KEY_TRIALS = 'picapic_trials';
 
 const images = ref<CloudinaryImage[]>([]);
 const isLoading = ref(false);
@@ -192,28 +208,24 @@ const hasSelected = ref(false);
 const selectedRank = ref(0);
 
 // Modal state
-const showResultModal = ref(false);
+const isShowingResultModal = ref(false);
 const countdownProgress = ref(100);
+const pointsEarned = ref(0);
 let modalTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let countdownIntervalId: ReturnType<typeof setInterval> | null = null;
 
-// Score tracking
-const totalScore = ref(0);
+// Score tracking (starts at 400)
+const score = ref(400);
 const numTrials = ref(0);
 
-const averageScore = computed(() => {
-	if (numTrials.value === 0) return 0;
-	return totalScore.value / numTrials.value;
-});
-
-// Load scores from server (if authenticated) or localStorage
-async function loadScores() {
+// Load score from server (if authenticated) or localStorage
+async function loadScore() {
 	if (typeof window === 'undefined') return;
 
 	// First load from localStorage for immediate display
 	const storedScore = localStorage.getItem(STORAGE_KEY_SCORE);
 	const storedTrials = localStorage.getItem(STORAGE_KEY_TRIALS);
-	totalScore.value = storedScore ? parseInt(storedScore, 10) : 0;
+	score.value = storedScore ? parseInt(storedScore, 10) : 400;
 	numTrials.value = storedTrials ? parseInt(storedTrials, 10) : 0;
 
 	// If authenticated, fetch from server and use that as source of truth
@@ -222,28 +234,28 @@ async function loadScores() {
 			const headers = getAuthHeader();
 			if (headers) {
 				const userData = await $fetch<{
-					popitScore: number;
-					popitTrials: number;
+					picapicScore: number;
+					picapicTrials: number;
 				}>('/api/user', { headers });
-				totalScore.value = userData.popitScore ?? 0;
-				numTrials.value = userData.popitTrials ?? 0;
+				score.value = userData.picapicScore ?? 400;
+				numTrials.value = userData.picapicTrials ?? 0;
 				// Sync localStorage with server values
-				localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
+				localStorage.setItem(STORAGE_KEY_SCORE, score.value.toString());
 				localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
 			}
 		} catch (err) {
-			console.error('Failed to fetch user scores:', err);
+			console.error('Failed to fetch user score:', err);
 			// Fall back to localStorage values already loaded
 		}
 	}
 }
 
-// Save scores to server (if authenticated) and localStorage
-async function saveScores() {
+// Save score to server (if authenticated) and localStorage
+async function saveScore() {
 	if (typeof window === 'undefined') return;
 
 	// Always save to localStorage
-	localStorage.setItem(STORAGE_KEY_SCORE, totalScore.value.toString());
+	localStorage.setItem(STORAGE_KEY_SCORE, score.value.toString());
 	localStorage.setItem(STORAGE_KEY_TRIALS, numTrials.value.toString());
 
 	// If authenticated, also persist to server
@@ -255,13 +267,13 @@ async function saveScores() {
 					method: 'POST',
 					headers,
 					body: {
-						popitScore: totalScore.value,
-						popitTrials: numTrials.value,
+						picapicScore: score.value,
+						picapicTrials: numTrials.value,
 					},
 				});
 			}
 		} catch (err) {
-			console.error('Failed to save scores to server:', err);
+			console.error('Failed to save score to server:', err);
 		}
 	}
 }
@@ -293,10 +305,10 @@ function calculateRank(publicId: string): number {
 	return rank;
 }
 
-// Calculate points based on rank
+// Calculate points based on rank: [2, 1, -1, -2] for ranks 1-4
 function calculatePoints(rank: number): number {
-	const n = images.value.length;
-	return Math.max(0, n - rank + 1);
+	const pointsByRank = [2, 1, -1, -2];
+	return pointsByRank[rank - 1] ?? 0;
 }
 
 function showConfetti() {
@@ -322,13 +334,13 @@ function dismissModal() {
 		countdownIntervalId = null;
 	}
 
-	showResultModal.value = false;
+	isShowingResultModal.value = false;
 	countdownProgress.value = 100;
 	fetchImages();
 }
 
 function showModal() {
-	showResultModal.value = true;
+	isShowingResultModal.value = true;
 	countdownProgress.value = 100;
 
 	const MODAL_DURATION = 4000;
@@ -374,11 +386,12 @@ async function selectImage(publicId: string) {
 		// Calculate rank and points
 		selectedRank.value = calculateRank(publicId);
 		const points = calculatePoints(selectedRank.value);
+		pointsEarned.value = points;
 
-		// Update scores
-		totalScore.value += points;
+		// Update score (ensure never goes negative)
+		score.value = Math.max(0, score.value + points);
 		numTrials.value += 1;
-		saveScores();
+		saveScore();
 
 		// Show confetti if won (selected most popular)
 		if (selectedRank.value === 1) {
@@ -416,7 +429,7 @@ async function fetchImages() {
 
 // Fetch images on mount
 onMounted(() => {
-	loadScores();
+	loadScore();
 	fetchImages();
 	document.addEventListener('click', handleClickOutside);
 });
@@ -897,6 +910,20 @@ onUnmounted(() => {
 .modal-message.winner {
 	color: #5cb85c;
 	font-size: 1.35rem;
+}
+
+.points-message {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-bottom: 0.75rem;
+}
+
+.points-message.positive {
+	color: #5cb85c;
+}
+
+.points-message.negative {
+	color: #d9534f;
 }
 
 .modal-countdown {
