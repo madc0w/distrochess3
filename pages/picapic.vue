@@ -138,7 +138,7 @@ import { useI18n } from '~/composables/useI18n';
 import { en } from '~/i18n';
 
 const { t, locale, setLocale } = useI18n();
-const { isAuthenticated, getAuthHeader } = useAuth();
+const { isAuthenticated, getAuthHeader, user } = useAuth();
 
 definePageMeta({
 	ssr: false,
@@ -198,6 +198,7 @@ interface CloudinaryImage {
 
 const STORAGE_KEY_SCORE = 'picapic_score';
 const STORAGE_KEY_TRIALS = 'picapic_trials';
+const STORAGE_KEY_USER_ID = 'picapick_userId';
 
 const images = ref<CloudinaryImage[]>([]);
 const isLoading = ref(false);
@@ -217,6 +218,37 @@ let countdownIntervalId: ReturnType<typeof setInterval> | null = null;
 // Score tracking (starts at 400)
 const score = ref(400);
 const numTrials = ref(0);
+
+// Generate a random 12-character alphanumeric string
+function generateRandomUserId(): string {
+	const chars =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	for (let i = 0; i < 12; i++) {
+		result += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+	return result;
+}
+
+// Get or create the picapick_userId
+function getPicapickUserId(): string {
+	if (typeof window === 'undefined') return '';
+
+	// If user is authenticated, use their MongoDB ID
+	if (user.value?._id) {
+		const userId = user.value._id;
+		localStorage.setItem(STORAGE_KEY_USER_ID, userId);
+		return userId;
+	}
+
+	// Otherwise, check localStorage for existing ID or generate new one
+	let storedUserId = localStorage.getItem(STORAGE_KEY_USER_ID);
+	if (!storedUserId || storedUserId.length !== 12) {
+		storedUserId = generateRandomUserId();
+		localStorage.setItem(STORAGE_KEY_USER_ID, storedUserId);
+	}
+	return storedUserId;
+}
 
 // Load score from server (if authenticated) or localStorage
 async function loadScore() {
@@ -368,6 +400,16 @@ async function selectImage(publicId: string) {
 	selectedImageId.value = publicId;
 
 	try {
+		// Track picapic user activity
+		const picapickUserId = getPicapickUserId();
+		await $fetch('/api/picapic-user', {
+			method: 'POST',
+			body: {
+				userId: picapickUserId,
+				isSignedIn: isAuthenticated.value,
+			},
+		});
+
 		// Persist the selection
 		await $fetch('/api/image-selection', {
 			method: 'POST',
@@ -429,6 +471,7 @@ async function fetchImages() {
 
 // Fetch images on mount
 onMounted(() => {
+	getPicapickUserId(); // Initialize/update picapick_userId
 	loadScore();
 	fetchImages();
 	document.addEventListener('click', handleClickOutside);
