@@ -5,8 +5,12 @@ import { getDb } from '../utils/mongo';
 export default defineEventHandler(async (event) => {
 	try {
 		const body = await readBody(event);
-		const { userId, isSignedIn }: { userId: string; isSignedIn: boolean } =
-			body;
+		console.log('PICAPIC-USER.POST body:', body);
+		const {
+			userId,
+			isSignedIn,
+			numTrials,
+		}: { userId: string; isSignedIn: boolean; numTrials: number } = body;
 
 		if (!userId) {
 			throw createError({
@@ -25,7 +29,7 @@ export default defineEventHandler(async (event) => {
 		await collection.updateOne(
 			{ userId },
 			{
-				$set: { lastActiveDate: now, ipAddress },
+				$set: { lastActiveDate: now, ipAddress, numTrials },
 				$setOnInsert: {
 					userId,
 					isSignedIn,

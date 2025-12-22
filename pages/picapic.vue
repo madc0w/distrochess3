@@ -407,6 +407,7 @@ async function selectImage(publicId: string) {
 			body: {
 				userId: picapickUserId,
 				isSignedIn: isAuthenticated.value,
+				numTrials: numTrials.value + 1,
 			},
 		});
 
